@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.xudong.data.mapper.BlackListMapper">
+    <resultMap id="blackListMap" type="blackList">
+        <id column="id" property="id"/><!--   -->
+        <result column="gmt_create" property="gmtCreate"/><!--  -->
+        <result column="gmt_modify" property="gmtModify"/><!--  -->
+        <result column="is_deleted" property="isDeleted"/><!-- 是否删除(0 未删除 1 删除) -->
+        <result column="status" property="status"/><!-- 状态(1 正常 2 停用) -->
+        <result column="content" property="content"/><!-- 屏蔽内容(ip,账号) -->
+    </resultMap>
+
+    <insert id="insert" parameterType="blackList" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        black_list(
+        <trim prefix="" prefixOverrides=",">
+            ,gmt_create
+            ,gmt_modify
+            ,is_deleted
+            <if test="status != null">,status</if>
+            <if test="content != null">,content</if>
+        </trim>
+        )values(
+        <trim prefix="" prefixOverrides=",">
+            ,now()
+            ,now()
+            ,0
+            <if test="status != null">,#{status,jdbcType=INTEGER}</if>
+            <if test="content != null">,#{content,jdbcType=VARCHAR}</if>
+        </trim>
+        )
+    </insert>
+
+    <update id="update" parameterType="blackList">
+        update black_list
+        <set>
+            <if test="gmtCreate != null">gmt_create=#{gmtCreate,jdbcType=TIMESTAMP},</if>
+            gmt_modify=now(),
+            <if test="isDeleted != null">is_deleted=#{isDeleted,jdbcType=INTEGER},</if>
+            <if test="status != null">status=#{status,jdbcType=INTEGER},</if>
+            <if test="content != null">content=#{content,jdbcType=VARCHAR},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="load" parameterType="int" resultMap="blackListMap">
+    		select * from black_list where id=#{id}
+    	</select>
+
+    <sql id="queryCommonSql">
+        FROM black_list bl
+        <where>
+            <if test="idArray != null">
+                bl.id in
+                <foreach collection="idArray" index="index" item="item" open="(" separator="," close=")">#{item}
+                </foreach>
+            </if>
+            <if test="gmtCreateFrom != null">and bl.gmt_create >= #{gmtCreateFrom}</if>
+            <if test="gmtCreateTo != null">
+                <![CDATA[and bl.gmt_create < date_add(#{gmtCreateTo}, interval 1 day)]]>
+            </if>
+            <if test="gmtModifyFrom != null">and bl.gmt_modify >= #{gmtModifyFrom}</if>
+            <if test="gmtModifyTo != null">
+                <![CDATA[and bl.gmt_modify < date_add(#{gmtModifyTo}, interval 1 day)]]>
+            </if>
+            <choose>
+                <when test="isDeleted == null">and bl.is_deleted=0</when>
+                <otherwise>and bl.is_deleted = #{isDeleted}</otherwise>
+            </choose>
+            <choose>
+                <when test="status != null">and bl.status = #{status}</when>
+                <when test="statusArray != null">
+                    and bl.status in
+                    <foreach collection="statusArray" index="index" item="item" open="(" separator="," close=")">#{item}
+                    </foreach>
+                </when>
+            </choose>
+            <if test="content != null and content.trim() !=''">and bl.content = #{content}</if>
+        </where>
+    </sql>
+
+    <sql id="sortSql">
+        <choose>
+            <when test="sort != null and sort.trim() !=''">
+                order by ${sort}
+            </when>
+            <otherwise>
+                <if test="sortByDefault">
+                    order by bl.gmt_create DESC
+                </if>
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="queryList" parameterType="blackListQuery" resultMap="blackListMap">
+        select bl.id
+        <choose>
+            <when test="columns != null and columns.length>0">
+                <foreach collection="columns" index="index" item="item">,${item}</foreach>
+            </when>
+            <otherwise>
+                ,bl.gmt_create
+                ,bl.gmt_modify
+                ,bl.is_deleted
+                ,bl.status
+                ,bl.content
+            </otherwise>
+        </choose>
+        <include refid="queryCommonSql"/>
+        <include refid="sortSql"/>
+        <if test="pageSize > 0">
+            limit ${startRow},${pageSize}
+        </if>
+    </select>
+
+    <select id="queryCount" parameterType="blackListQuery" resultType="int">
+        select count(1)
+        <include refid="queryCommonSql"/>
+    </select>
+
+    <update id="updateStatus" parameterType="blackList">
+		update black_list set status=#{status} where   id=#{id} 	</update>
+
+    <update id="updateIsDeleted" parameterType="blackList">
+        update black_list set is_deleted=#{isDeleted} where   id=#{id}     </update>
+
+    <delete id="delete" parameterType="int">
+    		delete from black_list where id=#{id}
+    	</delete>
+</mapper>
