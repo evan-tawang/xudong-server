@@ -9,20 +9,49 @@ spring:
     username: root
     password: MiZhi001
     driver-class-name: com.mysql.cj.jdbc.Driver
-    druid:   #下面为连接池的补充设置，应用到上面数据源中
-      initialSize: 4 #初始化大小
-      minIdle: 4 #最小
-      maxActive: 32 #最大
-      maxWait: 1000  #获取连接等待超时的时间
-      timeBetweenEvictionRunsMillis: 30000 #间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-      minEvictableIdleTimeMillis: 5000 #一个连接在池中最小生存的时间，单位是毫秒
-      validationQuery: SELECT 1
-      testWhileIdle: true
-      testOnBorrow: true
-      testOnReturn: false
-      poolPreparedStatements: true
-      maxPoolPreparedStatementPerConnectionSize: 20
+    hikari:   #下面为连接池的补充设置，应用到上面数据源中
+      max-lifetime: 1000
+      minimum-idle: 4
+      idle-timeout: 1000
+      maximum-pool-size: 32
+      connection-test-query: SELECT 1
+      connection-timeout: 2000
+#      initialSize: 4 #最小
+#      maxActive: 32 #最大
+#      maxWait: 1000  #获取连接等待超时的时间
+#      timeBetweenEvictionRunsMillis: 30000 #间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#      minEvictableIdleTimeMillis: 5000 #一个连接在池中最小生存的时间，单位是毫秒
+#      validationQuery: SELECT 1
+#      testWhileIdle: true
+#      testOnBorrow: true
+#      testOnReturn: false
+#      poolPreparedStatements: true
+#      maxPoolPreparedStatementPerConnectionSize: 20
 
+  redis:
+    host: 47.96.89.84
+    #host: 127.0.0.1
+    port: 6379
+    password: MiZhi001
+    lettuce:
+      pool:
+        max-idle: 2
+        min-idle: 2
+        max-active: 2
+        max-wait: 2000ms
+    jackson:
+      default-property-inclusion: non_null
+    mvc:
+      throw-exception-if-no-handler-found: true
+      #spring.resources.add-mappings=false
+    output:
+      ansi:
+        enabled: detect
+    http:
+      multipart:
+        enabled: true
+        max-file-size: 10MB
+        max-request-size: 10MB
   data:
     mongodb:
       uri: mongodb://btbs_his:MiZhi001@47.96.89.84:27017/btbs_his

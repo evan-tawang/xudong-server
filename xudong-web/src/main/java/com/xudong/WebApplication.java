@@ -7,7 +7,9 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {
         "com.xudong.service",
         "com.xudong.data",
-        "com.xudong.web"
+        "com.xudong.web",
+        "com.xudong.cache",
+        "com.xudong.config"
 })
 @SpringBootApplication
 public class WebApplication {

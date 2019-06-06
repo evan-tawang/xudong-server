@@ -1,7 +1,6 @@
-package com.xudong.mapper;
+package com.xudong.cache;
 
-import com.xudong.data.mapper.TalkSkillMapper;
-import com.xudong.domain.model.TalkSkill;
+import com.xudong.domain.model.BlackList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +9,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class TalkSkillMapperTest {
+public class BlackListCacheTest {
 
     @Autowired
-    private TalkSkillMapper talkSkillMapper;
+    private BlackListCache blackListCache;
 
     @Test
-    public void testLoad(){
-        TalkSkill talkSkill = talkSkillMapper.load(1);
-        System.out.println(talkSkill);
+    public void test(){
+        blackListCache.put(1,new BlackList(1));
+        System.out.println( blackListCache.get(1));
     }
 }
