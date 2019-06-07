@@ -12,7 +12,9 @@ import org.springframework.context.annotation.ComponentScan;
  * @author evan.shen
  */
 @EnableAutoConfiguration(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
-@ComponentScan(basePackages = {"com.xudong.im.config", "com.xudong.im.data.jdbc"})//jdbc扫描包
+@ComponentScan(basePackages = {
+        "com.xudong.im.config"
+        , "com.xudong.im.data.jdbc"})
 public class MySQLTestBeansConfig {
 
 }

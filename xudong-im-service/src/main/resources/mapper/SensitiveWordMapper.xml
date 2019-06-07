@@ -59,11 +59,6 @@
             <when test="sort != null and sort.trim() !=''">
                 order by ${sort}
             </when>
-            <otherwise>
-                <if test="sortByDefault">
-                    order by sw.gmt_create DESC
-                </if>
-            </otherwise>
         </choose>
     </sql>
 

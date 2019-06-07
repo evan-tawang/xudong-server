@@ -1,6 +1,5 @@
 package com.xudong.im.config;
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -9,8 +8,5 @@ import org.springframework.context.annotation.Configuration;
  * @author evan.shen
  */
 @Configuration
-@ComponentScan(basePackages = {
-        "com.xudong.im.service"
-})
 public class ServiceAutoConfiguration {
 }

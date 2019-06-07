@@ -59,3 +59,18 @@ spring:
 security:
   basic:
     enabled: false
+
+logging:
+  pattern:
+    console: "%date{dd HH:mm:ss} %level [%thread] %msg。%-60caller{1}"
+  level:
+    #org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod: trace
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: warn
+    org.springframework.boot.autoconfigure.logging.AutoConfigurationReportLoggingInitializer: info
+    org.springframework.web.socket: debug
+    java.sql.Statement: debug
+    java.sql.PreparedStatement: debug
+    java.sql.ResultSet: debug
+    org.springframework.jdbc.core: TRACE
+    com.xudong: debug
+

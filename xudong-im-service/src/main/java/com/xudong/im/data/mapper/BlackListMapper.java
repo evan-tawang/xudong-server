@@ -21,7 +21,7 @@ public interface BlackListMapper  {
 	void updateStatus(@Param("id") Integer id, @Param("status") Serializable status);
 
     /***/
-    void updateIsDeleted(@Param("id") Integer id, @Param("isDeleted") int status);
+    void updateIsDeleted(@Param("id") Integer id, @Param("isDeleted") int isDeleted);
 
 	/***/
 	void delete(Integer id);
