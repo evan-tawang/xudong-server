@@ -1,6 +1,5 @@
-package com.xudong.im.Manage;
+package com.xudong.im.manage;
 
-import com.xudong.im.manage.SensitiveWordMange;
 import com.xudong.im.support.ServiceTestCaseSupport;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

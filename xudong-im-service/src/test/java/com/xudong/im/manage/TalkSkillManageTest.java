@@ -1,9 +1,8 @@
-package com.xudong.im.Manage;
+package com.xudong.im.manage;
 
 
 import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
-import com.xudong.im.manage.TalkSkillMange;
 import com.xudong.im.support.ServiceTestCaseSupport;
 import com.xudong.im.testdata.TalkSkillTestData;
 import com.xudong.im.util.RandomUtil;

@@ -1,8 +1,7 @@
-package com.xudong.im.Manage;
+package com.xudong.im.manage;
 
 import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.limit.BlackListQuery;
-import com.xudong.im.manage.BlackListMange;
 import com.xudong.im.support.ServiceTestCaseSupport;
 import com.xudong.im.testdata.BlackListTestData;
 import com.xudong.im.util.RandomUtil;
