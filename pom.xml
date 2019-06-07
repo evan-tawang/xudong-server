@@ -11,13 +11,13 @@
     </parent>
 
     <groupId>com.xudong</groupId>
-    <artifactId>server</artifactId>
+    <artifactId>xudong-server</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>xudong-domain</module>
-        <module>xudong-web</module>
+        <module>xudong-service</module>
     </modules>
 
     <profiles>

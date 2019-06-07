@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>com.xudong</groupId>
-    <artifactId>web</artifactId>
+    <artifactId>xudong-service</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
