@@ -16,6 +16,6 @@ import org.springframework.context.annotation.ComponentScan;
         "com.xudong.im.cache",
         "com.xudong.im.manage",
         "com.xudong.im.service"
-})//jdbc扫描包
+})
 public class ServiceTestBeansConfig {
 }
