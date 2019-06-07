@@ -1,0 +1,34 @@
+package com.xudong.im.data.mapper;
+
+import java.util.List;
+
+import com.xudong.im.domain.limit.BlackList;
+import com.xudong.im.domain.limit.BlackListQuery;
+import org.apache.ibatis.annotations.Param;
+import java.io.Serializable;
+
+public interface BlackListMapper  {
+	/***/
+	BlackList load(Integer id);
+
+	/***/
+	void insert(BlackList blackList);
+
+	/***/
+	void update(BlackList blackList);
+
+	/***/
+	void updateStatus(@Param("id") Integer id, @Param("status") Serializable status);
+
+    /***/
+    void updateIsDeleted(@Param("id") Integer id, @Param("isDeleted") int status);
+
+	/***/
+	void delete(Integer id);
+
+	/***/
+	List<BlackList> queryList(BlackListQuery blackListQuery);
+
+	/***/
+	int queryCount(BlackListQuery blackListQuery);
+}

@@ -11,13 +11,13 @@
     </parent>
 
     <groupId>com.xudong</groupId>
-    <artifactId>xudong-server</artifactId>
+    <artifactId>xudong-im-server</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>xudong-domain</module>
-        <module>xudong-service</module>
+        <module>xudong-im-domain</module>
+        <module>xudong-im-service</module>
     </modules>
 
     <profiles>
@@ -25,7 +25,7 @@
             <id>develop</id>
             <properties>
                 <evanframework.version>2.1.1-SNAPSHOT</evanframework.version>
-                <xudong-domain.version>1.0-SNAPSHOT</xudong-domain.version>
+                <xudong-im-domain.version>1.0-SNAPSHOT</xudong-im-domain.version>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -35,7 +35,7 @@
             <id>release</id>
             <properties>
                 <evanframework.version>2.1.1</evanframework.version>
-                <xudong-domain.version>1.0</xudong-domain.version>
+                <xudong-im-domain.version>1.0</xudong-im-domain.version>
             </properties>
         </profile>
     </profiles>
