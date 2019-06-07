@@ -5,11 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = {
-        "com.xudong.service",
-        "com.xudong.data",
-        "com.xudong.web",
-        "com.xudong.cache",
-        "com.xudong.config"
+        "com.xudong.im.config",
+        "com.xudong.im.data",
+        "com.xudong.im.cache",
+        "com.xudong.im.service",
+        "com.xudong.im.web",
+
 })
 @SpringBootApplication
 public class WebApplication {
