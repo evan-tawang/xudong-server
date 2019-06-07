@@ -6,7 +6,7 @@
 <configuration>
     <settings>
         <!-- 设置mybatis日志前缀-->
-        <setting name="logPrefix" value="com.mizhi.btbs.core.mybatis.mapper."/>
+        <setting name="logPrefix" value="com.xudong.data.mapper."/>
         <!-- 使全局的映射器启用或禁用缓存。 -->
         <setting name="cacheEnabled" value="true"/>
         <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载。 -->
