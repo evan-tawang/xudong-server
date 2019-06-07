@@ -1,6 +1,6 @@
 package com.xudong.cache;
 
-import com.xudong.domain.model.BlackList;
+import com.xudong.domain.limit.BlackList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

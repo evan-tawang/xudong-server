@@ -1,4 +1,4 @@
-package com.xudong.domain.model;
+package com.xudong.domain.limit;
 
 import java.io.Serializable;
 import java.util.Date;

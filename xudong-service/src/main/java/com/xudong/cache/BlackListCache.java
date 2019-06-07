@@ -1,9 +1,9 @@
 package com.xudong.cache;
 
-import com.xudong.domain.model.BlackList;
+
+
+import com.sun.deploy.util.BlackList;
 import com.xudong.util.RedisUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package com.xudong.domain.query;
+package com.xudong.domain.limit;
 
 
 import org.evanframework.query.AbstractQueryParam;

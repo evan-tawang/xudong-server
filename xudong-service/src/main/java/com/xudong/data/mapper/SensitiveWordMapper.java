@@ -2,8 +2,8 @@ package com.xudong.data.mapper;
 
 import java.util.List;
 
-import com.xudong.domain.model.SensitiveWord;
-import com.xudong.domain.query.SensitiveWordQuery;
+import com.xudong.domain.limit.SensitiveWord;
+import com.xudong.domain.limit.SensitiveWordQuery;
 import org.apache.ibatis.annotations.Param;
 import java.io.Serializable;
 

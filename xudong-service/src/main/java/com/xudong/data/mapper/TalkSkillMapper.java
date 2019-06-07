@@ -2,8 +2,8 @@ package com.xudong.data.mapper;
 
 import java.util.List;
 
-import com.xudong.domain.model.TalkSkill;
-import com.xudong.domain.query.TalkSkillQuery;
+import com.xudong.domain.help.TalkSkill;
+import com.xudong.domain.help.TalkSkillQuery;
 import org.apache.ibatis.annotations.Param;
 import java.io.Serializable;
 

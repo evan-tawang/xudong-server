@@ -1,7 +1,6 @@
 package com.xudong.web.controller;
 
 
-import com.xudong.domain.model.BlackList;
 import com.xudong.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

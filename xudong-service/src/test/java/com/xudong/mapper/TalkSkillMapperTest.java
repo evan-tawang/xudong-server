@@ -1,7 +1,7 @@
 package com.xudong.mapper;
 
 import com.xudong.data.mapper.TalkSkillMapper;
-import com.xudong.domain.model.TalkSkill;
+import com.xudong.domain.help.TalkSkill;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

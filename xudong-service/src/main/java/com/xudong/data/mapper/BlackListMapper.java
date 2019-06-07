@@ -2,8 +2,8 @@ package com.xudong.data.mapper;
 
 import java.util.List;
 
-import com.xudong.domain.model.BlackList;
-import com.xudong.domain.query.BlackListQuery;
+import com.xudong.domain.limit.BlackList;
+import com.xudong.domain.limit.BlackListQuery;
 import org.apache.ibatis.annotations.Param;
 import java.io.Serializable;
 
