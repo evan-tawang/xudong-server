@@ -1,6 +1,5 @@
-package com.xudong.im.mapper;
+package com.xudong.im.data.mapper;
 
-import com.xudong.im.data.mapper.TalkSkillMapper;
 import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
 import com.xudong.im.support.MySQLTestCaseSupport;

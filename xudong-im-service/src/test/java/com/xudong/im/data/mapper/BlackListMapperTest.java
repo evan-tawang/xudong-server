@@ -1,6 +1,5 @@
-package com.xudong.im.mapper;
+package com.xudong.im.data.mapper;
 
-import com.xudong.im.data.mapper.BlackListMapper;
 import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.limit.BlackListQuery;
 import com.xudong.im.support.MySQLTestCaseSupport;

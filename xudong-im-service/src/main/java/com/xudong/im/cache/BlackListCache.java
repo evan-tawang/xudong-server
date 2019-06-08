@@ -1,6 +1,6 @@
 package com.xudong.im.cache;
 
-import com.sun.deploy.util.BlackList;
+import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
