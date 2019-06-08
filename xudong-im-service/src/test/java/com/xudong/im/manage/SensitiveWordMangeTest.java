@@ -1,6 +1,7 @@
 package com.xudong.im.manage;
 
 import com.xudong.im.support.ServiceTestCaseSupport;
+import com.xudong.im.util.RandomUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,15 +14,23 @@ public class SensitiveWordMangeTest extends ServiceTestCaseSupport {
     private SensitiveWordMange sensitiveWordMange;
 
     @Test
-    public void testSave(){
-        sensitiveWordMange.save("198,123");
+    public void test() {
+        String[] words = sensitiveWordMange.get();
+
+        LOGGER.info("====>> before update: " );
+        printInfo(words);
+
+        sensitiveWordMange.save(RandomUtil.randomString(5) + "," + RandomUtil.randomString(5));
+
+        words = sensitiveWordMange.get();
+
+        LOGGER.info("====>> after update: " );
+        printInfo(words);
     }
 
-    @Test
-    public void testGet(){
-        String[] words = sensitiveWordMange.get();
-        for(String word : words){
-            LOGGER.info("====>> testGet: " + word);
+    private void printInfo(String[] words) {
+        for (String word : words) {
+            LOGGER.info("====>> " + word);
         }
     }
 }

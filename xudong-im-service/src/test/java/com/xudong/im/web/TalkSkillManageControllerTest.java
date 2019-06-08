@@ -1,6 +1,6 @@
 package com.xudong.im.web;
 
-import com.xudong.im.domain.limit.BlackList;
+import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.support.WebTestCaseSupport;
 import com.xudong.im.util.RandomUtil;
 import org.evanframework.dto.ApiResponse;
@@ -14,23 +14,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * BlackListManageController Tester.
- *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>六月 7, 2019</pre>
+ * @author Evan.Shen
+ * @since 2019/6/8
  */
-public class BlackListManageControllerTest extends WebTestCaseSupport {
-
-    private ParameterizedTypeReference<ApiResponse<List<BlackList>>> responseType = new ParameterizedTypeReference<ApiResponse<List<BlackList>>>() {
+public class TalkSkillManageControllerTest extends WebTestCaseSupport {
+    private ParameterizedTypeReference<ApiResponse<List<TalkSkill>>> responseType = new ParameterizedTypeReference<ApiResponse<List<TalkSkill>>>() {
     };
 
     /**
-     * Method: getForList(BlackListQuery blackListQuery)
+     * Method: getForList(TalkSkillQuery talkSkillQuery)
      */
     @Test
     public void testGetForList() {
-        String url = getFullApiUri("/blackList/manage/list?pageSize={pageSize}&sort={sort}");
+        String url = getFullApiUri("/talkSkill/manage/list?pageSize={pageSize}&sort={sort}");
 
         Map<String, Object> parames = new HashMap<String, Object>();
         parames.put("pageSize", 15);
@@ -39,7 +35,7 @@ public class BlackListManageControllerTest extends WebTestCaseSupport {
         ResponseEntity<String> responseEntity1 = restTemplate.getForEntity(url, String.class, parames);
         LOGGER.info("========>>testGetList 结果1：" + responseEntity1.getBody());
 
-        ResponseEntity<ApiResponse<List<BlackList>>> responseEntity2 = restTemplate.exchange(url, HttpMethod.GET, null, responseType, parames);
+        ResponseEntity<ApiResponse<List<TalkSkill>>> responseEntity2 = restTemplate.exchange(url, HttpMethod.GET, null, responseType, parames);
         LOGGER.info("========>>testGetList 结果2：" + responseEntity2.getBody());
     }
 
@@ -48,37 +44,27 @@ public class BlackListManageControllerTest extends WebTestCaseSupport {
      */
     @Test
     public void testGetOne() {
-        String url = getFullApiUri("/blackList/manage/getOne?id={0}");
+        String url = getFullApiUri("/talkSkill/manage/getOne?id={0}");
         ApiResponse response = restTemplate.getForObject(url, ApiResponse.class, RandomUtil.randomInt(10));
         LOGGER.info("========>>testGetOne 结果1：" + response);
     }
 
     /**
-     * Method: add(BlackList o)
+     * Method: add(TalkSkill o)
      */
     @Test
     public void testAdd() {
-        String url = getFullApiUri("/blackList/manage/add?content={0}");
+        String url = getFullApiUri("/talkSkill/manage/add?content={0}");
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class,  RandomUtil.randomName("Test"));
         LOGGER.info("========>>testGetOne 结果1：" + response);
     }
 
     /**
-     * Method: addGroup(@RequestParam("blackLists") String blackListContents)
-     */
-    @Test
-    public void testAddGroup() {
-        String url = getFullApiUri("/blackList/manage/addGroup?blackLists={0}");
-        ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, RandomUtil.randomInt(100) + "," + RandomUtil.randomInt(100));
-        LOGGER.info("========>>testAddGroup 结果1：" + response);
-    }
-
-    /**
-     * Method: update(BlackList o)
+     * Method: update(TalkSkill o)
      */
     @Test
     public void testUpdate() {
-        String url = getFullApiUri("/blackList/manage/update?id={id}&content={content}");
+        String url = getFullApiUri("/talkSkill/manage/update?id={id}&content={content}");
 
         Map<String, Object> parames = new HashMap<String, Object>();
         parames.put("id", RandomUtil.randomInt(10));
@@ -93,7 +79,7 @@ public class BlackListManageControllerTest extends WebTestCaseSupport {
      */
     @Test
     public void testUpdateStatus() {
-        String url = getFullApiUri("/blackList/manage/updateStatus?id={id}&newStatus={newStatus}");
+        String url = getFullApiUri("/talkSkill/manage/updateStatus?id={id}&newStatus={newStatus}");
 
         Map<String, Object> parames = new HashMap<String, Object>();
         parames.put("id", RandomUtil.randomInt(10));
@@ -108,7 +94,7 @@ public class BlackListManageControllerTest extends WebTestCaseSupport {
      */
     @Test
     public void testUpdateStatusGroup() {
-        String url = getFullApiUri("/blackList/manage/updateStatusGroup?ids[]={ids}&newStatus={newStatus}");
+        String url = getFullApiUri("/talkSkill/manage/updateStatusGroup?ids[]={ids}&newStatus={newStatus}");
 
         Map<String, Object> parames = new HashMap<String, Object>();
         parames.put("ids", RandomUtil.randomInt(10) + "," + RandomUtil.randomInt(10));
@@ -123,9 +109,9 @@ public class BlackListManageControllerTest extends WebTestCaseSupport {
      */
     @Test
     public void testDelete() {
-        String url = getFullApiUri("/blackList/manage/delete?id={0}");
+        String url = getFullApiUri("/talkSkill/manage/delete?id={0}");
 
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class,  RandomUtil.randomInt(10));
         LOGGER.info("========>>testDelete 结果1：" + response);
     }
-} 
+}
