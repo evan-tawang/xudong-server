@@ -92,5 +92,4 @@ public class LoginController {
         loginDto.setRandom(random);
         loginDto.setSign(sign);
     }
-
 }

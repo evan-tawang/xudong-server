@@ -9,6 +9,15 @@ import java.util.Date;
  */
 public class ChatSession {
 
+    public ChatSession() {
+    }
+
+    public ChatSession(String id, String visitorId, String serviceId) {
+        this.id = id;
+        this.visitorId = visitorId;
+        this.serviceId = serviceId;
+    }
+
     @Id
     private String id;
     private String visitorIp;//访客ip

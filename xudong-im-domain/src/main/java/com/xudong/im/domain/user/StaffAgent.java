@@ -19,6 +19,7 @@ public class StaffAgent implements OperatorAgent, Serializable {
     private String account;
     private String mobile;
     private String userName;
+    private Integer userType;
     private String remoteAddr;
     private Integer status;
 
@@ -91,6 +92,19 @@ public class StaffAgent implements OperatorAgent, Serializable {
         this.userName = userName;
     }
 
+    /**
+     * 用户类型 1 访客 2 客服
+     */
+    public Integer getUserType() {
+        return userType;
+    }
+
+    /**
+     * 用户类型 1 访客 2 客服
+     */
+    public void setUserType(Integer userType) {
+        this.userType = userType;
+    }
 
     /**
      * 令牌，登录成功后写入
