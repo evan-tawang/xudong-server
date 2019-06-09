@@ -59,6 +59,7 @@ public class ChatManage {
         }
 
         ChatRecord chatRecord = new ChatRecord();
+        chatRecord.setSendUserType(agent.getUserType());
         chatRecord.setContent(chatDTO.getContent());
         chatRecord.setSessionId(chatDTO.getSessionId());
 

@@ -12,6 +12,7 @@ public class ChatRecord {
     @Id
     private String id;
     private String sessionId; //会话id
+    private Integer sendUserType; //消息发放方类型
     private String visitorId; //访客id
     private String serviceId; // 客服id
     private String content;//聊天内容
@@ -31,6 +32,14 @@ public class ChatRecord {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public Integer getSendUserType() {
+        return sendUserType;
+    }
+
+    public void setSendUserType(Integer sendUserType) {
+        this.sendUserType = sendUserType;
     }
 
     public String getVisitorId() {
