@@ -56,7 +56,7 @@ public class ChatController {
      * @return
      */
     @RequestMapping(value = "sendMsg", method = RequestMethod.POST)
-    public ApiResponse add(@RequestBody ChatDTO chatDTO,HttpServletRequest request) {
+    public ApiResponse sendMsg(@RequestBody ChatDTO chatDTO,HttpServletRequest request) {
         StaffAgent agent = staffAgentSession.get(request);
         chatManage.sendMsg(chatDTO, agent);
         return ApiResponse.create();
@@ -74,11 +74,12 @@ public class ChatController {
             Assert.notNull(chatRecordQuery.getConnectorId(),"连接人id不能为空");
 
             StaffAgent agent = staffAgentSession.get(request);
+            String serviceId = null, visitorId = null;
+
             if(agent == null){
                 return ApiResponse.create(PageResult.create(chatRecordQuery, new ArrayList<ChatRecord>(), 0));
             }
 
-            String serviceId = null, visitorId = null;
             if(UserTypeEnum.SERVICE.getValue().equals(agent.getUserType())){
                 serviceId = String.valueOf(agent.getId());
                 visitorId = chatRecordQuery.getConnectorId();

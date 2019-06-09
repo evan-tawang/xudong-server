@@ -32,10 +32,12 @@ public class ChatManage {
     public void sendMsg(ChatDTO chatDTO, StaffAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
 
+        ChatSession chatSession = null;
         if(StringUtils.isEmpty(chatDTO.getSessionId())){
             Assert.notNull(chatDTO.getReceiveId(),"接收者不能为空");
 
             String serviceId = null, visitorId = null;
+
             if(UserTypeEnum.SERVICE.getValue().equals(agent.getUserType())){
                 serviceId = String.valueOf(agent.getId());
                 visitorId = chatDTO.getReceiveId();
@@ -43,18 +45,9 @@ public class ChatManage {
                 visitorId = String.valueOf(agent.getId());
                 serviceId = chatDTO.getReceiveId();
             }
-
-            ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
-            chatSessionQuery.setServiceId(serviceId);
-            chatSessionQuery.setVisitorId(visitorId);
-            List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
-            if(CollectionUtils.isEmpty(chatSessions)){
-                chatDTO.setSessionId(createSession(serviceId,visitorId));;
-            } else {
-                chatDTO.setSessionId(chatSessions.get(0).getId());;
-            }
+            chatSession = createSession(serviceId,visitorId);
         } else {
-            ChatSession chatSession = chatSessionRepository.load(chatDTO.getSessionId());
+            chatSession = chatSessionRepository.load(chatDTO.getSessionId());
             Assert.notNull(chatSession, "sessionId不正确");
         }
 
@@ -62,6 +55,8 @@ public class ChatManage {
         chatRecord.setSendUserType(agent.getUserType());
         chatRecord.setContent(chatDTO.getContent());
         chatRecord.setSessionId(chatDTO.getSessionId());
+        chatRecord.setServiceId(chatSession.getServiceId());
+        chatSession.setVisitorId(chatSession.getVisitorId());
 
         chatRecordRepository.insert(chatRecord);
 
@@ -76,15 +71,24 @@ public class ChatManage {
         }
 
         String visitorId = agent == null ? UUIDUtil.nameUUIDFromBytes(remoteAddr) : agent.getId() + "";
-        String sessionId = createSession(serviceId, visitorId);
-        return new ChatSession(sessionId, serviceId, visitorId);
+        ChatSession session = createSession(serviceId, visitorId);
+        return new ChatSession(session.getId(), serviceId, visitorId);
     }
 
-    private String createSession(String serviceId, String visitorId){
+    private ChatSession createSession(String serviceId, String visitorId){
         return createSession(serviceId, visitorId, null);
     }
 
-    private String createSession(String serviceId, String visitorId, String visitorIp){
+    private ChatSession createSession(String serviceId, String visitorId, String visitorIp){
+
+        ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
+        chatSessionQuery.setServiceId(serviceId);
+        chatSessionQuery.setVisitorId(visitorId);
+        List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
+
+        if(!CollectionUtils.isEmpty(chatSessions)){
+            return chatSessions.get(0);
+        }
 
         ChatSession chatSession = new ChatSession();
         chatSession.setServiceId(serviceId);
@@ -93,7 +97,7 @@ public class ChatManage {
 
         chatSessionRepository.insert(chatSession);
 
-        return chatSession.getId();
+        return chatSession;
     }
 
     /**

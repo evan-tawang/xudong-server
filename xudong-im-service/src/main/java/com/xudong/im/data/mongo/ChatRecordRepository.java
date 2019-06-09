@@ -76,8 +76,11 @@ public class ChatRecordRepository {
     private Query buildQuery(ChatRecordQuery chatRecordQuery) {
         Query query = new Query();
 
+        MongoUtil.buildQueryForIs(query, "serviceId", chatRecordQuery.getServiceId());
+        MongoUtil.buildQueryForIs(query, "visitorId", chatRecordQuery.getVisitorId());
         MongoUtil.buildQueryForIs(query, "sessionId", chatRecordQuery.getSessionId());
         MongoUtil.buildQueryForIs(query, "content", chatRecordQuery.getContent());
+
         return query;
     }
 }
