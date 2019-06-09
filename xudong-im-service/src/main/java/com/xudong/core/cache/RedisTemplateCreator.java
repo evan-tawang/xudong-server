@@ -2,14 +2,16 @@ package com.xudong.core.cache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import redis.clients.jedis.JedisPoolConfig;
 
-import java.lang.reflect.Field;
+import java.time.Duration;
 import java.util.Vector;
 
 /**
@@ -29,12 +31,15 @@ public class RedisTemplateCreator {
     private JedisConnectionFactory connectionFactory;
     private RedisSentinelConfiguration sentinelConfig;
 
-    public RedisTemplateCreator(JedisConnectionFactory connectionFactory) {
+    public RedisTemplateCreator(RedisConnectionFactory connectionFactory) {
         for (int i = 0; i < DATABASE_COUNT; i++) {
             redisTemplates.add(null);
         }
 
-        this.connectionFactory = connectionFactory;
+        if (connectionFactory instanceof JedisConnectionFactory) {
+            this.connectionFactory = (JedisConnectionFactory) connectionFactory;
+        }
+
         //this.poolConfig = poolConfig;
 
 //        try {
@@ -61,33 +66,32 @@ public class RedisTemplateCreator {
         RedisTemplate redisTemplate = null;
 
         if (redisTemplates.get(databaseIndex) == null) { //如果没有，新创建一个redisTemplate
-//            JedisPoolConfig poolConfig1 = new JedisPoolConfig();
-//            poolConfig1.setMaxIdle(poolConfig.getMaxIdle());
-//            poolConfig1.setMinIdle(poolConfig.getMinIdle());
-//            poolConfig1.setMaxTotal(poolConfig.getMaxTotal());
-//            poolConfig1.setMaxWaitMillis(poolConfig.getMaxWaitMillis());
-//            poolConfig1.set
-            JedisConnectionFactory connectionFactory1 = null;
-            if (this.sentinelConfig == null) {
-                connectionFactory1 = new JedisConnectionFactory((JedisPoolConfig)connectionFactory.getPoolConfig());
-            } else {
-                connectionFactory1 = new JedisConnectionFactory(this.sentinelConfig, (JedisPoolConfig)connectionFactory.getPoolConfig());
-            }
-            connectionFactory1.setPassword(connectionFactory.getPassword());
-            connectionFactory1.setPort(connectionFactory.getPort());
-            connectionFactory1.setTimeout(connectionFactory.getTimeout());
-            connectionFactory1.setClientName(connectionFactory.getClientName());
-            connectionFactory1.setHostName(connectionFactory.getHostName());
-            //connectionFactory1.setShardInfo(connectionFactory.getShardInfo());
-            connectionFactory1.setUsePool(connectionFactory.getUsePool());
+
+            RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+
+            redisStandaloneConfiguration.setHostName(connectionFactory.getHostName());
+            redisStandaloneConfiguration.setPort(connectionFactory.getPort());
+            redisStandaloneConfiguration.setPassword(connectionFactory.getPassword());
+            redisStandaloneConfiguration.setDatabase(databaseIndex);
+
+            JedisClientConfiguration.JedisPoolingClientConfigurationBuilder configurationBuilder
+                    = JedisClientConfiguration.builder()
+                    .connectTimeout(Duration.ofMillis(connectionFactory.getTimeout()))
+                    .usePooling();
+
+            configurationBuilder.poolConfig(connectionFactory.getPoolConfig());
+
+            JedisClientConfiguration jedisClientConfiguration = configurationBuilder.build();
+
+            JedisConnectionFactory connectionFactory1 = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration);
             connectionFactory1.setConvertPipelineAndTxResults(connectionFactory.getConvertPipelineAndTxResults());
-            connectionFactory1.setDatabase(databaseIndex);
             connectionFactory1.afterPropertiesSet();
 
             redisTemplate = new RedisTemplate();
+
             redisTemplate.setConnectionFactory(connectionFactory1);
             redisTemplate.setKeySerializer(new StringRedisSerializer());
-            redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+            redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
             redisTemplate.afterPropertiesSet();
             redisTemplates.set(databaseIndex, redisTemplate);
 
