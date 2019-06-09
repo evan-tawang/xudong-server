@@ -22,4 +22,10 @@ public class ServiceTestCaseSupport {
     @Before
     public void init() {
     }
+
+    protected void printInfo(Object... objects) {
+        for (Object word : objects) {
+            LOGGER.info("====>> " + word.toString());
+        }
+    }
 }

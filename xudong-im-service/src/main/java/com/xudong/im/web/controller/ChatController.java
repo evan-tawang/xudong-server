@@ -74,20 +74,17 @@ public class ChatController {
             Assert.notNull(chatRecordQuery.getConnectorId(),"连接人id不能为空");
 
             StaffAgent agent = staffAgentSession.get(request);
-            String serviceId = null, visitorId = null;
+            String visitorId = null;
 
             if(agent == null){
                 return ApiResponse.create(PageResult.create(chatRecordQuery, new ArrayList<ChatRecord>(), 0));
             }
 
             if(UserTypeEnum.SERVICE.getValue().equals(agent.getUserType())){
-                serviceId = String.valueOf(agent.getId());
                 visitorId = chatRecordQuery.getConnectorId();
             } else {
                 visitorId = String.valueOf(agent.getId());
-                serviceId = chatRecordQuery.getConnectorId();
             }
-            chatRecordQuery.setServiceId(serviceId);
             chatRecordQuery.setVisitorId(visitorId);
         }
         if(chatRecordQuery.getPageSize() == 0){

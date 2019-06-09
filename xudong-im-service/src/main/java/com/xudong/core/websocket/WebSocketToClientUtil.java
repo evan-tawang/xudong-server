@@ -22,7 +22,7 @@ public class WebSocketToClientUtil {
      * @param receiveId
      * @param message
      */
-    public void newMsg(String receiveId, String message) {
+    public void sendMsg(String receiveId, String message) {
         if (StringUtils.isEmpty(message)) {
             return;
         }

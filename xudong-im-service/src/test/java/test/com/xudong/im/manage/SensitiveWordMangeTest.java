@@ -29,9 +29,5 @@ public class SensitiveWordMangeTest extends ServiceTestCaseSupport {
         printInfo(words);
     }
 
-    private void printInfo(String[] words) {
-        for (String word : words) {
-            LOGGER.info("====>> " + word);
-        }
-    }
+
 }

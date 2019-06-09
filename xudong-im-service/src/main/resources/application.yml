@@ -29,7 +29,7 @@ spring:
 #      maxPoolPreparedStatementPerConnectionSize: 20
   data:
     mongodb:
-      uri: mongodb://btbs_financing:mizhi001@47.96.89.84:27017/btbs_financing
+      uri: mongodb://btbs_financing:MiZhi001@47.96.89.84:27017/btbs_financing
 
   redis:
     host: 47.96.89.84

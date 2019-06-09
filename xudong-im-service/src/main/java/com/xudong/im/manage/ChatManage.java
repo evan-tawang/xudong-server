@@ -1,5 +1,6 @@
 package com.xudong.im.manage;
 
+import com.xudong.core.util.RandomUtil;
 import com.xudong.core.util.UUIDUtil;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
@@ -56,11 +57,12 @@ public class ChatManage {
         chatRecord.setContent(chatDTO.getContent());
         chatRecord.setSessionId(chatDTO.getSessionId());
         chatRecord.setServiceId(chatSession.getServiceId());
-        chatSession.setVisitorId(chatSession.getVisitorId());
+        chatRecord.setVisitorId(chatSession.getVisitorId());
 
         chatRecordRepository.insert(chatRecord);
 
-        webSocketToClientUtil.newMsg(chatDTO.getReceiveId(), chatDTO.getContent());
+        String receiveId = UserTypeEnum.SERVICE.getValue().equals(agent.getUserType()) ? chatSession.getVisitorId() : chatSession.getServiceId();
+        webSocketToClientUtil.sendMsg(receiveId, chatDTO.getContent());
     }
 
     public ChatSession createSession(StaffAgent agent,String remoteAddr) {
@@ -82,7 +84,7 @@ public class ChatManage {
     private ChatSession createSession(String serviceId, String visitorId, String visitorIp){
 
         ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
-        chatSessionQuery.setServiceId(serviceId);
+//        chatSessionQuery.setServiceId(serviceId);
         chatSessionQuery.setVisitorId(visitorId);
         List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
 
@@ -105,7 +107,7 @@ public class ChatManage {
      * @return
      */
     private String distributionService(){
-        return UUIDUtil.nameUUIDFromBytes(UUIDUtil.randomUUID());
+        return RandomUtil.randomId() + "";
     }
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {

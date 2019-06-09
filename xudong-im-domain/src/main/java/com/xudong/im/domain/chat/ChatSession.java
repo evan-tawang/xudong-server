@@ -64,4 +64,15 @@ public class ChatSession {
     public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
+
+    @Override
+    public String toString() {
+        return "ChatSession{" +
+                "id='" + id + '\'' +
+                ", visitorIp='" + visitorIp + '\'' +
+                ", visitorId='" + visitorId + '\'' +
+                ", serviceId='" + serviceId + '\'' +
+                ", gmtCreate=" + gmtCreate +
+                '}';
+    }
 }
