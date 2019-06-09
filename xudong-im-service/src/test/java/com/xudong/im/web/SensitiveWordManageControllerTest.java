@@ -1,7 +1,7 @@
 package com.xudong.im.web;
 
 import com.xudong.im.support.WebTestCaseSupport;
-import com.xudong.im.util.RandomUtil;
+import com.xudong.core.util.RandomUtil;
 import org.evanframework.dto.ApiResponse;
 import org.junit.Test;
 

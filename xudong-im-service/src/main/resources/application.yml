@@ -36,25 +36,35 @@ spring:
     #host: 127.0.0.1
     port: 6379
     password: MiZhi001
-    lettuce:
+    jedis:
       pool:
-        max-idle: 2
-        min-idle: 2
-        max-active: 2
-        max-wait: 2000ms
-    jackson:
-      default-property-inclusion: non_null
-    mvc:
-      throw-exception-if-no-handler-found: true
-      #spring.resources.add-mappings=false
-    output:
-      ansi:
-        enabled: detect
-    http:
-      multipart:
-        enabled: true
-        max-file-size: 10MB
-        max-request-size: 10MB
+        #最大连接数据库连接数,设 0 为没有限制
+        max-active: 8
+        #最大等待连接中的数量,设 0 为没有限制
+        max-idle: 8
+        #最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
+        max-wait: -1ms
+        #最小等待连接中的数量,设 0 为没有限制
+        min-idle: 0
+#    lettuce:
+#      pool:
+#        max-idle: 2
+#        min-idle: 2
+#        max-active: 2
+#        max-wait: 2000ms
+  jackson:
+    default-property-inclusion: non_null
+  mvc:
+    throw-exception-if-no-handler-found: true
+    #spring.resources.add-mappings=false
+  output:
+    ansi:
+      enabled: detect
+  http:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 
 security:

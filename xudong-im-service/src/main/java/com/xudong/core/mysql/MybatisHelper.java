@@ -1,4 +1,4 @@
-package com.xudong.im.core;
+package com.xudong.core.mysql;
 
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.session.SqlSessionFactory;

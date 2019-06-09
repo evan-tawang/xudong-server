@@ -1,4 +1,4 @@
-package com.xudong.im.util;
+package com.xudong.core.util;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

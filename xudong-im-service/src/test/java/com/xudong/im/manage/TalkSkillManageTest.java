@@ -5,7 +5,7 @@ import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
 import com.xudong.im.support.ServiceTestCaseSupport;
 import com.xudong.im.testdata.TalkSkillTestData;
-import com.xudong.im.util.RandomUtil;
+import com.xudong.core.util.RandomUtil;
 import org.evanframework.dto.PageResult;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

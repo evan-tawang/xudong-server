@@ -3,7 +3,7 @@
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
-package com.xudong.im.util;
+package com.xudong.core.util;
 
 import org.apache.commons.lang3.StringUtils;
 

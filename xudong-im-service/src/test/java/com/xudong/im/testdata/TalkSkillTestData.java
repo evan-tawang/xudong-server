@@ -1,8 +1,7 @@
 package com.xudong.im.testdata;
 
 import com.xudong.im.domain.help.TalkSkill;
-import com.xudong.im.domain.limit.BlackList;
-import com.xudong.im.util.RandomUtil;
+import com.xudong.core.util.RandomUtil;
 
 /**
  * @author Evan.Shen

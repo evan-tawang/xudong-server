@@ -3,7 +3,7 @@ package com.xudong.im.data.mongo;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
-import com.xudong.im.util.MongoUtil;
+import com.xudong.core.util.MongoUtil;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

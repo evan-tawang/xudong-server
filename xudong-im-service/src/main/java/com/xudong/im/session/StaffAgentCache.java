@@ -1,20 +1,29 @@
-package com.xudong.im.cache;
+package com.xudong.im.session;
+
 
 import com.xudong.core.cache.AbstractCache;
 import com.xudong.core.cache.RedisTemplateCreator;
-import com.xudong.im.domain.limit.BlackList;
+import com.xudong.im.domain.user.StaffAgent;
 import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * 平台登录用户缓存
+ * <p>
+ * create at 2014年4月15日 上午12:33:42
+ *
+ * @author Evan.Shen
+ * @see
+ * @since %I%, %G%
+ */
 @Component
-public class BlackListCache extends AbstractCache<BlackList> {
-    private static final Class CLZ = BlackList.class;
-    private static final String CACHE_NAME = BlackListCache.class.getSimpleName();
+public class StaffAgentCache extends AbstractCache<StaffAgent> {
+    private static final String CACHE_NAME = StaffAgentCache.class.getSimpleName();
 
-    private final static int REDIS_DATABASE_INDEX = 8;
+    private final static int REDIS_DATABASE_INDEX = 12;
 
     @Autowired
     private CacheManager cacheManager;
@@ -25,8 +34,5 @@ public class BlackListCache extends AbstractCache<BlackList> {
     @PostConstruct
     public void init() {
         super.init(CACHE_NAME, redisTemplateCreator, REDIS_DATABASE_INDEX, cacheManager);
-
-        setRedisExpireSeconds(14400);
     }
-
 }

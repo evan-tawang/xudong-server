@@ -1,7 +1,7 @@
 package com.xudong.im.manage;
 
 import com.xudong.im.support.ServiceTestCaseSupport;
-import com.xudong.im.util.RandomUtil;
+import com.xudong.core.util.RandomUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

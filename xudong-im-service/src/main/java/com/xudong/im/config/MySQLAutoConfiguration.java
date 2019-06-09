@@ -1,6 +1,6 @@
 package com.xudong.im.config;
 
-import com.xudong.im.core.MybatisHelper;
+import com.xudong.core.mysql.MybatisHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;

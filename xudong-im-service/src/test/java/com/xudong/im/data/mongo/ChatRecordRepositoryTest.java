@@ -2,8 +2,7 @@ package com.xudong.im.data.mongo;
 
 import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.support.MongoDBTestCaseSupport;
-import com.xudong.im.util.RandomUtil;
-import org.junit.After;
+import com.xudong.core.util.RandomUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
