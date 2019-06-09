@@ -39,7 +39,7 @@ public class WebSocketToClientUtil {
      * @param serviceId
      * @param sessionId
      */
-    public void newSession(String visitorId,String serviceId,String sessionId) {
+    public void startSession(String visitorId,String serviceId,String sessionId) {
         if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(serviceId)) {
             return;
         }
@@ -51,6 +51,6 @@ public class WebSocketToClientUtil {
         params.put("sessionId",sessionId);
         params.put("serviceId",serviceId);
 
-        simpMessageSendingOperations.convertAndSendToUser(visitorId, "/newSession", params);
+        simpMessageSendingOperations.convertAndSendToUser(visitorId, "/startSession", params);
     }
 }
