@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +28,10 @@ public class ChatSessionRepository {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    public ChatSession load(String id) {
+        return mongoTemplate.findById(id, ChatSession.class, COLLECTION_NAME);
+    }
 
     public ChatSession insert(ChatSession o) {
         if (o == null) {
