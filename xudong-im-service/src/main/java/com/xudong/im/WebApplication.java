@@ -10,8 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
         "com.xudong.im.cache",
         "com.xudong.im.manage",
         "com.xudong.im.service",
+        "com.xudong.im.session",
         "com.xudong.im.web",
-
+        "com.xudong.core.websocket",
 })
 @SpringBootApplication
 public class WebApplication {

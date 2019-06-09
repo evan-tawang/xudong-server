@@ -15,7 +15,8 @@ import org.springframework.context.annotation.ComponentScan;
         "com.xudong.im.data",
         "com.xudong.im.cache",
         "com.xudong.im.manage",
-        "com.xudong.im.service"
+        "com.xudong.im.service",
+        "com.xudong.core.websocket"
 })
 public class ServiceTestBeansConfig {
 }
