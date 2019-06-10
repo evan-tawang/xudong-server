@@ -1,7 +1,9 @@
-package com.xudong.im.session;
+package com.xudong.im.session.cache;
+
 
 import com.xudong.core.cache.AbstractCache;
 import com.xudong.core.cache.RedisTemplateCreator;
+import com.xudong.im.domain.user.VisitorAgent;
 import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,14 +11,13 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * @author evan.shen
- * @since 2018/1/10
+ * @author Evan.Shen
+ * @since 2019/6/10
  */
 @Component
-public class StaffAgentKeyCache extends AbstractCache<String> {
-    private static final String CACHE_NAME = StaffAgentKeyCache.class.getSimpleName();
+public class VisitorAgentCache extends AbstractCache<VisitorAgent> {
+    private final static int REDIS_DATABASE_INDEX = 6;
 
-    private final static int REDIS_DATABASE_INDEX = 12;
 
     @Autowired
     private CacheManager cacheManager;
@@ -26,6 +27,6 @@ public class StaffAgentKeyCache extends AbstractCache<String> {
 
     @PostConstruct
     public void init() {
-        super.init(CACHE_NAME, redisTemplateCreator, REDIS_DATABASE_INDEX, cacheManager);
+        super.init(StaffAgentCache.class.getSimpleName(), redisTemplateCreator, REDIS_DATABASE_INDEX, cacheManager);
     }
 }

@@ -7,7 +7,8 @@ import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
 import com.xudong.core.websocket.WebSocketToClientUtil;
 import com.xudong.im.domain.user.StaffAgent;
-import com.xudong.im.domain.user.UserTypeEnum;
+import com.xudong.im.domain.user.support.UserAgent;
+import com.xudong.im.enums.UserTypeEnum;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class ChatManage {
     @Autowired
     private ChatRecordRepository chatRecordRepository;
 
-    public void sendMsg(ChatDTO chatDTO, StaffAgent agent){
+    public void sendMsg(ChatDTO chatDTO, UserAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
 
         ChatSession chatSession = null;
@@ -39,7 +40,7 @@ public class ChatManage {
 
             String serviceId = null, visitorId = null;
 
-            if(UserTypeEnum.SERVICE.getValue().equals(agent.getUserType())){
+            if(UserTypeEnum.STAFF.getValue().equals(agent.getUserType())){
                 serviceId = String.valueOf(agent.getId());
                 visitorId = chatDTO.getReceiveId();
             } else {
@@ -61,11 +62,11 @@ public class ChatManage {
 
         chatRecordRepository.insert(chatRecord);
 
-        String receiveId = UserTypeEnum.SERVICE.getValue().equals(agent.getUserType()) ? chatSession.getVisitorId() : chatSession.getServiceId();
+        String receiveId = UserTypeEnum.STAFF.getValue().equals(agent.getUserType()) ? chatSession.getVisitorId() : chatSession.getServiceId();
         webSocketToClientUtil.sendMsg(receiveId, chatDTO.getContent());
     }
 
-    public ChatSession createSession(StaffAgent agent,String remoteAddr) {
+    public ChatSession createSession(UserAgent agent, String remoteAddr) {
         String serviceId = distributionService();
 
         if (StringUtils.isEmpty(serviceId)) {

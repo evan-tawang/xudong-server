@@ -1,11 +1,11 @@
-package com.xudong.im.domain.user;
+package com.xudong.im.enums;
 
 /**
  * 用户类型
  */
 public enum UserTypeEnum {
 
-    SERVICE(1),
+    STAFF(1),
     VISITOR(2)
     ;
 

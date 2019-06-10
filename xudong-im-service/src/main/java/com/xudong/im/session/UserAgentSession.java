@@ -1,12 +1,16 @@
 package com.xudong.im.session;
 
+import com.xudong.core.cache.AbstractCache;
 import com.xudong.core.cache.EHCacheUtil;
 import com.xudong.core.util.AESException;
 import com.xudong.core.util.AESUtil;
 import com.xudong.core.util.IpUtil;
 import com.xudong.im.constant.CommonConstant;
-import com.xudong.im.domain.user.StaffAgent;
+import com.xudong.im.domain.user.support.UserAgent;
+import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.exception.RemotingAddrExcetion;
+import com.xudong.im.session.cache.StaffAgentCache;
+import com.xudong.im.session.cache.VisitorAgentCache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -19,7 +23,8 @@ import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 登录 Session
@@ -29,41 +34,53 @@ import java.util.UUID;
  * @since %I%, %G%
  */
 @Component
-public class StaffAgentSession {
-    private final static Logger LOGGER = LoggerFactory.getLogger(StaffAgentSession.class);
+public class UserAgentSession {
+    private final static Logger LOGGER = LoggerFactory.getLogger(UserAgentSession.class);
 
     @Autowired
     private CacheManager ehCacheManager;
-    @Autowired
-    private StaffAgentCache userAgentCache;
-    @Autowired
-    private StaffAgentKeyCache userAgentKeyCache;
 
-    private String secretForCacheKey;
+    @Autowired
+    private StaffAgentCache staffAgentCache;
+
+    @Autowired
+    private VisitorAgentCache visitorAgentCache;
+//    @Autowired
+//    private UserAgentKeyCache userAgentKeyCache;
+
+    //private String secretForCacheKey;
     private EHCacheUtil ehCacheUtil;
+
+    private Map<Integer, AbstractCache> userAgentCacheMap = new HashMap<>(8);
 
     @PostConstruct
     public void init() {
         CacheConfiguration conf = new CacheConfiguration();
         conf.setTimeToIdleSeconds(60000);
         conf.setTimeToLiveSeconds(60000);
-        conf.setName(StaffAgentSession.class.getSimpleName() + "KeyCache");//缓存名，全局唯一，可以用类名
+        conf.setName(UserAgentSession.class.getSimpleName() + "KeyCache");//缓存名，全局唯一，可以用类名
         ehCacheUtil = new EHCacheUtil(ehCacheManager, conf);
+
+        userAgentCacheMap.put(UserTypeEnum.STAFF.getValue(), staffAgentCache);
+        userAgentCacheMap.put(UserTypeEnum.VISITOR.getValue(), visitorAgentCache);
     }
 
-    public void save(StaffAgent userAgent) {
+    public void save(UserAgent userAgent) {
         Assert.notNull(userAgent, "登录用户不能为空");
         Assert.hasLength(userAgent.getIp(), "登录用户Ip不能为空");
         Assert.notNull(userAgent.getId(), "登录用户Id不能为空");
         Assert.hasLength(userAgent.getAccount(), "登录用户账号不能为空");
 
         //生成用户登录信息存放在redis的key
-        String userAgentCacheKey = DigestUtils.sha1Hex(System.currentTimeMillis() + "-" + UUID.randomUUID());
-        String secretForCacheKey = DigestUtils.sha1Hex(userAgent.getIp());
-        String token = createToken(userAgentCacheKey, secretForCacheKey); //生成token：cacheKey进行AES加密,秘钥为 sha1(ip);
+        String userAgentCacheKey = DigestUtils.sha1Hex(DigestUtils.sha1Hex(userAgent.getId() + "-" + userAgent.getUserType()));
+        //String userAgentCacheKey = DigestUtils.sha1Hex(System.currentTimeMillis() + "-" + UUID.randomUUID());
+
+        String tokenSecret = DigestUtils.sha1Hex(userAgent.getIp());//生成用于加密token的加密秘钥
+        String token = createToken(userAgent.getUserType(), userAgentCacheKey, tokenSecret); //生成token：cacheKey进行AES加密,秘钥为 sha1(ip);
         userAgent.setToken(token);
         userAgent.setTokenSecret(DigestUtils.sha384Hex(token));
 
+        AbstractCache userAgentCache = getUserAgentCache(userAgent.getUserType());
 
         userAgentCache.put(userAgentCacheKey, userAgent);
 
@@ -72,14 +89,12 @@ public class StaffAgentSession {
                     , userAgentCacheKey, userAgent.getId(), userAgent.getIp(), userAgent.getAccount(), token);
         }
 
-        String userAgentKeyCacheKey = DigestUtils.sha1Hex(userAgent.getId() + "");
-        userAgentKeyCache.put(userAgentKeyCacheKey, userAgentCacheKey);
-
-
+        //String userAgentKeyCacheKey = DigestUtils.sha1Hex(userAgent.getId() + "");
+        // 、、userAgentKeyCache.put(userAgentKeyCacheKey, userAgentCacheKey);
     }
 
-    public StaffAgent get(HttpServletRequest request) throws RemotingAddrExcetion {
-        StaffAgent agent = null;
+    public UserAgent get(HttpServletRequest request) throws RemotingAddrExcetion {
+        UserAgent agent = null;
         String remotingAddr = IpUtil.getRemoteIp(request);
 
         String token = request.getHeader("token");
@@ -88,8 +103,13 @@ public class StaffAgentSession {
         }
         if (StringUtils.isNotBlank(token) && !CommonConstant.DEFAULT_TOKEN.equals(token)) {
             //String remotingAddr = request.getRemoteAddr();
-            String userAgentCacheKey = parseUserAgentCacheKey(token, remotingAddr, request);
-            agent = userAgentCache.get(userAgentCacheKey);
+            String[] tmps = parseToken(token, remotingAddr, request);
+
+            Integer userType = Integer.valueOf(tmps[0]);
+            String cacheKey = tmps[1];
+
+            AbstractCache userAgentCache = getUserAgentCache(userType);
+            agent = (UserAgent) userAgentCache.get(cacheKey);
         } else {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace(">>>>> 读取用户会话时，token为空或等于固定token（表示没登录），客户端ip【{}】，上游服务ip【{}】,url【{}】", remotingAddr, request.getRemoteAddr(), request.getRequestURI());
@@ -105,12 +125,15 @@ public class StaffAgentSession {
      * @param userId
      * @return
      */
-    public boolean isLogin(long userId, HttpServletRequest request) {
+    public boolean isLogin(String userId, Integer userType, HttpServletRequest request) {
         boolean returnV = false;
 
-        String userAgentCacheKey = userAgentKeyCache.get(DigestUtils.sha1Hex(userId + ""));
+        String userAgentCacheKey = generateUserAgentCacheKey(userId, userType);
         if (StringUtils.isNotBlank(userAgentCacheKey)) {
-            StaffAgent userAgent = userAgentCache.get(userAgentCacheKey);
+
+            AbstractCache<UserAgent> userAgentCache = getUserAgentCache(userType);
+
+            UserAgent userAgent = userAgentCache.get(userAgentCacheKey);
 
             String remotingAddr = IpUtil.getRemoteIp(request);
 
@@ -126,7 +149,11 @@ public class StaffAgentSession {
     public void remove(HttpServletRequest request) throws RemotingAddrExcetion {
         String token = request.getHeader("token");
         String remotingAddr = IpUtil.getRemoteIp(request);
-        String cacheKey = parseUserAgentCacheKey(token, remotingAddr, request);
+
+        String[] tmps = parseToken(token, remotingAddr, request);
+        Integer userType = Integer.valueOf(tmps[0]);
+        String cacheKey = tmps[1];
+        AbstractCache userAgentCache = getUserAgentCache(userType);
 
         userAgentCache.remove(cacheKey);
     }
@@ -136,14 +163,16 @@ public class StaffAgentSession {
      *
      * @param newUserAgent 新的userAgent，只刷新该userAgent中不为空的值。id不能为空
      */
-    public void refresh(StaffAgent newUserAgent) {
+    public void refresh(UserAgent newUserAgent) {
         Assert.notNull(newUserAgent, "新会话不能为空");
         Assert.notNull(newUserAgent.getId(), "新会话用户Id不能为空");
 
-        String userAgentCacheKey = userAgentKeyCache.get(DigestUtils.sha1Hex(newUserAgent.getId() + ""));
+        String userAgentCacheKey = DigestUtils.sha1Hex(DigestUtils.sha1Hex(newUserAgent.getId() + "-" + newUserAgent.getUserType()));
 
         if (StringUtils.isNotBlank(userAgentCacheKey)) {
-            StaffAgent userAgent = userAgentCache.get(userAgentCacheKey);
+            AbstractCache<UserAgent> userAgentCache = getUserAgentCache(newUserAgent.getUserType());
+
+            UserAgent userAgent = userAgentCache.get(userAgentCacheKey);
 
             if (userAgent != null) {
 
@@ -160,6 +189,17 @@ public class StaffAgentSession {
     }
 
     /**
+     * 生成cacheKey
+     *
+     * @param userId
+     * @param userType
+     * @return
+     */
+    private String generateUserAgentCacheKey(String userId, Integer userType) {
+        return DigestUtils.sha1Hex(userId + "-" + userType);
+    }
+
+    /**
      * 创建token
      * <br>实现:对cacheKey进行AES加密
      *
@@ -167,10 +207,10 @@ public class StaffAgentSession {
      * @param tokenSecret
      * @return
      */
-    private String createToken(String userAgentCacheKey, String tokenSecret) {
+    private String createToken(Integer userType, String userAgentCacheKey, String tokenSecret) {
         String token;
         try {
-            token = AESUtil.encrypt(userAgentCacheKey, tokenSecret);
+            token = AESUtil.encrypt(userType + userAgentCacheKey, tokenSecret);
         } catch (AESException e) {
             LOGGER.error("存储用户会话时，加密serAgentCacheKey【" + userAgentCacheKey + "】出错，tokenSecret【" + tokenSecret + "】， " + e.getMessage(), e);
             token = userAgentCacheKey;
@@ -179,37 +219,43 @@ public class StaffAgentSession {
     }
 
     /**
-     * 根据客户端传递的token和remotingAddr获取UserAgentCacheKey
+     * 解析token
      *
      * @param token
      * @param remotingAddr
-     * @return
+     * @return 返回数组，0位用户类型，1位cacheKey
      */
-    private String parseUserAgentCacheKey(String token, String remotingAddr, HttpServletRequest request) throws RemotingAddrExcetion {
-        String cacheKey = ehCacheUtil.get(token, String.class);
+    private String[] parseToken(String token, String remotingAddr, HttpServletRequest request) throws RemotingAddrExcetion {
+        String[] returnV = ehCacheUtil.get(token, String[].class);
 
-        if (StringUtils.isBlank(cacheKey)) {
-            String secretForCacheKey = DigestUtils.sha1Hex(remotingAddr);
+        if (returnV == null || returnV.length == 0) {
+            String secretForToken = DigestUtils.sha1Hex(remotingAddr);
+            String tokenPlaintext = null;
             try {
-                cacheKey = AESUtil.decrypt(token.toLowerCase(), secretForCacheKey);
+                tokenPlaintext = AESUtil.decrypt(token.toLowerCase(), secretForToken);
             } catch (AESException e1) {
-                secretForCacheKey = DigestUtils.sha1Hex(request.getRemoteAddr());
+                secretForToken = DigestUtils.sha1Hex(request.getRemoteAddr());
                 try {
-                    cacheKey = AESUtil.decrypt(token.toLowerCase(), secretForCacheKey);
+                    tokenPlaintext = AESUtil.decrypt(token.toLowerCase(), secretForToken);
                 } catch (AESException e2) {
                     LOGGER.error("获取用户会话时，解密token【" + token + "】出错，客户端ip【" + remotingAddr + "】，上游服务ip【" + request.getRemoteAddr() + "】,url【" + request.getRequestURI() + "】," + e2.getMessage(), e2);
                     throw new RemotingAddrExcetion("客户端ip【" + remotingAddr + "】不正确，请重新登录！");
                 }
             }
 
-            ehCacheUtil.put(token, cacheKey);
+            String userType = tokenPlaintext.substring(0, 1);
+            String cacheKey = tokenPlaintext.substring(1);
+
+            returnV = new String[]{userType, cacheKey};
+
+            ehCacheUtil.put(token, returnV);
 
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(">>>> parseUserAgentCacheKey, cacheKey [{}], 客户端ip[{}]，上游服务ip[{}], url[{}]", cacheKey, remotingAddr, request.getRemoteAddr(), request.getRequestURI());
+                LOGGER.trace(">>>> parseToken, userType[{}] ,cacheKey [{}], 客户端ip[{}]，上游服务ip[{}], url[{}]", userType, cacheKey, remotingAddr, request.getRemoteAddr(), request.getRequestURI());
             }
         }
 
-        return cacheKey;
+        return returnV;
     }
 
     /**
@@ -218,8 +264,8 @@ public class StaffAgentSession {
      * @param request
      * @return
      */
-    public StaffAgent getAndPutToContext(HttpServletRequest request) {
-        StaffAgent loginUser = null;
+    public UserAgent getAndPutToContext(HttpServletRequest request) {
+        UserAgent loginUser = null;
         try {
             loginUser = get(request);
         } catch (RemotingAddrExcetion ex) {
@@ -227,9 +273,13 @@ public class StaffAgentSession {
         }
 
         if (loginUser != null) {
-            StaffAgentContext.put(loginUser);
+            UserAgentContext.put(loginUser);
         }
         return loginUser;
+    }
+
+    private AbstractCache getUserAgentCache(Integer userType) {
+        return userAgentCacheMap.get(userType);
     }
 
 //    public void setEhCacheManager(CacheManager ehCacheManager) {

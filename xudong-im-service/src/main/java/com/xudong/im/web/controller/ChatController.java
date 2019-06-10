@@ -5,10 +5,10 @@ import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
 import com.xudong.im.domain.chat.ChatSession;
 import com.xudong.im.domain.user.StaffAgent;
-import com.xudong.im.domain.user.UserTypeEnum;
+import com.xudong.im.domain.user.support.UserAgent;
+import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
-import com.xudong.core.util.UUIDUtil;
-import com.xudong.im.session.StaffAgentSession;
+import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.ApiResponse;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class ChatController {
     @Autowired
     private ChatManage chatManage;
     @Autowired
-    private StaffAgentSession staffAgentSession;
+    private UserAgentSession userAgentSession;
 
     /**
      * 访客发起会话
@@ -43,7 +43,7 @@ public class ChatController {
      */
     @RequestMapping(value = "createSession", method = RequestMethod.POST)
     public ApiResponse<ChatSession> createSession(HttpServletRequest request) {
-        StaffAgent agent = staffAgentSession.get(request);
+        UserAgent agent = userAgentSession.get(request);
         ChatSession session = chatManage.createSession(agent, request.getRemoteAddr());
         return ApiResponse.create(session);
     }
@@ -57,7 +57,7 @@ public class ChatController {
      */
     @RequestMapping(value = "sendMsg", method = RequestMethod.POST)
     public ApiResponse sendMsg(@RequestBody ChatDTO chatDTO,HttpServletRequest request) {
-        StaffAgent agent = staffAgentSession.get(request);
+        UserAgent agent = userAgentSession.get(request);
         chatManage.sendMsg(chatDTO, agent);
         return ApiResponse.create();
     }
@@ -73,14 +73,14 @@ public class ChatController {
         if(StringUtils.isEmpty(chatRecordQuery.getSessionId())){
             Assert.notNull(chatRecordQuery.getConnectorId(),"连接人id不能为空");
 
-            StaffAgent agent = staffAgentSession.get(request);
+            UserAgent agent = userAgentSession.get(request);
             String visitorId = null;
 
             if(agent == null){
                 return ApiResponse.create(PageResult.create(chatRecordQuery, new ArrayList<ChatRecord>(), 0));
             }
 
-            if(UserTypeEnum.SERVICE.getValue().equals(agent.getUserType())){
+            if(UserTypeEnum.VISITOR.getValue().equals(agent.getUserType())){
                 visitorId = chatRecordQuery.getConnectorId();
             } else {
                 visitorId = String.valueOf(agent.getId());
