@@ -1,6 +1,8 @@
 package com.xudong.im.domain.help;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.evanframework.query.AbstractQueryParam;
 import org.evanframework.query.QueryParam;
 
@@ -10,6 +12,7 @@ import java.util.Date;
 /**
  * 常用话术查询对象
  */
+@ApiModel("常用话术查询对象")
 public class TalkSkillQuery extends AbstractQueryParam implements QueryParam, Serializable {
     private static final long serialVersionUID = 15593867104741L;
 
@@ -19,8 +22,14 @@ public class TalkSkillQuery extends AbstractQueryParam implements QueryParam, Se
     private Date gmtModifyFrom;//
     private Date gmtModifyTo;//
     private Integer isDeleted;//是否删除(0 未删除 1 删除)
+
+    @ApiModelProperty(value = "状态(1 正常 2 停用)", allowableValues = "1,2")
     private Integer status;//状态(1 正常 2 停用)
+
+    @ApiModelProperty(value = "状态(1 正常 2 停用)", allowableValues = "1,2")
     private Integer[] statusArray;//状态(1 正常 2 停用)
+
+    @ApiModelProperty(value = "内容")
     private String content;//内容
 
     /****/

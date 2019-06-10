@@ -1,17 +1,23 @@
 package com.xudong.im.domain.limit;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 敏感词实体类
  */
+@ApiModel("敏感词实体类")
 public class SensitiveWord implements Serializable {
     private static final long serialVersionUID = 15593388464302L;
 
 
     private Integer id;//
     private Date gmtModify;//
+
+    @ApiModelProperty(value = "敏感词(逗号分隔)")
     private String words;//敏感词(逗号分隔)
 
 

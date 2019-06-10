@@ -1,11 +1,15 @@
 package com.xudong.im.domain.help;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 常用话术实体类
  */
+@ApiModel("话术")
 public class TalkSkill implements Serializable {
     private static final long serialVersionUID = 15593867104742L;
 
@@ -14,9 +18,12 @@ public class TalkSkill implements Serializable {
     private Date gmtCreate;//
     private Date gmtModify;//
     private Integer isDeleted;//是否删除(0 未删除 1 删除)
-    private Integer status;//状态(1 正常 2 停用)
-    private String content;//内容
 
+    @ApiModelProperty(value = "状态(1 正常 2 停用)", allowableValues = "1,2")
+    private Integer status;//状态(1 正常 2 停用)
+
+    @ApiModelProperty("内容")
+    private String content;//内容
 
     public TalkSkill() {
     }
