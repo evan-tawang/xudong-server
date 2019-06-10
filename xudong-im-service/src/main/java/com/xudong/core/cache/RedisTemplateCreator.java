@@ -29,12 +29,12 @@ public class RedisTemplateCreator {
     private static final Vector<RedisTemplate> redisTemplates = new Vector<RedisTemplate>(DATABASE_COUNT);
 
     private JedisConnectionFactory connectionFactory;
+    //private RedisTemplate redisTemplate;
+
     private RedisSentinelConfiguration sentinelConfig;
 
     public RedisTemplateCreator(RedisConnectionFactory connectionFactory) {
-        for (int i = 0; i < DATABASE_COUNT; i++) {
-            redisTemplates.add(null);
-        }
+        init();
 
         if (connectionFactory instanceof JedisConnectionFactory) {
             this.connectionFactory = (JedisConnectionFactory) connectionFactory;
@@ -58,6 +58,20 @@ public class RedisTemplateCreator {
         LOGGER.info("RedisTemplateCreator inited,{},{}", connectionFactory, sentinelConfig);
     }
 
+//    public RedisTemplateCreator(RedisTemplate redisTemplate) {
+//        init();
+//
+//        this.redisTemplate = redisTemplate;
+//
+//        LOGGER.info("RedisTemplateCreator inited,{}", redisTemplate);
+//    }
+
+    private void init() {
+        for (int i = 0; i < DATABASE_COUNT; i++) {
+            redisTemplates.add(null);
+        }
+    }
+
     public RedisTemplate getRedisTemplate(int databaseIndex) {
         if (databaseIndex >= DATABASE_COUNT || databaseIndex < 0) {
             throw new IllegalArgumentException("Redis databaseIndex mush >= 0 and < 16!");
@@ -67,32 +81,21 @@ public class RedisTemplateCreator {
 
         if (redisTemplates.get(databaseIndex) == null) { //如果没有，新创建一个redisTemplate
 
-            RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+            JedisConnectionFactory redisConnectionFactory;
 
-            redisStandaloneConfiguration.setHostName(connectionFactory.getHostName());
-            redisStandaloneConfiguration.setPort(connectionFactory.getPort());
-            redisStandaloneConfiguration.setPassword(connectionFactory.getPassword());
-            redisStandaloneConfiguration.setDatabase(databaseIndex);
-
-            JedisClientConfiguration.JedisPoolingClientConfigurationBuilder configurationBuilder
-                    = JedisClientConfiguration.builder()
-                    .connectTimeout(Duration.ofMillis(connectionFactory.getTimeout()))
-                    .usePooling();
-
-            configurationBuilder.poolConfig(connectionFactory.getPoolConfig());
-
-            JedisClientConfiguration jedisClientConfiguration = configurationBuilder.build();
-
-            JedisConnectionFactory connectionFactory1 = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration);
-            connectionFactory1.setConvertPipelineAndTxResults(connectionFactory.getConvertPipelineAndTxResults());
-            connectionFactory1.afterPropertiesSet();
+//            if (this.redisTemplate == null) {
+            redisConnectionFactory = cloneJedisConnectionFactoryAndSetDbIndex(connectionFactory, databaseIndex);
+//            } else {
+            //redisConnectionFactory = (JedisConnectionFactory)this.redisTemplate.getConnectionFactory();
+            //redisConnectionFactory.setDatabase(databaseIndex);
+            //}
 
             redisTemplate = new RedisTemplate();
-
-            redisTemplate.setConnectionFactory(connectionFactory1);
+            redisTemplate.setConnectionFactory(redisConnectionFactory);
             redisTemplate.setKeySerializer(new StringRedisSerializer());
             redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
             redisTemplate.afterPropertiesSet();
+
             redisTemplates.set(databaseIndex, redisTemplate);
 
             if (LOGGER.isDebugEnabled()) {
@@ -107,6 +110,30 @@ public class RedisTemplateCreator {
         return redisTemplate;
     }
 
+    private JedisConnectionFactory cloneJedisConnectionFactoryAndSetDbIndex(JedisConnectionFactory connectionFactory, int databaseIndex) {
+
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+
+        redisStandaloneConfiguration.setHostName(connectionFactory.getHostName());
+        redisStandaloneConfiguration.setPort(connectionFactory.getPort());
+        redisStandaloneConfiguration.setPassword(connectionFactory.getPassword());
+        redisStandaloneConfiguration.setDatabase(databaseIndex);
+
+        JedisClientConfiguration.JedisPoolingClientConfigurationBuilder configurationBuilder
+                = JedisClientConfiguration.builder()
+                .connectTimeout(Duration.ofMillis(connectionFactory.getTimeout()))
+                .usePooling();
+
+        configurationBuilder.poolConfig(connectionFactory.getPoolConfig());
+
+        JedisClientConfiguration jedisClientConfiguration = configurationBuilder.build();
+
+        JedisConnectionFactory connectionFactory1 = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration);
+        connectionFactory1.setConvertPipelineAndTxResults(connectionFactory.getConvertPipelineAndTxResults());
+        connectionFactory1.afterPropertiesSet();
+        return connectionFactory1;
+    }
+
     public void destroy() {
         for (int i = 0; i < DATABASE_COUNT; i++) {
             RedisTemplate redisTemplate = redisTemplates.get(i);
@@ -116,6 +143,16 @@ public class RedisTemplateCreator {
             }
         }
     }
+
+    /***/
+    public void setConnectionFactory(JedisConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+//    /***/
+//    public void setRedisTemplate(RedisTemplate redisTemplate) {
+//        this.redisTemplate = redisTemplate;
+//    }
 
 
 //    private Jedis getJedis(int dbIndex) {
