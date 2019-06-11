@@ -13,14 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 黑名单管理
  * @author Evan.Shen
  * @since 2019/6/7
  */
 @Service
-public class BlackListMange {
+public class BlackListManage {
     @Autowired
     private BlackListMapper blackListMapper;
 
+    /**
+     * 分页
+     * @param blackListQuery
+     * @return
+     */
     public PageResult<BlackList> getForList(BlackListQuery blackListQuery) {
         int count = blackListMapper.queryCount(blackListQuery);
         List<BlackList> list;
@@ -33,6 +39,11 @@ public class BlackListMange {
 
     }
 
+    /**
+     * 单个
+     * @param id
+     * @return
+     */
     public BlackList getOne(int id) {
         return blackListMapper.load(id);
     }
@@ -43,6 +54,10 @@ public class BlackListMange {
         return o.getId();
     }
 
+    /**
+     * 批量添加
+     * @param blackListContents 需要添加的黑名单，多个以半角逗号分割
+     */
     @Transactional
     public void addGroup(String blackListContents) {
         String[] contents = blackListContents.split(",");
@@ -63,6 +78,11 @@ public class BlackListMange {
         blackListMapper.updateStatus(id, newStatus);
     }
 
+    /**
+     * 批量更新状态
+     * @param ids
+     * @param newStatus
+     */
     public void updateStatusGroup(int[] ids, int newStatus) {
         for (int id : ids) {
             updateStatus(id, newStatus);

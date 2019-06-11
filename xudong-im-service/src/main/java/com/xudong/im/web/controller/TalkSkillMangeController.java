@@ -3,7 +3,7 @@ package com.xudong.im.web.controller;
 
 import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
-import com.xudong.im.manage.TalkSkillMange;
+import com.xudong.im.manage.TalkSkillManage;
 import org.evanframework.dto.ApiResponse;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("talkSkill/manage")
 public class TalkSkillMangeController {
     @Autowired
-    private TalkSkillMange talkSkillMange;
+    private TalkSkillManage talkSkillMange;
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public ApiResponse getForList(TalkSkillQuery talkSkillQuery) {

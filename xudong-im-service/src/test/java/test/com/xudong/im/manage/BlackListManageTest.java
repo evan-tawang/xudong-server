@@ -2,7 +2,7 @@ package test.com.xudong.im.manage;
 
 import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.limit.BlackListQuery;
-import com.xudong.im.manage.BlackListMange;
+import com.xudong.im.manage.BlackListManage;
 import com.xudong.core.util.RandomUtil;
 import org.evanframework.dto.PageResult;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import test.com.xudong.im.testdata.BlackListTestData;
 public class BlackListManageTest extends ServiceTestCaseSupport {
 
     @Autowired
-    private BlackListMange blackListService;
+    private BlackListManage blackListService;
 
     /**
      * Method: add(BlackList o)

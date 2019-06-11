@@ -3,7 +3,7 @@ package com.xudong.im.web.controller;
 
 import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.limit.BlackListQuery;
-import com.xudong.im.manage.BlackListMange;
+import com.xudong.im.manage.BlackListManage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BlackListManageController {
 
     @Autowired
-    private BlackListMange blackListMange;
+    private BlackListManage blackListMange;
 
     @ApiOperation(value = "列表")
     @RequestMapping(value = "list", method = RequestMethod.GET)

@@ -1,6 +1,6 @@
 package com.xudong.im.web.controller;
 
-import com.xudong.im.manage.SensitiveWordMange;
+import com.xudong.im.manage.SensitiveWordManage;
 import org.evanframework.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("sensitiveWord/manage")
 public class SensitiveWordManageController {
     @Autowired
-    private SensitiveWordMange sensitiveWordMange;
+    private SensitiveWordManage sensitiveWordMange;
 
     @RequestMapping(value = "save", method = RequestMethod.POST)
     public ApiResponse save(@RequestParam("words") String words) {
