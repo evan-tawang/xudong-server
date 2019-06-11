@@ -74,8 +74,10 @@ logging:
   level:
     #org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod: trace
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: warn
-    org.springframework.boot.autoconfigure.logging.AutoConfigurationReportLoggingInitializer: info
+    org.springframework.boot.autoconfigure.logging: warn
     org.springframework.web.socket: debug
+    springfox.documentation: error
+    io.swagger: error
     java.sql.Statement: debug
     java.sql.PreparedStatement: debug
     java.sql.ResultSet: debug

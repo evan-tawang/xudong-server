@@ -1,4 +1,4 @@
-package com.xudong.im.session;
+package com.xudong.im.session.cache;
 
 
 import com.xudong.core.cache.AbstractCache;
@@ -21,9 +21,8 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class StaffAgentCache extends AbstractCache<StaffAgent> {
-    private static final String CACHE_NAME = StaffAgentCache.class.getSimpleName();
 
-    private final static int REDIS_DATABASE_INDEX = 12;
+    private final static int REDIS_DATABASE_INDEX = 5;
 
     @Autowired
     private CacheManager cacheManager;
@@ -33,6 +32,7 @@ public class StaffAgentCache extends AbstractCache<StaffAgent> {
 
     @PostConstruct
     public void init() {
-        super.init(CACHE_NAME, redisTemplateCreator, REDIS_DATABASE_INDEX, cacheManager);
+        super.init(StaffAgentCache.class.getSimpleName(), redisTemplateCreator, REDIS_DATABASE_INDEX, cacheManager);
     }
+
 }

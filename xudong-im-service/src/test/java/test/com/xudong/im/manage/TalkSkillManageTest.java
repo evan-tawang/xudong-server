@@ -3,7 +3,7 @@ package test.com.xudong.im.manage;
 
 import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
-import com.xudong.im.manage.TalkSkillMange;
+import com.xudong.im.manage.TalkSkillManage;
 import com.xudong.core.util.RandomUtil;
 import org.evanframework.dto.PageResult;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import test.com.xudong.im.testdata.TalkSkillTestData;
  */
 public class TalkSkillManageTest extends ServiceTestCaseSupport {
     @Autowired
-    private TalkSkillMange talkSkillService;
+    private TalkSkillManage talkSkillService;
 
     /**
      * Method: add(TalkSkill o)

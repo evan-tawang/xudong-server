@@ -3,8 +3,9 @@ package com.xudong.im.web.controller;
 import com.xudong.core.util.IpUtil;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.StaffLoginDTO;
+import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.service.LoginService;
-import com.xudong.im.session.StaffAgentSession;
+import com.xudong.im.session.UserAgentSession;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.evanframework.dto.ApiResponse;
 import org.evanframework.dto.OperateResult;
@@ -36,7 +37,7 @@ public class LoginController {
     private static final String EMAIL_SET_URL = "email.set.url";
 
     @Autowired
-    private StaffAgentSession staffAgentSession;
+    private UserAgentSession userAgentSession;
 
     @Autowired
     private LoginService loginService;
@@ -55,7 +56,7 @@ public class LoginController {
 
         agent.setRemoteAddr(IpUtil.getRemoteIp(request));
 
-        staffAgentSession.save(agent);
+        userAgentSession.save(agent);
 
         return ApiResponse.create(operateResult);
     }
@@ -68,9 +69,9 @@ public class LoginController {
 
     @PostMapping("logout")
     public ApiResponse logout(HttpServletRequest request) {
-        StaffAgent agent = staffAgentSession.get(request);
+        UserAgent agent = userAgentSession.get(request);
         if (null != agent) {
-            staffAgentSession.remove(request);
+            userAgentSession.remove(request);
         }
         return ApiResponse.create();
     }

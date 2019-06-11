@@ -12,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 常用话术管理
+ */
 @Service
-public class TalkSkillMange {
+public class TalkSkillManage {
 
     @Autowired
     private TalkSkillMapper talkSkillMapper;

@@ -4,7 +4,8 @@ import com.xudong.core.util.RandomUtil;
 import com.xudong.im.domain.chat.ChatDTO;
 import com.xudong.im.domain.chat.ChatSession;
 import com.xudong.im.domain.user.StaffAgent;
-import com.xudong.im.domain.user.UserTypeEnum;
+import com.xudong.im.domain.user.VisitorAgent;
+import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
 import org.junit.Test;
 import org.junit.Before;
@@ -42,8 +43,7 @@ public class ChatManageTest extends ServiceTestCaseSupport {
         chatDTO.setSessionId("5cfcdd131d798610084eb98c");
 
         StaffAgent agent = new StaffAgent();
-        agent.setId(RandomUtil.randomId());
-        agent.setUserType(UserTypeEnum.VISITOR.getValue());
+        agent.setId(RandomUtil.randomId() + "");
 
         chatManage.sendMsg(chatDTO, agent);
 
@@ -57,8 +57,7 @@ public class ChatManageTest extends ServiceTestCaseSupport {
         chatDTO.setReceiveId("f528764d-624d-3129-b32c-21fbca0cb8d6");
 
         StaffAgent agent = new StaffAgent();
-        agent.setId(6459835738292525451L);
-        agent.setUserType(UserTypeEnum.SERVICE.getValue());
+        agent.setId("6459835738292525451");
 
         chatManage.sendMsg(chatDTO, agent);
 
@@ -70,10 +69,9 @@ public class ChatManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testCreateSession() throws Exception {
-        StaffAgent agent = new StaffAgent();
-        agent.setId(RandomUtil.randomId());
-        agent.setUserType(UserTypeEnum.VISITOR.getValue());
-        ChatSession chatSession = chatManage.createSession(null, "127.0.0.1");
+        VisitorAgent agent = new VisitorAgent();
+        agent.setId(RandomUtil.randomId() + "");
+             ChatSession chatSession = chatManage.createSession(null, "127.0.0.1");
         printInfo(chatSession);
 //TODO: Test goes here... 
     }

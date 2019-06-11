@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
+ * 敏感词管理
  * @author Evan.Shen
  * @since 2019/6/7
  */
 @Service
-public class SensitiveWordMange {
+public class SensitiveWordManage {
     @Autowired
     private SensitiveWordMapper sensitiveWordMapper;
 

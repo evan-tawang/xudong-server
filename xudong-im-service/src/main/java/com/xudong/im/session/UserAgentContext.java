@@ -2,18 +2,19 @@ package com.xudong.im.session;
 
 
 import com.xudong.im.domain.user.StaffAgent;
+import com.xudong.im.domain.user.support.UserAgent;
 
 /**
  * 获取登录用户
  */
-public class StaffAgentContext {
-    private static ThreadLocal<StaffAgent> threadLocal = new ThreadLocal<StaffAgent>();
+public class UserAgentContext {
+    private static ThreadLocal<UserAgent> threadLocal = new ThreadLocal<UserAgent>();
 
-    public static StaffAgent get() {
+    public static UserAgent get() {
         return threadLocal.get();
     }
 
-    public static void put(StaffAgent userAgent) {
+    public static void put(UserAgent userAgent) {
         threadLocal.set(userAgent);
     }
 

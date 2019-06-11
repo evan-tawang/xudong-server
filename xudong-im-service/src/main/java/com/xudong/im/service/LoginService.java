@@ -49,7 +49,7 @@ public class LoginService {
         StaffAgent userAgent = new StaffAgent();
 
         userAgent.setAccount(loginDto.getAccount());
-        userAgent.setId(RandomUtil.randomLong(1000));
+        userAgent.setId(RandomUtil.randomLong(1000) + "");
 
         result.setData(userAgent);
     }
