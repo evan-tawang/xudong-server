@@ -4,15 +4,10 @@ import com.xudong.im.domain.chat.ChatDTO;
 import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
 import com.xudong.im.domain.chat.ChatSession;
-import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
-<<<<<<< HEAD
-import com.xudong.im.session.StaffAgentSession;
-=======
 import com.xudong.im.session.UserAgentSession;
->>>>>>> 58e50010fb8d72c0fa315da8d19da73f442d579f
 import org.evanframework.dto.ApiResponse;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
@@ -20,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
