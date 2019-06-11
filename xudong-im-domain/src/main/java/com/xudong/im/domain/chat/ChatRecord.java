@@ -14,7 +14,7 @@ public class ChatRecord {
     private String sessionId; //会话id
     private Integer sendUserType; //消息发放方类型
     private String visitorId; //访客id
-    private String serviceId; // 客服id
+    private String staffId; // 员工
     private String content;//聊天内容
     private Date gmtCreate;
 
@@ -50,12 +50,12 @@ public class ChatRecord {
         this.visitorId = visitorId;
     }
 
-    public String getServiceId() {
-        return serviceId;
+    public String getStaffId() {
+        return staffId;
     }
 
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
 
     public String getContent() {
@@ -79,6 +79,9 @@ public class ChatRecord {
         return "ChatRecord{" +
                 "id='" + id + '\'' +
                 ", sessionId='" + sessionId + '\'' +
+                ", sendUserType=" + sendUserType +
+                ", visitorId='" + visitorId + '\'' +
+                ", staffId='" + staffId + '\'' +
                 ", content='" + content + '\'' +
                 ", gmtCreate=" + gmtCreate +
                 '}';

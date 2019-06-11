@@ -30,23 +30,23 @@ public class ChatManage {
     @Autowired
     private ChatRecordRepository chatRecordRepository;
 
-    public void sendMsg(ChatDTO chatDTO, StaffAgent agent){
+    public ChatRecord sendMsg(ChatDTO chatDTO, StaffAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
 
         ChatSession chatSession = null;
         if(StringUtils.isEmpty(chatDTO.getSessionId())){
             Assert.notNull(chatDTO.getReceiveId(),"接收者不能为空");
 
-            String serviceId = null, visitorId = null;
+            String staffId = null, visitorId = null;
 
             if(UserTypeEnum.SERVICE.getValue().equals(agent.getUserType())){
-                serviceId = String.valueOf(agent.getId());
+                staffId = String.valueOf(agent.getId());
                 visitorId = chatDTO.getReceiveId();
             } else {
                 visitorId = String.valueOf(agent.getId());
-                serviceId = chatDTO.getReceiveId();
+                staffId = chatDTO.getReceiveId();
             }
-            chatSession = createSession(serviceId,visitorId);
+            chatSession = createSession(staffId,visitorId);
         } else {
             chatSession = chatSessionRepository.load(chatDTO.getSessionId());
             Assert.notNull(chatSession, "sessionId不正确");
@@ -56,32 +56,33 @@ public class ChatManage {
         chatRecord.setSendUserType(agent.getUserType());
         chatRecord.setContent(chatDTO.getContent());
         chatRecord.setSessionId(chatDTO.getSessionId());
-        chatRecord.setServiceId(chatSession.getServiceId());
+        chatRecord.setStaffId(chatSession.getStaffId());
         chatRecord.setVisitorId(chatSession.getVisitorId());
 
         chatRecordRepository.insert(chatRecord);
 
-        String receiveId = UserTypeEnum.SERVICE.getValue().equals(agent.getUserType()) ? chatSession.getVisitorId() : chatSession.getServiceId();
-        webSocketToClientUtil.sendMsg(receiveId, chatDTO.getContent());
+        String receiveId = UserTypeEnum.SERVICE.getValue().equals(agent.getUserType()) ? chatSession.getVisitorId() : chatSession.getStaffId();
+        webSocketToClientUtil.sendMsg(receiveId, chatRecord);
+        return chatRecord;
     }
 
     public ChatSession createSession(StaffAgent agent,String remoteAddr) {
-        String serviceId = distributionService();
+        String staffId = distributionService();
 
-        if (StringUtils.isEmpty(serviceId)) {
+        if (StringUtils.isEmpty(staffId)) {
             return null;
         }
 
         String visitorId = agent == null ? UUIDUtil.nameUUIDFromBytes(remoteAddr) : agent.getId() + "";
-        ChatSession session = createSession(serviceId, visitorId);
-        return new ChatSession(session.getId(), serviceId, visitorId);
+        ChatSession session = createSession(staffId, visitorId);
+        return new ChatSession(session.getId(), staffId, visitorId);
     }
 
-    private ChatSession createSession(String serviceId, String visitorId){
-        return createSession(serviceId, visitorId, null);
+    private ChatSession createSession(String staffId, String visitorId){
+        return createSession(staffId, visitorId, null);
     }
 
-    private ChatSession createSession(String serviceId, String visitorId, String visitorIp){
+    private ChatSession createSession(String staffId, String visitorId, String visitorIp){
 
         ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
 //        chatSessionQuery.setServiceId(serviceId);
@@ -93,7 +94,7 @@ public class ChatManage {
         }
 
         ChatSession chatSession = new ChatSession();
-        chatSession.setServiceId(serviceId);
+        chatSession.setStaffId(staffId);
         chatSession.setVisitorId(visitorId);
         chatSession.setVisitorIp(visitorIp);
 

@@ -9,7 +9,7 @@ public class ChatSessionQuery extends AbstractQueryParam implements QueryParam, 
 
     private String visitorIp;//访客ip
     private String visitorId;//访客id
-    private String serviceId;//客服id
+    private String staffId; // 员工
 
     public String getVisitorIp() {
         return visitorIp;
@@ -27,11 +27,11 @@ public class ChatSessionQuery extends AbstractQueryParam implements QueryParam, 
         this.visitorId = visitorId;
     }
 
-    public String getServiceId() {
-        return serviceId;
+    public String getStaffId() {
+        return staffId;
     }
 
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
 }

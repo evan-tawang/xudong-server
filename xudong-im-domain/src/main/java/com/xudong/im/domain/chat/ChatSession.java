@@ -12,17 +12,17 @@ public class ChatSession {
     public ChatSession() {
     }
 
-    public ChatSession(String id, String visitorId, String serviceId) {
+    public ChatSession(String id, String visitorId, String staffId) {
         this.id = id;
         this.visitorId = visitorId;
-        this.serviceId = serviceId;
+        this.staffId = staffId;
     }
 
     @Id
     private String id;
     private String visitorIp;//访客ip
     private String visitorId;//访客id
-    private String serviceId;//客服id
+    private String staffId; // 员工
     private Date gmtCreate;//创建时间
 
     public String getId() {
@@ -49,12 +49,12 @@ public class ChatSession {
         this.visitorId = visitorId;
     }
 
-    public String getServiceId() {
-        return serviceId;
+    public String getStaffId() {
+        return staffId;
     }
 
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
 
     public Date getGmtCreate() {
@@ -71,7 +71,7 @@ public class ChatSession {
                 "id='" + id + '\'' +
                 ", visitorIp='" + visitorIp + '\'' +
                 ", visitorId='" + visitorId + '\'' +
-                ", serviceId='" + serviceId + '\'' +
+                ", staffId='" + staffId + '\'' +
                 ", gmtCreate=" + gmtCreate +
                 '}';
     }

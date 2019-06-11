@@ -47,6 +47,8 @@ public class LoginController {
     @PostMapping(value = "login")
     //@CsrfValidate
     public ApiResponse login(StaffLoginDTO loginDto, HttpServletRequest request) {
+
+//
         OperateResult<StaffAgent> operateResult = loginService.login(loginDto);
 
         StaffAgent agent = operateResult.getData();
@@ -56,6 +58,12 @@ public class LoginController {
         staffAgentSession.save(agent);
 
         return ApiResponse.create(operateResult);
+    }
+
+
+    @PostMapping("logout1")
+    public ApiResponse logout1(HttpServletRequest request) {
+        return ApiResponse.create("NO_LOGIN","未登录");
     }
 
     @PostMapping("logout")

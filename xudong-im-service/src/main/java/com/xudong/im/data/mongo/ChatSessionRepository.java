@@ -69,7 +69,7 @@ public class ChatSessionRepository {
     private Query buildQuery(ChatSessionQuery ChatSessionQuery) {
         Query query = new Query();
 
-        MongoUtil.buildQueryForIs(query, "serviceId", ChatSessionQuery.getServiceId());
+        MongoUtil.buildQueryForIs(query, "staffId", ChatSessionQuery.getStaffId());
         MongoUtil.buildQueryForIs(query, "visitorId", ChatSessionQuery.getVisitorId());
         MongoUtil.buildQueryForIs(query, "visitorIp", ChatSessionQuery.getVisitorIp());
         return query;

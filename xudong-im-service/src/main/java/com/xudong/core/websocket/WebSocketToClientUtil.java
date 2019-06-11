@@ -1,5 +1,6 @@
 package com.xudong.core.websocket;
 
+import com.xudong.im.domain.chat.ChatRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +21,17 @@ public class WebSocketToClientUtil {
     /**
      * 新消息
      * @param receiveId
-     * @param message
+     * @param chatRecord
      */
-    public void sendMsg(String receiveId, String message) {
-        if (StringUtils.isEmpty(message)) {
+    public void sendMsg(String receiveId, ChatRecord chatRecord) {
+        if (chatRecord == null) {
             return;
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(">>>> websocket to client, receiveId:{},message:{}", receiveId, message);
+            LOGGER.debug(">>>> WebSocket to client, receiveId:{},chatRecord:{}", receiveId, chatRecord);
         }
 
-        simpMessageSendingOperations.convertAndSendToUser(receiveId, "/sendMsg", message);
+        simpMessageSendingOperations.convertAndSendToUser("2222", "/receiveMsg", chatRecord);
     }
 
     /**
@@ -39,7 +40,7 @@ public class WebSocketToClientUtil {
      * @param serviceId
      * @param sessionId
      */
-    public void startSession(String visitorId,String serviceId,String sessionId) {
+    public void startSession(String visitorId, String serviceId, String sessionId) {
         if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(serviceId)) {
             return;
         }

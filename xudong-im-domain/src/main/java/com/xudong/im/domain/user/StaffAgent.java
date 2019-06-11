@@ -190,11 +190,12 @@ public class StaffAgent implements OperatorAgent, Serializable {
 
     @Override
     public String toString() {
-        return "UserAgent{" +
+        return "StaffAgent{" +
                 "id=" + id +
                 ", account='" + account + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", userName='" + userName + '\'' +
+                ", userType=" + userType +
                 ", remoteAddr='" + remoteAddr + '\'' +
                 ", status=" + status +
                 ", token='" + token + '\'' +

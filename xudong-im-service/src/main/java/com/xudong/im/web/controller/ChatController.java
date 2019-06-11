@@ -7,7 +7,6 @@ import com.xudong.im.domain.chat.ChatSession;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
-import com.xudong.core.util.UUIDUtil;
 import com.xudong.im.session.StaffAgentSession;
 import org.evanframework.dto.ApiResponse;
 import org.evanframework.dto.PageResult;
@@ -56,10 +55,10 @@ public class ChatController {
      * @return
      */
     @RequestMapping(value = "sendMsg", method = RequestMethod.POST)
-    public ApiResponse sendMsg(@RequestBody ChatDTO chatDTO,HttpServletRequest request) {
+    public ApiResponse sendMsg(ChatDTO chatDTO,HttpServletRequest request) {
         StaffAgent agent = staffAgentSession.get(request);
-        chatManage.sendMsg(chatDTO, agent);
-        return ApiResponse.create();
+        ChatRecord chatRecord = chatManage.sendMsg(chatDTO, agent);
+        return ApiResponse.create(chatRecord);
     }
 
     /**

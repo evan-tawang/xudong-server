@@ -3,6 +3,7 @@ package com.xudong.im;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 @ComponentScan(basePackages = {
         "com.xudong.im.config",
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
         "com.xudong.im.web",
         "com.xudong.core.websocket",
 })
+@EnableWebSocket
 @SpringBootApplication
 public class WebApplication {
 

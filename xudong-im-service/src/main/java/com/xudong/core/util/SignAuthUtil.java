@@ -38,4 +38,8 @@ public class SignAuthUtil {
 
         return StringUtils.equalsIgnoreCase(signInServer, signInRequest);
     }
+
+    public static void main(String[] args) {
+        System.out.println(DigestUtils.sha256Hex("1234"));
+    }
 }

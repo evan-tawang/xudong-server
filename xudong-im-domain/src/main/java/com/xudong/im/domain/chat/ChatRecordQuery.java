@@ -10,7 +10,7 @@ public class ChatRecordQuery extends AbstractQueryParam implements QueryParam, S
     private String sessionId; //会话id
     private String connectorId;//连接人id
     private String visitorId; //访客id
-    private String serviceId; // 客服id
+    private String staffId; // 员工
     private String content;//聊天内容
 
     public String getSessionId() {
@@ -37,12 +37,12 @@ public class ChatRecordQuery extends AbstractQueryParam implements QueryParam, S
         this.visitorId = visitorId;
     }
 
-    public String getServiceId() {
-        return serviceId;
+    public String getStaffId() {
+        return staffId;
     }
 
-    public void setServiceId(String serviceId) {
-        this.serviceId = serviceId;
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
 
     public String getContent() {
