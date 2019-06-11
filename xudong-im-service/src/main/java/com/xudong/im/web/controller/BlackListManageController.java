@@ -68,7 +68,7 @@ public class BlackListManageController {
 
     @ApiOperation(value = "批量更新状态")
     @RequestMapping(value = "updateStatusGroup", method = RequestMethod.POST)
-    public ApiResponse updateStatusGroup(@ApiParam(value = "需要更新数据的id数组", required = true) @RequestParam("ids[]") int[] ids,
+    public ApiResponse updateStatusGroup(@ApiParam(value = "需要更新数据的id数组", required = true) @RequestParam("ids") int[] ids,
                                          @ApiParam(value = "更新后的状态", required = true) @RequestParam("newStatus") int newStatus) {
         blackListMange.updateStatusGroup(ids, newStatus);
         return ApiResponse.create();

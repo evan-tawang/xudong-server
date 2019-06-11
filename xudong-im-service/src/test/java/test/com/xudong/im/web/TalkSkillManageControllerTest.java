@@ -94,7 +94,7 @@ public class TalkSkillManageControllerTest extends WebTestCaseSupport {
      */
     @Test
     public void testUpdateStatusGroup() {
-        String url = getFullApiUri("/talkSkill/manage/updateStatusGroup?ids[]={ids}&newStatus={newStatus}");
+        String url = getFullApiUri("/talkSkill/manage/updateStatusGroup?ids={ids}&newStatus={newStatus}");
 
         Map<String, Object> parames = new HashMap<String, Object>();
         parames.put("ids", RandomUtil.randomInt(10) + "," + RandomUtil.randomInt(10));

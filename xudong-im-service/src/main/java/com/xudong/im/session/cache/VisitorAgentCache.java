@@ -27,6 +27,6 @@ public class VisitorAgentCache extends AbstractCache<VisitorAgent> {
 
     @PostConstruct
     public void init() {
-        super.init(StaffAgentCache.class.getSimpleName(), redisTemplateCreator, REDIS_DATABASE_INDEX, cacheManager);
+        super.init(VisitorAgentCache.class.getSimpleName(), redisTemplateCreator, REDIS_DATABASE_INDEX, cacheManager);
     }
 }
