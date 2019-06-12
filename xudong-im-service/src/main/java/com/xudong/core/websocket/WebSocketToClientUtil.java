@@ -31,27 +31,48 @@ public class WebSocketToClientUtil {
             LOGGER.debug(">>>> WebSocket to client, receiveId:{},chatRecord:{}", receiveId, chatRecord);
         }
 
-        simpMessageSendingOperations.convertAndSendToUser("2222", "/receiveMsg", chatRecord);
+        simpMessageSendingOperations.convertAndSendToUser(receiveId, "/receiveMsg", chatRecord);
     }
 
     /**
-     * 用户排队排到后，通知用户
+     * 访客排队排到后，通知访客
      * @param visitorId
-     * @param serviceId
+     * @param staffId
      * @param sessionId
      */
-    public void startSession(String visitorId, String serviceId, String sessionId) {
-        if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(serviceId)) {
+    public void startSession(String visitorId, String staffId, String sessionId) {
+        if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(staffId)) {
             return;
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(">>>> websocket to client, visitorId:{}", visitorId);
+            LOGGER.debug(">>>> WebSocket to client, visitorId:{}", visitorId);
         }
 
         Map<String,String> params = new HashMap<>();
         params.put("sessionId",sessionId);
-        params.put("serviceId",serviceId);
+        params.put("staffId",staffId);
 
         simpMessageSendingOperations.convertAndSendToUser(visitorId, "/startSession", params);
+    }
+
+    /**
+     * 给客服分配访客
+     * @param visitorId
+     * @param staffId
+     * @param sessionId
+     */
+    public void allocate(String staffId, String visitorId, String sessionId) {
+        if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(staffId)) {
+            return;
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(">>>> WebSocket to client, visitorId:{}", visitorId);
+        }
+
+        Map<String,String> params = new HashMap<>();
+        params.put("sessionId", sessionId);
+        params.put("visitorId", visitorId);
+
+        simpMessageSendingOperations.convertAndSendToUser(staffId, "/allocate", params);
     }
 }

@@ -122,4 +122,6 @@ public interface CommonConstant extends CoreConstants {
     String TEMP = "temp";
 
     String FORMAT_SHORT_STRING_CN = "yyyy年MM月dd日";
+
+    String DEFAULT_STAFF_ID = "1";
 }

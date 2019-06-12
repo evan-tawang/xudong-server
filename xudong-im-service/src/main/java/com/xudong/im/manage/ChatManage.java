@@ -2,6 +2,7 @@ package com.xudong.im.manage;
 
 import com.xudong.core.util.RandomUtil;
 import com.xudong.core.util.UUIDUtil;
+import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
@@ -54,7 +55,7 @@ public class ChatManage {
         }
 
         ChatRecord chatRecord = new ChatRecord();
-        chatRecord.setSendUserType(agent.getUserType());
+        chatRecord.setSendUserType(agent != null ? agent.getUserType() : UserTypeEnum.VISITOR.getValue());
         chatRecord.setContent(chatDTO.getContent());
         chatRecord.setSessionId(chatDTO.getSessionId());
         chatRecord.setStaffId(chatSession.getStaffId());
@@ -62,13 +63,14 @@ public class ChatManage {
 
         chatRecordRepository.insert(chatRecord);
 
-        String receiveId = UserTypeEnum.STAFF.getValue().equals(agent.getUserType()) ? chatSession.getVisitorId() : chatSession.getStaffId();
+        String receiveId = agent == null || UserTypeEnum.STAFF.getValue().equals(agent.getUserType())
+                ? chatSession.getVisitorId() : chatSession.getStaffId();
         webSocketToClientUtil.sendMsg(receiveId, chatRecord);
         return chatRecord;
     }
 
     public ChatSession createSession(UserAgent agent, String remoteAddr) {
-        String staffId = distributionService();
+        String staffId = allocateStaff();
 
         if (StringUtils.isEmpty(staffId)) {
             return null;
@@ -76,6 +78,9 @@ public class ChatManage {
 
         String visitorId = agent == null ? UUIDUtil.nameUUIDFromBytes(remoteAddr) : agent.getId() + "";
         ChatSession session = createSession(staffId, visitorId);
+
+        webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
+
         return new ChatSession(session.getId(), staffId, visitorId);
     }
 
@@ -108,8 +113,9 @@ public class ChatManage {
      * 分配客服
      * @return
      */
-    private String distributionService(){
-        return RandomUtil.randomId() + "";
+    //TODO: default user
+    private String allocateStaff(){
+        return CommonConstant.DEFAULT_STAFF_ID;
     }
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
