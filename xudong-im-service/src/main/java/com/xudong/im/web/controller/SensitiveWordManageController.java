@@ -26,7 +26,7 @@ public class SensitiveWordManageController {
 
     @RequestMapping(value = "get", method = RequestMethod.GET)
     public ApiResponse get() {
-        String[] words = sensitiveWordMange.get();
+        String words = sensitiveWordMange.get();
         return ApiResponse.create(words);
     }
 }

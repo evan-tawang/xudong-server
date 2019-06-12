@@ -1,9 +1,9 @@
 package test.com.xudong.im.manage;
 
+import com.xudong.core.util.RandomUtil;
 import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.limit.BlackListQuery;
 import com.xudong.im.manage.BlackListManage;
-import com.xudong.core.util.RandomUtil;
 import org.evanframework.dto.PageResult;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +37,24 @@ public class BlackListManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testUpdate() {
-        BlackList o = BlackListTestData.random();
-        o.setId(RandomUtil.randomInt(10));
-        blackListService.update(o);
+//        BlackList o = BlackListTestData.random();
+//        o.setId(RandomUtil.randomInt(10));
+//        blackListService.update(o);
+
+        for (int i = 8; i <= 19; i++) {
+            BlackList o = new BlackList(i);
+
+            if (i % 3 == 0) {
+                o.setContent("1" + RandomUtil.randomString(10));
+            } else {
+                o.setContent(RandomUtil.randomInt(254) + "."
+                        + RandomUtil.randomInt(254) + "."
+                        + RandomUtil.randomInt(254) + "."
+                        + RandomUtil.randomInt(254));
+            }
+
+            blackListService.update(o);
+        }
     }
 
     /**
@@ -67,7 +82,7 @@ public class BlackListManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testUpdateStatus() {
-        blackListService.updateStatus(RandomUtil.randomInt(10),1);
+        blackListService.updateStatus(RandomUtil.randomInt(10), 1);
     }
 
     /**

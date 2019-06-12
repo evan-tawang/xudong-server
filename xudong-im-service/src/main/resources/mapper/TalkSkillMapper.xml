@@ -78,7 +78,7 @@
                     </foreach>
                 </when>
             </choose>
-            <if test="content != null and content.trim() !=''">and ts.content = #{content}</if>
+            <if test="content != null and content.trim() !=''">and ts.content like CONCAT('%',#{content},'%')</if>
         </where>
     </sql>
 

@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * 敏感词管理
+ *
  * @author Evan.Shen
  * @since 2019/6/7
  */
@@ -33,19 +34,24 @@ public class SensitiveWordManage {
         }
     }
 
-    public String[] get() {
+    public String get() {
         List<SensitiveWord> list = sensitiveWordMapper.queryList(new SensitiveWordQuery());
         if (list.isEmpty()) {
-            return new String[]{};
+            return "";
         } else {
             SensitiveWord o = list.get(0);
             String words = o.getWords();
+            return words;
+        }
+    }
 
-            if (StringUtils.isBlank(words)) {
-                return new String[]{};
-            } else {
-                return words.split(",");
-            }
+    public String[] getForArray() {
+        String words = get();
+
+        if (StringUtils.isBlank(words)) {
+            return new String[]{};
+        } else {
+            return words.split(",");
         }
     }
 }
