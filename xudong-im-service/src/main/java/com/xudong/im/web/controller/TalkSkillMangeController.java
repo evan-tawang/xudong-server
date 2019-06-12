@@ -53,7 +53,7 @@ public class TalkSkillMangeController {
     }
 
     @RequestMapping(value = "updateStatusGroup", method = RequestMethod.POST)
-    public ApiResponse updateStatusGroup(@RequestParam("ids[]") int[] ids, @RequestParam("newStatus") int newStatus) {
+    public ApiResponse updateStatusGroup(@RequestParam("ids") int[] ids, @RequestParam("newStatus") int newStatus) {
         talkSkillMange.updateStatusGroup(ids, newStatus);
         return ApiResponse.create();
     }
