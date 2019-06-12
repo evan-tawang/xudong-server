@@ -1,7 +1,7 @@
 package test.com.xudong.im.web;
 
-import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.core.util.RandomUtil;
+import com.xudong.im.domain.help.TalkSkill;
 import org.evanframework.dto.ApiResponse;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Evan.Shen
  * @since 2019/6/8
  */
-public class TalkSkillManageControllerTest extends WebTestCaseSupport {
+public class TalkSkillControllerTest extends WebTestCaseSupport {
     private ParameterizedTypeReference<ApiResponse<List<TalkSkill>>> responseType = new ParameterizedTypeReference<ApiResponse<List<TalkSkill>>>() {
     };
 
@@ -55,7 +55,7 @@ public class TalkSkillManageControllerTest extends WebTestCaseSupport {
     @Test
     public void testAdd() {
         String url = getFullApiUri("/talkSkill/manage/add?content={0}");
-        ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class,  RandomUtil.randomName("Test"));
+        ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, RandomUtil.randomName("Test"));
         LOGGER.info("========>>testGetOne 结果1：" + response);
     }
 
@@ -83,7 +83,7 @@ public class TalkSkillManageControllerTest extends WebTestCaseSupport {
 
         Map<String, Object> parames = new HashMap<String, Object>();
         parames.put("id", RandomUtil.randomInt(10));
-        parames.put("newStatus", RandomUtil.randomInt(2) );
+        parames.put("newStatus", RandomUtil.randomInt(2));
 
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, parames);
         LOGGER.info("========>>testUpdateStatus 结果1：" + response);
@@ -98,7 +98,7 @@ public class TalkSkillManageControllerTest extends WebTestCaseSupport {
 
         Map<String, Object> parames = new HashMap<String, Object>();
         parames.put("ids", RandomUtil.randomInt(10) + "," + RandomUtil.randomInt(10));
-        parames.put("newStatus", RandomUtil.randomInt(2) );
+        parames.put("newStatus", RandomUtil.randomInt(2));
 
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, parames);
         LOGGER.info("========>>testUpdateStatusGroup 结果1：" + response);
@@ -111,7 +111,14 @@ public class TalkSkillManageControllerTest extends WebTestCaseSupport {
     public void testDelete() {
         String url = getFullApiUri("/talkSkill/manage/delete?id={0}");
 
-        ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class,  RandomUtil.randomInt(10));
+        ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, RandomUtil.randomInt(10));
         LOGGER.info("========>>testDelete 结果1：" + response);
+    }
+
+    @Test
+    public void testServiceList() {
+        String url = getFullApiUri("/talkSkill/service/list");
+        ApiResponse response = restTemplate.getForObject(url,  ApiResponse.class);
+        LOGGER.info("========>>testServiceList 结果：" + response);
     }
 }
