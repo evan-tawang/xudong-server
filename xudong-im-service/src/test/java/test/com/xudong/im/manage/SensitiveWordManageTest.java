@@ -16,7 +16,7 @@ public class SensitiveWordManageTest extends ServiceTestCaseSupport {
 
     @Test
     public void test() {
-        String[] words = sensitiveWordMange.get();
+        String words = sensitiveWordMange.get();
 
         LOGGER.info("====>> before update: " );
         printInfo(words);
