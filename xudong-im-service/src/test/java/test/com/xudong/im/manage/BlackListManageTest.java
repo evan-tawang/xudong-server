@@ -100,4 +100,9 @@ public class BlackListManageTest extends ServiceTestCaseSupport {
     public void testDelete() {
         blackListService.delete(RandomUtil.randomInt(10));
     }
+
+    @Test
+    public void testRefreshCache() {
+        blackListService.refreshCache();
+    }
 } 

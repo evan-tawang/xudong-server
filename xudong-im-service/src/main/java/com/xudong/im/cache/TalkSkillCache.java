@@ -60,6 +60,8 @@ public class TalkSkillCache {
 
     public void clear() {
         Set<Integer> key = hashOperations.keys();
-        hashOperations.delete(key.toArray());
+        if(!key.isEmpty()) {
+            hashOperations.delete(key.toArray());
+        }
     }
 }
