@@ -28,14 +28,18 @@ public class TalkSkillService {
         List<TalkSkill> list = talkSkillCache.getList();
 
         if (list == null || list.isEmpty()) {
-            TalkSkillQuery talkSkillQuery = new TalkSkillQuery();
-            talkSkillQuery.setStatus(TalkSkillStatusEnum.NORMAL.getValue());
-            list = talkSkillMapper.queryList(talkSkillQuery);
+            list = getFromDB();
             for (TalkSkill o : list) {
                 talkSkillCache.put(o);
             }
         }
 
         return list;
+    }
+
+    private List<TalkSkill> getFromDB() {
+        TalkSkillQuery talkSkillQuery = new TalkSkillQuery();
+        talkSkillQuery.setStatus(TalkSkillStatusEnum.NORMAL.getValue());
+        return talkSkillMapper.queryList(talkSkillQuery);
     }
 }

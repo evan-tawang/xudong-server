@@ -63,4 +63,9 @@ public class SensitiveWordManage {
             return words.split(",");
         }
     }
+
+    public void refreshCache() {
+        String words = get();
+        sensitiveWordCache.put(words);
+    }
 }

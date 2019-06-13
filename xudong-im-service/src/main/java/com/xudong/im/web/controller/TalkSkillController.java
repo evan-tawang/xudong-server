@@ -67,6 +67,12 @@ public class TalkSkillController {
         return ApiResponse.create();
     }
 
+    @PostMapping(value = "manage/refreshCache")
+    public ApiResponse refreshCache() {
+        talkSkillMange.refreshCache();
+        return ApiResponse.create();
+    }
+
     @GetMapping(value = "service/list")
     public ApiResponse list() {
         List<TalkSkill> list = talkSkillService.getForList();

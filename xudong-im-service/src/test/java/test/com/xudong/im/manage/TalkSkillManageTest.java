@@ -17,7 +17,8 @@ import test.com.xudong.im.testdata.TalkSkillTestData;
  */
 public class TalkSkillManageTest extends ServiceTestCaseSupport {
     @Autowired
-    private TalkSkillManage talkSkillService;
+    private TalkSkillManage talkSkillManage;
+
 
     /**
      * Method: add(TalkSkill o)
@@ -25,7 +26,7 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
     @Test
     public void testAdd() {
         TalkSkill o = TalkSkillTestData.random();
-        int id = talkSkillService.add(o);
+        int id = talkSkillManage.add(o);
         LOGGER.info("====>>testAdd:" + o);
     }
 
@@ -36,7 +37,7 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
     public void testUpdate() {
         TalkSkill o = TalkSkillTestData.random();
         o.setId(RandomUtil.randomInt(10));
-        talkSkillService.update(o);
+        talkSkillManage.update(o);
     }
 
     /**
@@ -45,7 +46,7 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
     @Test
     public void testGetForList() {
         TalkSkillQuery query = new TalkSkillQuery();
-        PageResult<TalkSkill> result = talkSkillService.getForList(query);
+        PageResult<TalkSkill> result = talkSkillManage.getForList(query);
         LOGGER.info("====>>testGetForList:" + result);
     }
 
@@ -54,7 +55,7 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testGetOne() {
-        TalkSkill result = talkSkillService.getOne(RandomUtil.randomInt(10));
+        TalkSkill result = talkSkillManage.getOne(RandomUtil.randomInt(10));
         LOGGER.info("====>>testGetOne:" + result);
 
     }
@@ -64,9 +65,9 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testUpdateStatus() {
-        talkSkillService.updateStatus(RandomUtil.randomInt(10), 2);
-        talkSkillService.updateStatus(RandomUtil.randomInt(10), 2);
-        talkSkillService.updateStatus(RandomUtil.randomInt(10), 2);
+        talkSkillManage.updateStatus(RandomUtil.randomInt(10), 2);
+        talkSkillManage.updateStatus(RandomUtil.randomInt(10), 2);
+        talkSkillManage.updateStatus(RandomUtil.randomInt(10), 2);
 
     }
 
@@ -83,11 +84,16 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testDelete() {
-        talkSkillService.delete(RandomUtil.randomInt(10));
-        talkSkillService.delete(RandomUtil.randomInt(10));
-        talkSkillService.delete(RandomUtil.randomInt(10));
-        talkSkillService.delete(RandomUtil.randomInt(10));
-        talkSkillService.delete(RandomUtil.randomInt(10));
-        talkSkillService.delete(RandomUtil.randomInt(10));
+        talkSkillManage.delete(RandomUtil.randomInt(10));
+        talkSkillManage.delete(RandomUtil.randomInt(10));
+        talkSkillManage.delete(RandomUtil.randomInt(10));
+        talkSkillManage.delete(RandomUtil.randomInt(10));
+        talkSkillManage.delete(RandomUtil.randomInt(10));
+        talkSkillManage.delete(RandomUtil.randomInt(10));
+    }
+
+    @Test
+    public void testRefreshCache() {
+        talkSkillManage.refreshCache();
     }
 }

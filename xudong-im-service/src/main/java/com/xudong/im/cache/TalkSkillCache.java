@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Evan.Shen
@@ -55,5 +56,10 @@ public class TalkSkillCache {
 
     public void remove(Integer id) {
         hashOperations.delete(id);
+    }
+
+    public void clear() {
+        Set<Integer> key = hashOperations.keys();
+        hashOperations.delete(key.toArray());
     }
 }

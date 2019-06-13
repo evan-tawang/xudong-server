@@ -82,4 +82,20 @@ public class TalkSkillManage {
         talkSkillMapper.updateIsDeleted(id, CommonConstant.DELETED_TAG);
         talkSkillCache.remove(id);
     }
+
+    public void refreshCache() {
+        talkSkillCache.clear();
+
+        List<TalkSkill> list = getFromDB();
+
+        for (TalkSkill o : list) {
+            talkSkillCache.put(o);
+        }
+    }
+
+    private List<TalkSkill> getFromDB() {
+        TalkSkillQuery talkSkillQuery = new TalkSkillQuery();
+        talkSkillQuery.setStatus(TalkSkillStatusEnum.NORMAL.getValue());
+        return talkSkillMapper.queryList(talkSkillQuery);
+    }
 }

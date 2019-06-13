@@ -13,17 +13,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("sensitiveWord/manage")
 public class SensitiveWordManageController {
     @Autowired
-    private SensitiveWordManage sensitiveWordMange;
+    private SensitiveWordManage sensitiveWordManage;
 
     @PostMapping(value = "save")
     public ApiResponse save(@RequestParam("words") String words) {
-        sensitiveWordMange.save(words);
+        sensitiveWordManage.save(words);
         return ApiResponse.create();
     }
 
     @GetMapping(value = "get")
     public ApiResponse get() {
-        String words = sensitiveWordMange.get();
+        String words = sensitiveWordManage.get();
+        return ApiResponse.create(words);
+    }
+
+    @GetMapping(value = "refreshCache")
+    public ApiResponse refreshCache() {
+        String words = sensitiveWordManage.get();
         return ApiResponse.create(words);
     }
 }
