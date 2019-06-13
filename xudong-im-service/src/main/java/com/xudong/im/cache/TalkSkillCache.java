@@ -51,11 +51,11 @@ public class TalkSkillCache {
     }
 
     public TalkSkill getOne(Integer id) {
-        return hashOperations.get(id);
+        return hashOperations.get(id + "");
     }
 
     public void remove(Integer id) {
-        hashOperations.delete(id);
+        hashOperations.delete(id + "");
     }
 
     public void clear() {

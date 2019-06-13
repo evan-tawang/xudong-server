@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -46,16 +45,16 @@ public class BlackListCache {
     }
 
     public BlackList getOne(Integer id) {
-        return hashOperations.get(id);
+        return hashOperations.get(id + "");
     }
 
     public void remove(Integer id) {
-        hashOperations.delete(id);
+        hashOperations.delete(id + "");
     }
 
     public void clear() {
         Set<String> key = hashOperations.keys();
-        if(!key.isEmpty()) {
+        if (!key.isEmpty()) {
             hashOperations.delete(key.toArray());
         }
     }
