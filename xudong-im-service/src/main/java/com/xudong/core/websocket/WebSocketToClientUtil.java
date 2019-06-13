@@ -1,6 +1,7 @@
 package com.xudong.core.websocket;
 
 import com.xudong.im.domain.chat.ChatRecord;
+import com.xudong.im.enums.UserTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +21,18 @@ public class WebSocketToClientUtil {
 
     /**
      * 新消息
-     * @param receiveId
      * @param chatRecord
      */
-    public void sendMsg(String receiveId, ChatRecord chatRecord) {
+    public void sendMsg( ChatRecord chatRecord) {
         if (chatRecord == null) {
             return;
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(">>>> WebSocket to client, receiveId:{},chatRecord:{}", receiveId, chatRecord);
+            LOGGER.debug(">>>> WebSocket to client, chatRecord:{}",  chatRecord);
         }
+//        Integer receiveUserType = UserTypeEnum.VISITOR.getValue().equals(chatRecord.getSendUserType()) ? UserTypeEnum.STAFF.getValue() : UserTypeEnum.VISITOR.getValue();
 
-        simpMessageSendingOperations.convertAndSendToUser(receiveId, "/receiveMsg", chatRecord);
+        simpMessageSendingOperations.convertAndSendToUser(chatRecord.getSessionId() + "-" + chatRecord.getSendUserType(), "/receiveMsg", chatRecord);
     }
 
     /**
@@ -70,9 +71,31 @@ public class WebSocketToClientUtil {
         }
 
         Map<String,String> params = new HashMap<>();
-        params.put("sessionId", sessionId);
+        params.put("id", sessionId);
         params.put("visitorId", visitorId);
 
         simpMessageSendingOperations.convertAndSendToUser(staffId, "/allocate", params);
+    }
+
+    /**
+     * 访客断开连接
+     * @param visitorId
+     * @param staffId
+     * @param sessionId
+     */
+    public void disconnect(String staffId, String visitorId, String sessionId) {
+        if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(staffId)) {
+            return;
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(">>>> WebSocket to client, visitorId:{}", visitorId);
+        }
+
+        Map<String,String> params = new HashMap<>();
+        params.put("id", sessionId);
+        params.put("visitorId", visitorId);
+        params.put("staffId", staffId);
+
+        simpMessageSendingOperations.convertAndSendToUser(sessionId, "/disconnect", params);
     }
 }

@@ -1,5 +1,6 @@
 package com.xudong.im.web.controller;
 
+import com.xudong.core.util.IpUtil;
 import com.xudong.im.domain.chat.ChatDTO;
 import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
@@ -9,6 +10,7 @@ import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.ApiResponse;
+import org.evanframework.dto.OperateResult;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("chat")
@@ -42,7 +46,7 @@ public class ChatController {
     @RequestMapping(value = "createSession", method = RequestMethod.POST)
     public ApiResponse<ChatSession> createSession(HttpServletRequest request) {
         UserAgent agent = userAgentSession.get(request);
-        ChatSession session = chatManage.createSession(agent, request.getRemoteAddr());
+        ChatSession session = chatManage.createSession(agent, IpUtil.getRemoteIp(request));
         return ApiResponse.create(session);
     }
 
@@ -60,6 +64,19 @@ public class ChatController {
         return ApiResponse.create(chatRecord);
     }
 
+    @RequestMapping(value = "disconnect", method = RequestMethod.POST)
+    public ApiResponse<PageResult<ChatRecord>> disconnect(String sessionId) {
+        chatManage.disconnect(sessionId);
+        return ApiResponse.create();
+    }
+
+    @RequestMapping(value = "connected", method = RequestMethod.GET)
+    public ApiResponse connected(HttpServletRequest request) {
+        UserAgent agent = userAgentSession.get(request);
+        List<ChatSession> chatSessions = chatManage.connected(agent);
+        return ApiResponse.create(chatSessions);
+    }
+
     /**
      * 会话中的聊天记录信息
      * 传递双方id 或者 会话id
@@ -68,26 +85,12 @@ public class ChatController {
      */
     @RequestMapping(value = "history", method = RequestMethod.GET)
     public ApiResponse<PageResult<ChatRecord>> history(ChatRecordQuery chatRecordQuery,HttpServletRequest request) {
-        if(StringUtils.isEmpty(chatRecordQuery.getSessionId())){
-            Assert.notNull(chatRecordQuery.getConnectorId(),"连接人id不能为空");
+        Assert.notNull(chatRecordQuery.getSessionId(),"会话id不能为空");
 
-            UserAgent agent = userAgentSession.get(request);
-            String visitorId = null;
-
-            if(agent == null){
-                return ApiResponse.create(PageResult.create(chatRecordQuery, new ArrayList<ChatRecord>(), 0));
-            }
-
-            if(UserTypeEnum.VISITOR.getValue().equals(agent.getUserType())){
-                visitorId = chatRecordQuery.getConnectorId();
-            } else {
-                visitorId = String.valueOf(agent.getId());
-            }
-            chatRecordQuery.setVisitorId(visitorId);
-        }
         if(chatRecordQuery.getPageSize() == 0){
             chatRecordQuery.setPageSize(30);
         }
+        chatRecordQuery.setSort("ASC");
         PageResult<ChatRecord> result = chatManage.queryPage(chatRecordQuery);
         return ApiResponse.create(result);
     }

@@ -1,13 +1,12 @@
 package com.xudong.im.manage;
 
-import com.xudong.core.util.RandomUtil;
 import com.xudong.core.util.UUIDUtil;
+import com.xudong.im.cache.ChatSessionCache;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
 import com.xudong.core.websocket.WebSocketToClientUtil;
-import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.UserTypeEnum;
 import org.evanframework.dto.PageResult;
@@ -17,7 +16,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 聊天
@@ -31,6 +33,8 @@ public class ChatManage {
     private ChatSessionRepository chatSessionRepository;
     @Autowired
     private ChatRecordRepository chatRecordRepository;
+    @Autowired
+    private ChatSessionCache chatSessionCache;
 
     public ChatRecord sendMsg(ChatDTO chatDTO, UserAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
@@ -63,9 +67,7 @@ public class ChatManage {
 
         chatRecordRepository.insert(chatRecord);
 
-        String receiveId = agent == null || UserTypeEnum.STAFF.getValue().equals(agent.getUserType())
-                ? chatSession.getVisitorId() : chatSession.getStaffId();
-        webSocketToClientUtil.sendMsg(receiveId, chatRecord);
+        webSocketToClientUtil.sendMsg(chatRecord);
         return chatRecord;
     }
 
@@ -81,7 +83,39 @@ public class ChatManage {
 
         webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
 
+        // 缓存会话
+        chatSessionCache.put(staffId, session.getId());
+
         return new ChatSession(session.getId(), staffId, visitorId);
+    }
+
+    public void disconnect(String sessionId) {
+        Assert.notNull(sessionId, "会话id不能为空");
+
+        ChatSession chatSession = chatSessionRepository.load(sessionId);
+
+        Assert.notNull(chatSession, "会话不存在");
+
+        webSocketToClientUtil.disconnect(chatSession.getStaffId(), chatSession.getVisitorId(), chatSession.getId());
+
+        // 缓存会话
+        chatSessionCache.remove(chatSession.getStaffId(), chatSession.getId());
+    }
+
+    public List<ChatSession> connected(UserAgent agent) {
+        if(agent == null){
+            return new ArrayList<>();
+        }
+
+        Set<String> sessionIds = chatSessionCache.get(agent.getId());
+        if(CollectionUtils.isEmpty(sessionIds)){
+            return new ArrayList<>();
+        }
+
+        ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
+        chatSessionQuery.setIdArray(sessionIds);
+        List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
+        return chatSessions;
     }
 
     private ChatSession createSession(String staffId, String visitorId){
@@ -121,4 +155,6 @@ public class ChatManage {
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
         return chatRecordRepository.queryPage(chatRecordQuery);
     }
+
+
 }

@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +62,13 @@ public class ChatRecordRepository {
 
         Query query = buildQuery(chatRecordQuery);
 
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "gmtCreate"));
+        Sort.Direction direction = Sort.Direction.DESC;
+        if(!StringUtils.isEmpty(chatRecordQuery.getSort()) && Sort.Direction.ASC.name().equals(chatRecordQuery.getSort())){
+            direction = Sort.Direction.ASC;
+        }
+
+        String sortCode = StringUtils.isEmpty(chatRecordQuery.getSortCode()) ? "gmtCreate" : chatRecordQuery.getSortCode();
+        Sort sort = new Sort(new Sort.Order(direction, sortCode));
         PageRequest pageRequest = new PageRequest(chatRecordQuery.getPageNo() - 1, chatRecordQuery.getPageSize(), sort);
         query.with(pageRequest);
 
