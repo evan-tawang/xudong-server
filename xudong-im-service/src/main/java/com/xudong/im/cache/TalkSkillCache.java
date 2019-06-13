@@ -32,7 +32,7 @@ public class TalkSkillCache {
 
     private RedisTemplate redisTemplate;
 
-    private BoundHashOperations<String, Integer, TalkSkill> hashOperations;
+    private BoundHashOperations<String, String, TalkSkill> hashOperations;
     private BoundZSetOperations<String, TalkSkill> zSetOperations;
 
     @PostConstruct
@@ -43,7 +43,7 @@ public class TalkSkillCache {
     }
 
     public void put(TalkSkill o) {
-        hashOperations.put(o.getId(), o);
+        hashOperations.put(o.getId() + "", o);
     }
 
     public List<TalkSkill> getList() {
@@ -59,8 +59,8 @@ public class TalkSkillCache {
     }
 
     public void clear() {
-        Set<Integer> key = hashOperations.keys();
-        if(!key.isEmpty()) {
+        Set<String> key = hashOperations.keys();
+        if (!key.isEmpty()) {
             hashOperations.delete(key.toArray());
         }
     }

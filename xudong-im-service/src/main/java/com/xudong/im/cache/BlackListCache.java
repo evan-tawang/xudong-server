@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +27,7 @@ public class BlackListCache {
 
     private RedisTemplate redisTemplate;
 
-    private BoundHashOperations<String, Integer, BlackList> hashOperations;
+    private BoundHashOperations<String, String, BlackList> hashOperations;
     //private BoundZSetOperations<String, BlackList> zSetOperations;
 
     @PostConstruct
@@ -37,7 +38,7 @@ public class BlackListCache {
     }
 
     public void put(BlackList o) {
-        hashOperations.put(o.getId(), o);
+        hashOperations.put(o.getId() + "", o);
     }
 
     public List<BlackList> getList() {
@@ -53,7 +54,7 @@ public class BlackListCache {
     }
 
     public void clear() {
-        Set<Integer> key = hashOperations.keys();
+        Set<String> key = hashOperations.keys();
         if(!key.isEmpty()) {
             hashOperations.delete(key.toArray());
         }
