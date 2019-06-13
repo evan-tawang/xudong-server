@@ -1,8 +1,10 @@
 package com.xudong.im.service;
 
+import com.xudong.im.cache.TalkSkillCache;
 import com.xudong.im.data.mapper.TalkSkillMapper;
 import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
+import com.xudong.im.enums.TalkSkillStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +18,23 @@ import java.util.List;
  */
 @Service
 public class TalkSkillService {
-
     @Autowired
     private TalkSkillMapper talkSkillMapper;
 
-    public List<TalkSkill> getForList() {
-        TalkSkillQuery talkSkillQuery = new TalkSkillQuery();
+    @Autowired
+    private TalkSkillCache talkSkillCache;
 
-        List list = talkSkillMapper.queryList(talkSkillQuery);
+    public List<TalkSkill> getForList() {
+        List<TalkSkill> list = talkSkillCache.getList();
+
+        if (list == null || list.isEmpty()) {
+            TalkSkillQuery talkSkillQuery = new TalkSkillQuery();
+            talkSkillQuery.setStatus(TalkSkillStatusEnum.NORMAL.getValue());
+            list = talkSkillMapper.queryList(talkSkillQuery);
+            for (TalkSkill o : list) {
+                talkSkillCache.put(o);
+            }
+        }
 
         return list;
     }

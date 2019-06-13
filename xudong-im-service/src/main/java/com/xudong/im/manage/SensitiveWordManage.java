@@ -1,11 +1,13 @@
 package com.xudong.im.manage;
 
+import com.xudong.im.cache.SensitiveWordCache;
 import com.xudong.im.data.mapper.SensitiveWordMapper;
 import com.xudong.im.domain.limit.SensitiveWord;
 import com.xudong.im.domain.limit.SensitiveWordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,9 +19,14 @@ import java.util.List;
  */
 @Service
 public class SensitiveWordManage {
+
+    @Autowired
+    private SensitiveWordCache sensitiveWordCache;
+
     @Autowired
     private SensitiveWordMapper sensitiveWordMapper;
 
+    @Transactional
     public void save(String words) {
         List<SensitiveWord> list = sensitiveWordMapper.queryList(new SensitiveWordQuery());
 
@@ -32,6 +39,8 @@ public class SensitiveWordManage {
             o.setId(list.get(0).getId());
             sensitiveWordMapper.update(o);
         }
+
+        sensitiveWordCache.put(words);
     }
 
     public String get() {

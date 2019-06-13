@@ -1,9 +1,11 @@
 package com.xudong.im.manage;
 
+import com.xudong.im.cache.TalkSkillCache;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.data.mapper.TalkSkillMapper;
 import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
+import com.xudong.im.enums.TalkSkillStatusEnum;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,11 @@ import java.util.List;
  */
 @Service
 public class TalkSkillManage {
-
     @Autowired
     private TalkSkillMapper talkSkillMapper;
+
+    @Autowired
+    private TalkSkillCache talkSkillCache;
 
     public PageResult<TalkSkill> getForList(TalkSkillQuery talkSkillQuery) {
         int count = talkSkillMapper.queryCount(talkSkillQuery);
@@ -40,17 +44,32 @@ public class TalkSkillManage {
     @Transactional
     public int add(TalkSkill o) {
         talkSkillMapper.insert(o);
+        talkSkillCache.put(o);
+
         return o.getId();
     }
 
     @Transactional
     public void update(TalkSkill o) {
-        talkSkillMapper.update(o);
+        TalkSkill old = talkSkillMapper.load(o.getId());
+        if (old != null) {
+            talkSkillMapper.update(o);
+            if (TalkSkillStatusEnum.NORMAL.getValue().equals(old.getStatus())) {
+                talkSkillCache.put(o);
+            }
+        }
     }
 
     @Transactional
     public void updateStatus(int id, int newStatus) {
         talkSkillMapper.updateStatus(id, newStatus);
+
+        if (TalkSkillStatusEnum.NORMAL.getValue().equals(newStatus)) {
+            TalkSkill o = talkSkillMapper.load(id);
+            talkSkillCache.put(o);
+        } else {
+            talkSkillCache.remove(id);
+        }
     }
 
     public void updateStatusGroup(int[] ids, int newStatus) {
@@ -61,5 +80,6 @@ public class TalkSkillManage {
 
     public void delete(int id) {
         talkSkillMapper.updateIsDeleted(id, CommonConstant.DELETED_TAG);
+        talkSkillCache.remove(id);
     }
 }

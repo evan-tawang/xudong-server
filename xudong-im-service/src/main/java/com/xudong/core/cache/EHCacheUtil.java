@@ -71,7 +71,8 @@ public class EHCacheUtil {
      * @param value
      */
     public void put(Serializable key, Serializable value) {
-        cache.put(new Element(key, value));
+        Element e = new Element(key, value);
+        cache.put(e);
     }
 
     /**

@@ -64,7 +64,10 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testUpdateStatus() {
-        talkSkillService.updateStatus(RandomUtil.randomInt(10), 1);
+        talkSkillService.updateStatus(RandomUtil.randomInt(10), 2);
+        talkSkillService.updateStatus(RandomUtil.randomInt(10), 2);
+        talkSkillService.updateStatus(RandomUtil.randomInt(10), 2);
+
     }
 
     /**
@@ -80,6 +83,11 @@ public class TalkSkillManageTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testDelete() {
+        talkSkillService.delete(RandomUtil.randomInt(10));
+        talkSkillService.delete(RandomUtil.randomInt(10));
+        talkSkillService.delete(RandomUtil.randomInt(10));
+        talkSkillService.delete(RandomUtil.randomInt(10));
+        talkSkillService.delete(RandomUtil.randomInt(10));
         talkSkillService.delete(RandomUtil.randomInt(10));
     }
 }

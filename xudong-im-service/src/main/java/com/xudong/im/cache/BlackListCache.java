@@ -29,4 +29,5 @@ public class BlackListCache extends AbstractCache<BlackList> {
         setRedisExpireSeconds(14400);
     }
 
+
 }
