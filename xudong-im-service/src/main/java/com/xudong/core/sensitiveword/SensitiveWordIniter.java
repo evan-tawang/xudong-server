@@ -21,7 +21,7 @@ public class SensitiveWordIniter {
     private HashMap sensitiveWordMap;
 
     public SensitiveWordIniter() {
-        super();
+        sensitiveWordMap = new HashMap(4000);//预估4000个敏感词
     }
 
     /**
@@ -107,7 +107,8 @@ public class SensitiveWordIniter {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void addSensitiveWordToHashMap(Set<String> keyWordSet) {
-        sensitiveWordMap = new HashMap(keyWordSet.size());     //初始化敏感词容器，减少扩容操作
+        sensitiveWordMap.clear();//先清空
+
         String key = null;
         Map nowMap = null;
         Map<String, String> newWorMap = null;
