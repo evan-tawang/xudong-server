@@ -1,10 +1,14 @@
 package com.xudong.im.service;
 
-import com.xudong.im.cache.SensitiveWordCache;
+import com.xudong.core.sensitiveword.SensitiveWordIniter;
+import com.xudong.core.sensitiveword.SensitivewordFilter;
 import com.xudong.im.manage.SensitiveWordManage;
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author Evan.Shen
@@ -12,26 +16,36 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SensitiveWordService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SensitiveWordService.class);
 
     @Autowired
-    private SensitiveWordCache sensitiveWordCache;
+    private SensitiveWordIniter sensitiveWordIniter;
 
     @Autowired
     private SensitiveWordManage sensitiveWordManage;
 
+    private SensitivewordFilter sensitivewordFilter;
+
+    @PostConstruct
+    private void init() {
+        String words = sensitiveWordManage.get();
+        sensitiveWordIniter.initKeyWord(words);
+        sensitivewordFilter = new SensitivewordFilter(sensitiveWordIniter);
+    }
+
     public String filter(String content) {
-        String sensitiveWord = get();
-        return content;
+        String result = sensitivewordFilter.replaceSensitiveWord(content, 2, "*");
+        return result;
     }
 
-    private String get() {
-        String returnV = sensitiveWordCache.get();
-
-        if (StringUtils.isBlank(returnV)) {
-            returnV = sensitiveWordManage.get();
-            sensitiveWordCache.put(returnV);
-        }
-
-        return returnV;
-    }
+//    private String get() {
+//        String returnV = sensitiveWordCache.get();
+//
+//        if (StringUtils.isBlank(returnV)) {
+//            returnV = sensitiveWordManage.get();
+//            sensitiveWordCache.put(returnV);
+//        }
+//
+//        return returnV;
+//    }
 }

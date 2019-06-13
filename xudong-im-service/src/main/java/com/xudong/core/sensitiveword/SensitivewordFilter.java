@@ -17,8 +17,8 @@ public class SensitivewordFilter {
 	/**
 	 * 构造函数，初始化敏感词库
 	 */
-	public SensitivewordFilter(){
-		sensitiveWordMap = new SensitiveWordInit().initKeyWord();
+	public SensitivewordFilter(SensitiveWordIniter initor){
+		sensitiveWordMap = initor.getSensitiveWordMap();
 	}
 	
 	/**
@@ -145,7 +145,11 @@ public class SensitivewordFilter {
 	}
 	
 	public static void main(String[] args) {
-		SensitivewordFilter filter = new SensitivewordFilter();
+		SensitiveWordIniter initor = new SensitiveWordIniter();
+		Set<String> words = new HashSet<>();
+		initor.initKeyWord(words);
+
+		SensitivewordFilter filter = new SensitivewordFilter(initor);
 		System.out.println("敏感词的数量：" + filter.sensitiveWordMap.size());
 		String string = "傻逼吃饭了阿妈a,大傻逼";
 		//long beginTime = System.currentTimeMillis();

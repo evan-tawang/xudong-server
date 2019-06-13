@@ -4,7 +4,6 @@ import com.xudong.core.cache.EHCacheUtil;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -12,7 +11,8 @@ import javax.annotation.PostConstruct;
  * @author Evan.Shen
  * @since 2019-06-13
  */
-@Component
+//@Component
+@Deprecated
 public class SensitiveWordCache { //敏感词过滤cache不采用redis，不继承AbstractCache
 
     private static final String CACHE_NAME = SensitiveWordCache.class.getSimpleName();

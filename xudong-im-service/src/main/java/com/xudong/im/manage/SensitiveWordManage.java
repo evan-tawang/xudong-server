@@ -1,10 +1,11 @@
 package com.xudong.im.manage;
 
-import com.xudong.im.cache.SensitiveWordCache;
+import com.xudong.core.sensitiveword.SensitiveWordIniter;
 import com.xudong.im.data.mapper.SensitiveWordMapper;
 import com.xudong.im.domain.limit.SensitiveWord;
 import com.xudong.im.domain.limit.SensitiveWordQuery;
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +20,16 @@ import java.util.List;
  */
 @Service
 public class SensitiveWordManage {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SensitiveWordManage.class);
 
-    @Autowired
-    private SensitiveWordCache sensitiveWordCache;
+//    @Autowired
+////    private SensitiveWordCache sensitiveWordCache;
 
     @Autowired
     private SensitiveWordMapper sensitiveWordMapper;
+
+    @Autowired
+    private SensitiveWordIniter sensitiveWordIniter;
 
     @Transactional
     public void save(String words) {
@@ -40,7 +45,7 @@ public class SensitiveWordManage {
             sensitiveWordMapper.update(o);
         }
 
-        sensitiveWordCache.put(words);
+        sensitiveWordIniter.initKeyWord(words);
     }
 
     public String get() {
@@ -54,18 +59,18 @@ public class SensitiveWordManage {
         }
     }
 
-    public String[] getForArray() {
-        String words = get();
-
-        if (StringUtils.isBlank(words)) {
-            return new String[]{};
-        } else {
-            return words.split(",");
-        }
-    }
+//    public String[] getForArray() {
+//        String words = get();
+//
+//        if (StringUtils.isBlank(words)) {
+//            return new String[]{};
+//        } else {
+//            return words.split(",");
+//        }
+//    }
 
     public void refreshCache() {
         String words = get();
-        sensitiveWordCache.put(words);
+        sensitiveWordIniter.initKeyWord(words);
     }
 }

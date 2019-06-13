@@ -23,7 +23,7 @@ public class SensitiveWordServiceTest extends ServiceTestCaseSupport {
      */
     @Test
     public void testFilter() {
-       String result =  sensitiveWordService.filter("bbbb");
+       String result =  sensitiveWordService.filter("傻逼吃饭了阿妈a,大傻逼");
         LOGGER.info("====>>testFilter result1:" + result);
 
         result =  sensitiveWordService.filter("aaa");
@@ -31,25 +31,6 @@ public class SensitiveWordServiceTest extends ServiceTestCaseSupport {
 
         result =  sensitiveWordService.filter("ddd");
         LOGGER.info("====>>testFilter result2:" + result);
-    }
-
-
-    /**
-     * Method: get()
-     */
-    @Test
-    public void testGet() {
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = SensitiveWordService.getClass().getMethod("get"); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/
     }
 
 } 

@@ -1,5 +1,8 @@
 package com.xudong.core.sensitiveword;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
@@ -11,12 +14,13 @@ import java.util.*;
 /**
  * 初始化敏感词库，将敏感词加入到HashMap中，构建DFA算法模型
  */
-public class SensitiveWordInit {
-    private String ENCODING = "UTF-8";    //字符编码
-    @SuppressWarnings("rawtypes")
-    public HashMap sensitiveWordMap;
+public class SensitiveWordIniter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SensitiveWordIniter.class);
+    private String ENCODING = "UTF-8";
 
-    public SensitiveWordInit() {
+    private HashMap sensitiveWordMap;
+
+    public SensitiveWordIniter() {
         super();
     }
 
@@ -25,8 +29,8 @@ public class SensitiveWordInit {
      * @date 2014年4月20日 下午2:28:32
      * @version 1.0
      */
-    @SuppressWarnings("rawtypes")
-    public Map initKeyWord() {
+    @Deprecated
+    public void initKeyWord() {
         try {
             //读取敏感词库
             Set<String> keyWordSet = readSensitiveWordFile();
@@ -36,7 +40,34 @@ public class SensitiveWordInit {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return sensitiveWordMap;
+        //return sensitiveWordMap;
+    }
+
+    public void initKeyWord(Set<String> keyWordSet) {
+        //将敏感词库加入到HashMap中
+        addSensitiveWordToHashMap(keyWordSet);
+
+        //return sensitiveWordMap;
+    }
+
+    /**
+     * @param keyWordString 多个以','分割
+     */
+    public void initKeyWord(String keyWordString) {
+        if (StringUtils.isBlank(keyWordString)) {
+            LOGGER.error(">>>> Sensitive Word not inited");
+        } else {
+            String[] words = keyWordString.split(",");
+            Set<String> wordsSet = new HashSet<>(words.length);
+
+            for (String word : words) {
+                wordsSet.add(word);
+            }
+
+            addSensitiveWordToHashMap(wordsSet);
+
+            LOGGER.error(">>>> Sensitive Word inited，total 【{}】", wordsSet.size());
+        }
     }
 
     /**
@@ -115,7 +146,7 @@ public class SensitiveWordInit {
      * @version 1.0
      */
     @SuppressWarnings("resource")
-    private Set<String> readSensitiveWordFile( File file) throws Exception {
+    private Set<String> readSensitiveWordFile(File file) throws Exception {
         Set<String> set = null;
 
         InputStreamReader read = new InputStreamReader(new FileInputStream(file), ENCODING);
@@ -161,11 +192,18 @@ public class SensitiveWordInit {
         Set<String> words = new HashSet<>();
         for (String path : Arrays.asList(files)) {
             Set<String> word = readSensitiveWordFile(new File(path));
-            if(CollectionUtils.isEmpty(word)){
+            if (CollectionUtils.isEmpty(word)) {
                 continue;
             }
             words.addAll(word);
         }
         return words;
+    }
+
+    /**
+     *
+     */
+    public HashMap getSensitiveWordMap() {
+        return sensitiveWordMap;
     }
 }
