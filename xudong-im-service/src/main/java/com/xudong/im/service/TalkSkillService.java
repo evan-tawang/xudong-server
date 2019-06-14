@@ -5,6 +5,8 @@ import com.xudong.im.data.mapper.TalkSkillMapper;
 import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
 import com.xudong.im.enums.TalkSkillStatusEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.util.List;
  */
 @Service
 public class TalkSkillService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TalkSkillService.class);
+
     @Autowired
     private TalkSkillMapper talkSkillMapper;
 
@@ -29,8 +33,15 @@ public class TalkSkillService {
 
         if (list == null || list.isEmpty()) {
             list = getFromDB();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(">>>>> get [{}] talkskills from database", list.size());
+            }
             for (TalkSkill o : list) {
                 talkSkillCache.put(o);
+            }
+        } else {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(">>>>> get [{}] talkskills from cache", list.size());
             }
         }
 

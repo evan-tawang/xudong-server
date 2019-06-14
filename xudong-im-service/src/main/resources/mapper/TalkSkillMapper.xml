@@ -89,7 +89,7 @@
             </when>
             <otherwise>
                 <if test="sortByDefault">
-                    order by ts.gmt_create DESC
+                    order by ts.gmt_create DESC,ts.id desc
                 </if>
             </otherwise>
         </choose>

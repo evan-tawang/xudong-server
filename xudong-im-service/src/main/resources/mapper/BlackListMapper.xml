@@ -89,7 +89,7 @@
             </when>
             <otherwise>
                 <if test="sortByDefault">
-                    order by bl.gmt_create DESC
+                    order by bl.gmt_create DESC,bl.id desc
                 </if>
             </otherwise>
         </choose>

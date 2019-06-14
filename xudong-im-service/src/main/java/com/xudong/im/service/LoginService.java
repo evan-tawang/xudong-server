@@ -1,9 +1,9 @@
 package com.xudong.im.service;
 
-import com.xudong.core.util.RandomUtil;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.StaffLoginDTO;
+import com.xudong.im.domain.user.support.UserAgent;
 import org.evanframework.dto.OperateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +33,14 @@ public class LoginService {
         OperateResult<StaffAgent> result = OperateResult.create();
 
         if (result.isSuccess()) {
+            UserAgent agent = result.getData();
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(">>>> login success, usertype [{}], account [{}], id [{}]", agent.getType(), agent.getAccount(), agent.getId());
+            }
             handlerLoginSuccess(result, loginDto);
         } else {
+            LOGGER.warn(">>>> login fail, account [{}]", loginDto.getAccount());
+
             //handlerLoginFail(dto, result, user);
         }
 
