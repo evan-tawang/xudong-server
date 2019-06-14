@@ -15,6 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
         "com.xudong.im.service",
         "com.xudong.im.session",
         "com.xudong.im.web",
+        "com.xudong.im.exception",
         "com.xudong.core.websocket",
 })
 @EnableWebSocket

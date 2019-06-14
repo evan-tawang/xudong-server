@@ -33,11 +33,11 @@ public class LoginService {
         OperateResult<StaffAgent> result = OperateResult.create();
 
         if (result.isSuccess()) {
+            handlerLoginSuccess(result, loginDto);
             UserAgent agent = result.getData();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(">>>> login success, usertype [{}], account [{}], id [{}]", agent.getType(), agent.getAccount(), agent.getId());
             }
-            handlerLoginSuccess(result, loginDto);
         } else {
             LOGGER.warn(">>>> login fail, account [{}]", loginDto.getAccount());
 

@@ -155,6 +155,4 @@ public class ChatManage {
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
         return chatRecordRepository.queryPage(chatRecordQuery);
     }
-
-
 }
