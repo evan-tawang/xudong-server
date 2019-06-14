@@ -7,9 +7,12 @@ import com.xudong.im.domain.help.TalkSkill;
 import com.xudong.im.domain.help.TalkSkillQuery;
 import com.xudong.im.enums.TalkSkillStatusEnum;
 import org.evanframework.dto.PageResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,9 @@ import java.util.List;
  */
 @Service
 public class TalkSkillManage {
+    private final static String MODULE_NAME = "常用话术";
+    private final static Logger LOGGER = LoggerFactory.getLogger(TalkSkillManage.class);
+
     @Autowired
     private TalkSkillMapper talkSkillMapper;
 
@@ -43,6 +49,9 @@ public class TalkSkillManage {
 
     @Transactional
     public int add(TalkSkill o) {
+        Assert.notNull(o, "添加" + MODULE_NAME + "时，内容不能为空");
+        Assert.hasLength(o.getContent(), "添加" + MODULE_NAME + "时，内容不能为空");
+
         talkSkillMapper.insert(o);
         talkSkillCache.put(o);
 
@@ -51,6 +60,10 @@ public class TalkSkillManage {
 
     @Transactional
     public void update(TalkSkill o) {
+        Assert.notNull(o, "修改" + MODULE_NAME + "时，内容不能为空");
+        Assert.notNull(o.getId(), "修改" + MODULE_NAME + "时，id不能为空");
+        Assert.hasLength(o.getContent(), "修改" + MODULE_NAME + "时，内容不能为空");
+
         TalkSkill old = talkSkillMapper.load(o.getId());
         if (old != null) {
             talkSkillMapper.update(o);
@@ -62,6 +75,13 @@ public class TalkSkillManage {
 
     @Transactional
     public void updateStatus(int id, int newStatus) {
+        if (id == 0) {
+            throw new IllegalArgumentException("修改" + MODULE_NAME + "状态时，id不能为空或0");
+        }
+        if (newStatus == 0) {
+            throw new IllegalArgumentException("修改" + MODULE_NAME + "状态时，状态不能为空或0");
+        }
+
         talkSkillMapper.updateStatus(id, newStatus);
 
         if (TalkSkillStatusEnum.NORMAL.getValue().equals(newStatus)) {
@@ -79,6 +99,10 @@ public class TalkSkillManage {
     }
 
     public void delete(int id) {
+        if (id == 0) {
+            throw new IllegalArgumentException("删除" + MODULE_NAME + "状态时，id不能为空或0");
+        }
+
         talkSkillMapper.updateIsDeleted(id, CommonConstant.DELETED_TAG);
         talkSkillCache.remove(id);
     }
