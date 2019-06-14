@@ -51,8 +51,10 @@ spring:
 #        max-wait: 2000ms
   jackson:
     default-property-inclusion: non_null
+    time-zone: GMT+8
     serialization:
       write-dates-as-timestamps: true
+
   mvc:
     throw-exception-if-no-handler-found: true
     #spring.resources.add-mappings=false
