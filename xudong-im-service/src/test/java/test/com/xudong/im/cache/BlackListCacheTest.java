@@ -1,6 +1,6 @@
 package test.com.xudong.im.cache;
 
-import com.xudong.im.cache.BlackListCache;
+import com.xudong.im.cache.BlackListRedis;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.com.xudong.im.support.CacheTestCaseSupport;
@@ -8,7 +8,7 @@ import test.com.xudong.im.support.CacheTestCaseSupport;
 public class BlackListCacheTest extends CacheTestCaseSupport {
 
     @Autowired
-    private BlackListCache blackListCache;
+    private BlackListRedis blackListCache;
 
     @Test
     public void test() {

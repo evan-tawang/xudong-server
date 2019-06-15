@@ -12,9 +12,10 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Set;
 
+//用于缓存黑名单原始数据库的数据
 @Component
-public class BlackListCache {
-    private static final String CACHE_NAME = BlackListCache.class.getSimpleName();
+public class BlackListRedis {
+    private static final String CACHE_NAME = BlackListRedis.class.getSimpleName();
 
     private final static int REDIS_DATABASE_INDEX = 8;
 
@@ -36,6 +37,11 @@ public class BlackListCache {
         hashOperations = redisTemplate.boundHashOps(CACHE_NAME);
     }
 
+    public List<String> getMatchingRegexList() {
+        return null;
+    }
+
+    //
     public void put(BlackList o) {
         hashOperations.put(o.getId() + "", o);
     }
@@ -44,9 +50,9 @@ public class BlackListCache {
         return hashOperations.values();
     }
 
-    public BlackList getOne(Integer id) {
-        return hashOperations.get(id + "");
-    }
+//    public BlackList getOne(Integer id) {
+//        return hashOperations.get(id + "");
+//    }
 
     public void remove(Integer id) {
         hashOperations.delete(id + "");

@@ -20,6 +20,17 @@ public class BlacklistServiceTest extends ServiceTestCaseSupport {
     @Test
     public void testIsBlock() {
         Boolean result = blacklistService.isBlock("129.22.33.11");
+        LOGGER.info("====>>testIsBlock:" + result);
+
+        result = blacklistService.isBlock("129.22.33.11");
+
+        LOGGER.info("====>>testIsBlock:" + result);
+
+        result = blacklistService.isBlock("129.22.33.11");
+
+        LOGGER.info("====>>testIsBlock:" + result);
+
+        result = blacklistService.isBlock("129.22.33.11");
 
         LOGGER.info("====>>testIsBlock:" + result);
     }

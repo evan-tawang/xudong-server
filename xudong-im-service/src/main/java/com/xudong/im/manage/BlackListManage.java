@@ -1,8 +1,12 @@
 package com.xudong.im.manage;
 
-import com.xudong.im.cache.BlackListCache;
+import com.xudong.core.blacklist.BlacklistIniter;
+import com.xudong.core.blacklist.BlacklistReader;
+import com.xudong.im.cache.BlackListEHCache;
+import com.xudong.im.cache.BlackListRedis;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.data.mapper.BlackListMapper;
+import com.xudong.im.domain.BlacklistMatchingRegexList;
 import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.limit.BlackListQuery;
 import com.xudong.im.enums.BlacklistStatusEnum;
@@ -25,16 +29,18 @@ import java.util.List;
  * @since 2019/6/7
  */
 @Service
-public class BlackListManage {
+public class BlackListManage  {
     private final static String MODULE_NAME = "黑名单";
     private final static Logger LOGGER = LoggerFactory.getLogger(BlackListManage.class);
-
 
     @Autowired
     private BlackListMapper blackListMapper;
 
     @Autowired
-    private BlackListCache blackListCache;
+    private BlackListRedis blackListRedis;
+
+    @Autowired
+    private BlackListEHCache blackListEHCache;
 
     /**
      * 分页
@@ -70,7 +76,7 @@ public class BlackListManage {
         Assert.hasLength(o.getContent(), "添加" + MODULE_NAME + "时，内容不能为空");
 
         blackListMapper.insert(o);
-        blackListCache.put(o);
+        blackListRedis.put(o);
 
         return o.getId();
     }
@@ -84,14 +90,16 @@ public class BlackListManage {
     public void addGroup(String blackListContents) {
         Assert.hasLength(blackListContents, "添加" + MODULE_NAME + "时，内容不能为空");
 
-        blackListContents = StringUtils.replace(blackListContents, "\n", ",");
+        blackListContents = StringUtils.replace(
+                StringUtils.replace(blackListContents, "\n", ",")
+                , "，", ",");
 
         String[] contents = blackListContents.split(",");
         for (String content : contents) {
             BlackList o = new BlackList();
             o.setContent(content);
             blackListMapper.insert(o);
-            blackListCache.put(o);
+            blackListRedis.put(o);
         }
     }
 
@@ -105,7 +113,7 @@ public class BlackListManage {
         if (old != null) {
             blackListMapper.update(o);
             if (BlacklistStatusEnum.NORMAL.getValue().equals(old.getStatus())) {
-                blackListCache.put(o);
+                blackListRedis.put(o);
             }
         }
     }
@@ -123,9 +131,9 @@ public class BlackListManage {
 
         if (BlacklistStatusEnum.NORMAL.getValue().equals(newStatus)) {
             BlackList o = blackListMapper.load(id);
-            blackListCache.put(o);
+            blackListRedis.put(o);
         } else {
-            blackListCache.remove(id);
+            blackListRedis.remove(id);
         }
     }
 
@@ -147,20 +155,19 @@ public class BlackListManage {
         }
 
         blackListMapper.updateIsDeleted(id, CommonConstant.DELETED_TAG);
-        blackListCache.remove(id);
+        blackListRedis.remove(id);
     }
 
     public void refreshCache() {
-        blackListCache.clear();
-
-        List<BlackList> list = getFromDB();
-
-        for (BlackList o : list) {
-            blackListCache.put(o);
+        blackListRedis.clear();
+        List<BlackList> list = getNormal();
+        //List<String> matchingRegexList = blacklistIniter.init(list);
+        for (BlackList e : list) {
+            blackListRedis.put(e);
         }
     }
 
-    private List<BlackList> getFromDB() {
+    public List<BlackList> getNormal() {
         BlackListQuery query = new BlackListQuery();
         query.setStatus(BlacklistStatusEnum.NORMAL.getValue());
         return blackListMapper.queryList(query);

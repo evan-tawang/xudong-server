@@ -3,6 +3,7 @@ package test.com.xudong.im.support;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * Created on 2017/7/18.
@@ -18,5 +19,6 @@ import org.springframework.context.annotation.ComponentScan;
         "com.xudong.im.service",
         "com.xudong.core.websocket"
 })
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceTestBeansConfig {
 }
