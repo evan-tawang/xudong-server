@@ -60,6 +60,8 @@ public class BlacklistIniter {
                 } else { //单个ip
                     matchingRegexList.add(content);
                 }
+            }else{
+                matchingRegexList.add(content);
             }
         }
 

@@ -20,7 +20,7 @@ import java.util.Map;
  * @version 1.0
  * @since <pre>六月 7, 2019</pre>
  */
-public class BlackListManageControllerTest extends WebTestCaseSupport {
+public class BlackListControllerTest extends WebTestCaseSupport {
 
     private ParameterizedTypeReference<ApiResponse<List<BlackList>>> responseType = new ParameterizedTypeReference<ApiResponse<List<BlackList>>>() {
     };
@@ -127,5 +127,12 @@ public class BlackListManageControllerTest extends WebTestCaseSupport {
 
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class,  RandomUtil.randomInt(10));
         LOGGER.info("========>>testDelete 结果1：" + response);
+    }
+
+    @Test
+    public void testSetBlock() {
+        String url = getFullApiUri("/blackList/service/setBlock?content={0}");
+        ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class,  "111222333");
+        LOGGER.info("========>>testSetBlock 结果1：" + response);
     }
 } 

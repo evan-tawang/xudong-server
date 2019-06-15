@@ -10,6 +10,7 @@ import com.xudong.im.domain.BlacklistMatchingRegexList;
 import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.limit.BlackListQuery;
 import com.xudong.im.enums.BlacklistStatusEnum;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
@@ -171,5 +172,21 @@ public class BlackListManage  {
         BlackListQuery query = new BlackListQuery();
         query.setStatus(BlacklistStatusEnum.NORMAL.getValue());
         return blackListMapper.queryList(query);
+    }
+
+    /**
+     *
+     * @param val
+     */
+    public void setBlock(String val) {
+        BlackList o = blackListMapper.getByContent(val);
+
+        if(o == null){
+            o = new BlackList();
+            o.setContent(val);
+            add(o);
+        }else if (BlacklistStatusEnum.STOP.getValue().equals(o.getStatus())) {
+            updateStatus(o.getId(),BlacklistStatusEnum.NORMAL.getValue());
+        }
     }
 }

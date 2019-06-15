@@ -130,4 +130,8 @@
     <delete id="delete" parameterType="int">
     		delete from black_list where id=#{id}
     	</delete>
+
+    <select id="getByContent" parameterType="string" resultMap="blackListMap">
+        select * from black_list where content=#{content}
+    </select>
 </mapper>
