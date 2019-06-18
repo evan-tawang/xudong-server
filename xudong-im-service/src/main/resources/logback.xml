@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<configuration scan="true" scanPeriod="10 seconds">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <contextName>xudong-im</contextName>
+    <!--   <property name="LOG_DIR" value="/mizhi-btbs/log" />-->
+    <property name="LOG_DIR" value="${LOG_DIR}"/>
+    <property name="PATTERN" value="%date{yy-MM-dd HH:mm:ss} %level [%thread] %msg。%caller{1}"/>
+    <property name="PATTERN_OPERATION_LOG" value="%msg"/>
+
+    <appender name="all" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_DIR}/main.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/main/main-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${PATTERN}</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="task" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_DIR}/task.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/task/task-%d{yyyyMM}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${PATTERN}</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="xudong" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_DIR}/btbs.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/btbs/btbs-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${PATTERN}</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="database" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_DIR}/database.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/database/database-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${PATTERN}</Pattern>
+        </layout>
+    </appender>
+
+    <!-- 只用保存输出error级别的日志 -->
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_DIR}/error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/error/error-%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${PATTERN}</Pattern>
+        </layout>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--<logger name="org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod" level="trace" ></logger>-->
+    <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"
+            level="warn"></logger>
+
+    <logger name="springfox" level="warn"></logger>
+
+    <logger name="java.sql.Statement" level="debug" addtivity="false">
+        <appender-ref ref="database"/>
+    </logger>
+    <logger name="java.sql.PreparedStatement" level="debug" addtivity="false">
+        <appender-ref ref="database"/>
+    </logger>
+    <logger name="java.sql.ResultSet" level="debug" addtivity="false">
+        <appender-ref ref="database"/>
+    </logger>
+    <logger name="org.springframework.jdbc.core" level="trace" addtivity="false">
+        <appender-ref ref="database"/>
+    </logger>
+    <logger name="com.xudong.im.data.mapper" level="debug" addtivity="false">
+        <appender-ref ref="database"/>
+    </logger>
+    <logger name="org.springframework.data.mongodb.core" level="debug" addtivity="false">
+        <appender-ref ref="database"/>
+    </logger>
+
+    <logger name="com.xudong" level="DEBUG" addtivity="false">
+        <appender-ref ref="xudong"/>
+    </logger>
+    <logger name="org.evanframework" level="DEBUG" addtivity="false">
+        <appender-ref ref="xudong"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="all"/>
+        <appender-ref ref="error"/>
+    </root>
+</configuration>
