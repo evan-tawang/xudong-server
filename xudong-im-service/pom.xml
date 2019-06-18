@@ -11,7 +11,7 @@
 
     <groupId>com.xudong</groupId>
     <artifactId>xudong-im-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <dependencies>
         <!-- xudong -->
