@@ -36,7 +36,7 @@ public class LoginService {
             handlerLoginSuccess(result, loginDto);
             UserAgent agent = result.getData();
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(">>>> login success, usertype [{}], account [{}], id [{}]", agent.getType(), agent.getAccount(), agent.getId());
+                LOGGER.debug(">>>> login success, usertype [{}], account [{}], id [{}]", agent.getUserType(), agent.getAccount(), agent.getId());
             }
         } else {
             LOGGER.warn(">>>> login fail, account [{}]", loginDto.getAccount());

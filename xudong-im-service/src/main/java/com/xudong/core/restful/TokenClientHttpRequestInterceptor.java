@@ -32,7 +32,7 @@ public class TokenClientHttpRequestInterceptor implements ClientHttpRequestInter
 
         if (userAgent != null) {
             headers.set("token", userAgent.getToken());
-            headers.set("X-Forwarded-For", userAgent.getIp());
+            headers.set("X-Forwarded-For", userAgent.getRemoteAddr());
         }
 
 //        String random = System.currentTimeMillis() + "";

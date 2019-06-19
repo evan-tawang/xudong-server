@@ -68,7 +68,7 @@ public class UserAgentSession {
 
     public void save(UserAgent userAgent) {
         Assert.notNull(userAgent, "登录用户不能为空");
-        Assert.hasLength(userAgent.getIp(), "登录用户Ip不能为空");
+        Assert.hasLength(userAgent.getRemoteAddr(), "登录用户Ip不能为空");
         Assert.notNull(userAgent.getId(), "登录用户Id不能为空");
         Assert.hasLength(userAgent.getAccount(), "登录用户账号不能为空");
 
@@ -76,7 +76,7 @@ public class UserAgentSession {
         String userAgentCacheKey = DigestUtils.sha1Hex(DigestUtils.sha1Hex(userAgent.getId() + "-" + userAgent.getUserType()));
         //String userAgentCacheKey = DigestUtils.sha1Hex(System.currentTimeMillis() + "-" + UUID.randomUUID());
 
-        String tokenSecret = DigestUtils.sha1Hex(userAgent.getIp());//生成用于加密token的加密秘钥
+        String tokenSecret = DigestUtils.sha1Hex(userAgent.getRemoteAddr());//生成用于加密token的加密秘钥
         String token = createToken(userAgent.getUserType(), userAgentCacheKey, tokenSecret); //生成token：cacheKey进行AES加密,秘钥为 sha1(ip);
         userAgent.setToken(token);
         userAgent.setTokenSecret(DigestUtils.sha384Hex(token));
@@ -87,7 +87,7 @@ public class UserAgentSession {
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(">>>>> 存储用户会话，userAgentCacheKey【{}】，id【{}】，ip【{}】,account【{}】,token【{}】"
-                    , userAgentCacheKey, userAgent.getId(), userAgent.getIp(), userAgent.getAccount(), token);
+                    , userAgentCacheKey, userAgent.getId(), userAgent.getRemoteAddr(), userAgent.getAccount(), token);
         }
 
         //String userAgentKeyCacheKey = DigestUtils.sha1Hex(userAgent.getId() + "");
@@ -139,7 +139,7 @@ public class UserAgentSession {
             String remotingAddr = IpUtil.getRemoteIp(request);
 
             if (userAgent != null
-                    && !remotingAddr.equals(userAgent.getIp())
+                    && !remotingAddr.equals(userAgent.getRemoteAddr())
             ) {
                 returnV = true;
             }

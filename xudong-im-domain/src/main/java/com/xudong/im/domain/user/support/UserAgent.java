@@ -27,7 +27,18 @@ public abstract class UserAgent implements Serializable {
      */
     public abstract Integer getUserType();
 
-    /** */
+    /**
+     * 定义一个空的setter json反序列化的时候需要用到
+     *
+     * @param userType
+     */
+    public void setUserType(Integer userType) {
+
+    }
+
+    /**
+     *
+     */
     public Integer getStatus() {
         return status;
     }
@@ -57,18 +68,6 @@ public abstract class UserAgent implements Serializable {
      */
     public void setAccount(String account) {
         this.account = account;
-    }
-
-    public String getType() {
-        return null;
-    }
-
-
-    /**
-     * 登录时的ip
-     */
-    public String getIp() {
-        return this.remoteAddr;
     }
 
     /**
@@ -113,7 +112,6 @@ public abstract class UserAgent implements Serializable {
         this.tokenSecret = tokenSecret;
     }
 
-
     /**
      * 远程地址
      */
@@ -127,7 +125,6 @@ public abstract class UserAgent implements Serializable {
     public void setRemoteAddr(String remoteAddr) {
         this.remoteAddr = remoteAddr;
     }
-
 
     /**
      * http请求的user-agent
@@ -143,7 +140,6 @@ public abstract class UserAgent implements Serializable {
         this.userAgentHeader = userAgentHeader;
     }
 
-
     public Date getLastLoginTime() {
         return lastLoginTime;
     }
@@ -151,7 +147,6 @@ public abstract class UserAgent implements Serializable {
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
     }
-
 
     /**
      * 手机
@@ -166,5 +161,4 @@ public abstract class UserAgent implements Serializable {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
-
 }

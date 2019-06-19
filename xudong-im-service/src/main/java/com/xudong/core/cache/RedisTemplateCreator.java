@@ -36,7 +36,7 @@ public class RedisTemplateCreator {
     private RedisSentinelConfiguration sentinelConfig;
 
     private RedisSerializer stringSerializer = new StringRedisSerializer();
-    private GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+    private GenericFastJson2JsonRedisSerializer genericJackson2JsonRedisSerializer = new GenericFastJson2JsonRedisSerializer();
     private JdkSerializationRedisSerializer jdkSerializationRedisSerializer = new JdkSerializationRedisSerializer();
 
     public RedisTemplateCreator(RedisConnectionFactory connectionFactory) {

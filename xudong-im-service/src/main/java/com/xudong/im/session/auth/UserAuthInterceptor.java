@@ -1,7 +1,6 @@
 package com.xudong.im.session.auth;
 
 
-import com.xudong.core.util.CollectionUtil;
 import com.xudong.core.util.Excludor;
 import com.xudong.core.util.PathUtils;
 import com.xudong.im.domain.user.support.UserAgent;
