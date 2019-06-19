@@ -4,8 +4,7 @@ package test.com.xudong.im.support;
 import com.xudong.core.restful.TokenClientHttpRequestInterceptor;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
-import com.xudong.im.enums.UserTypeEnum;
-import com.xudong.im.session.UserAgentContext;
+import com.xudong.im.session.reader.UserAgentContext;
 import com.xudong.im.session.UserAgentSession;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -20,9 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by evan.shen on 2017/3/16.

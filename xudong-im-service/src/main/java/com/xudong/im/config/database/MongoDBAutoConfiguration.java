@@ -1,4 +1,4 @@
-package com.xudong.im.config;
+package com.xudong.im.config.database;
 
 import org.springframework.context.annotation.Configuration;
 

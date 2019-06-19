@@ -1,7 +1,6 @@
-package com.xudong.im.session;
+package com.xudong.im.session.reader;
 
 
-import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 
 /**

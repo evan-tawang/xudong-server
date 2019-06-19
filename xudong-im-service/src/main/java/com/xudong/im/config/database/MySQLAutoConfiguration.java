@@ -1,4 +1,4 @@
-package com.xudong.im.config;
+package com.xudong.im.config.database;
 
 import com.xudong.core.mysql.MybatisHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
