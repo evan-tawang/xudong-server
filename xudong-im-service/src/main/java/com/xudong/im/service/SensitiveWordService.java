@@ -1,7 +1,7 @@
 package com.xudong.im.service;
 
 import com.xudong.core.sensitiveword.SensitiveWordIniter;
-import com.xudong.core.sensitiveword.SensitivewordFilter;
+import com.xudong.core.sensitiveword.SensitiveWordFilter;
 import com.xudong.im.manage.SensitiveWordManage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +24,13 @@ public class SensitiveWordService {
     @Autowired
     private SensitiveWordManage sensitiveWordManage;
 
-    private SensitivewordFilter sensitivewordFilter;
+    private SensitiveWordFilter sensitivewordFilter;
 
     @PostConstruct
     private void init() {
         String words = sensitiveWordManage.get();
         sensitiveWordIniter.initKeyWord(words);
-        sensitivewordFilter = new SensitivewordFilter(sensitiveWordIniter);
+        sensitivewordFilter = new SensitiveWordFilter(sensitiveWordIniter);
     }
 
     public String filter(String content) {

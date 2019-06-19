@@ -2,6 +2,7 @@ package com.xudong.im.manage;
 
 import com.xudong.core.util.UUIDUtil;
 import com.xudong.im.cache.ChatSessionCache;
+import com.xudong.im.cache.ChatWaitConnectQueueCache;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
@@ -9,6 +10,7 @@ import com.xudong.im.domain.chat.*;
 import com.xudong.core.websocket.WebSocketToClientUtil;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.UserTypeEnum;
+import com.xudong.im.service.SensitiveWordService;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,11 @@ public class ChatManage {
     @Autowired
     private ChatRecordRepository chatRecordRepository;
     @Autowired
+    private SensitiveWordService sensitiveWordService;
+    @Autowired
     private ChatSessionCache chatSessionCache;
+    @Autowired
+    private ChatWaitConnectQueueCache chatWaitConnectQueueCache;
 
     public ChatRecord sendMsg(ChatDTO chatDTO, UserAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
@@ -67,6 +73,9 @@ public class ChatManage {
 
         chatRecordRepository.insert(chatRecord);
 
+        String filteredContent = sensitiveWordService.filter(chatDTO.getContent());
+        chatRecord.setContent(filteredContent);
+
         webSocketToClientUtil.sendMsg(chatRecord);
         return chatRecord;
     }
@@ -81,12 +90,17 @@ public class ChatManage {
         String visitorId = agent == null ? UUIDUtil.nameUUIDFromBytes(remoteAddr) : agent.getId() + "";
         ChatSession session = createSession(staffId, visitorId);
 
-        webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
+        if(session == null){
+            chatWaitConnectQueueCache.leftPush(visitorId);
+            return null;
+        } else {
+            webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
 
-        // 缓存会话
-        chatSessionCache.put(staffId, session.getId());
+            // 缓存会话
+            chatSessionCache.put(staffId, session.getId());
 
-        return new ChatSession(session.getId(), staffId, visitorId);
+            return new ChatSession(session.getId(), staffId, visitorId);
+        }
     }
 
     public void disconnect(String sessionId) {

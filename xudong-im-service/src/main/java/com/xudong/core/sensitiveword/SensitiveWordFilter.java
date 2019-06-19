@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  *  敏感词过滤
  */
-public class SensitivewordFilter {
+public class SensitiveWordFilter {
 	@SuppressWarnings("rawtypes")
 	private Map sensitiveWordMap = null;
 	public static int minMatchTYpe = 1;      //最小匹配规则
@@ -17,7 +17,7 @@ public class SensitivewordFilter {
 	/**
 	 * 构造函数，初始化敏感词库
 	 */
-	public SensitivewordFilter(SensitiveWordIniter initor){
+	public SensitiveWordFilter(SensitiveWordIniter initor){
 		sensitiveWordMap = initor.getSensitiveWordMap();
 	}
 	
@@ -129,7 +129,7 @@ public class SensitivewordFilter {
 				matchFlag++;     //找到相应key，匹配标识+1 
 				if("1".equals(nowMap.get("isEnd"))){       //如果为最后一个匹配规则,结束循环，返回匹配标识数
 					flag = true;       //结束标志位为true   
-					if(SensitivewordFilter.minMatchTYpe == matchType){    //最小规则，直接返回,最大规则还需继续查找
+					if(SensitiveWordFilter.minMatchTYpe == matchType){    //最小规则，直接返回,最大规则还需继续查找
 						break;
 					}
 				}
@@ -149,7 +149,7 @@ public class SensitivewordFilter {
 		Set<String> words = new HashSet<>();
 		initor.initKeyWord(words);
 
-		SensitivewordFilter filter = new SensitivewordFilter(initor);
+		SensitiveWordFilter filter = new SensitiveWordFilter(initor);
 		System.out.println("敏感词的数量：" + filter.sensitiveWordMap.size());
 		String string = "傻逼吃饭了阿妈a,大傻逼";
 		//long beginTime = System.currentTimeMillis();

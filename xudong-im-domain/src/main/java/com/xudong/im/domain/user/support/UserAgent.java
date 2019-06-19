@@ -1,5 +1,7 @@
 package com.xudong.im.domain.user.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,6 +27,7 @@ public abstract class UserAgent implements Serializable {
     /**
      * 用户类型 1 访客 2 客服
      */
+    @JsonIgnore
     public abstract Integer getUserType();
 
     /** */
@@ -59,14 +62,14 @@ public abstract class UserAgent implements Serializable {
         this.account = account;
     }
 
-    public String getType() {
-        return null;
-    }
-
+//    public String getType() {
+//        return null;
+//    }
 
     /**
      * 登录时的ip
      */
+    @JsonIgnore
     public String getIp() {
         return this.remoteAddr;
     }
