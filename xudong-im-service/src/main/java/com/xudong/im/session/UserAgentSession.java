@@ -6,7 +6,9 @@ import com.xudong.core.util.AESException;
 import com.xudong.core.util.AESUtil;
 import com.xudong.core.util.IpUtil;
 import com.xudong.im.constant.CommonConstant;
+import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
+import com.xudong.im.enums.OnlineStatusEnum;
 import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.exception.RemotingAddrExcetion;
 import com.xudong.im.session.cache.StaffAgentCache;
@@ -25,6 +27,7 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -186,6 +189,34 @@ public class UserAgentSession {
 
                 userAgentCache.put(userAgentCacheKey, userAgent);
             }
+        }
+    }
+
+    /**
+     * 获取在线客服
+     *
+     * @return
+     */
+    public List<StaffAgent> getOnlineStaffs() {
+        return staffAgentCache.getByOnlineStatus(OnlineStatusEnum.ONLINE.getValue());
+    }
+
+
+    /**
+     * 更新客服自己的在线状态
+     *
+     * @param status 更新后的状态
+     * @see com.xudong.im.enums.OnlineStatusEnum
+     */
+    public void updateOnlineStatus(Integer status, HttpServletRequest request) {
+        UserAgent loginUser = get(request);
+
+        String userAgentCacheKey = DigestUtils.sha1Hex(DigestUtils.sha1Hex(loginUser.getId() + "-" + loginUser.getUserType()));
+
+        if (StringUtils.isNotBlank(userAgentCacheKey)) {
+            loginUser.setOnlineStatus(status);
+            AbstractCache<UserAgent> userAgentCache = getUserAgentCache(loginUser.getUserType());
+            userAgentCache.put(userAgentCacheKey, loginUser);
         }
     }
 

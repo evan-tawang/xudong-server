@@ -4,6 +4,7 @@ import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.StaffLoginDTO;
 import com.xudong.im.domain.user.support.UserAgent;
+import com.xudong.im.enums.OnlineStatusEnum;
 import org.evanframework.dto.OperateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,7 @@ public class LoginService {
         userAgent.setAccount(loginDto.getAccount());
         // TODO: default
         userAgent.setId(CommonConstant.DEFAULT_STAFF_ID);
+        userAgent.setOnlineStatus(OnlineStatusEnum.ONLINE.getValue());
 
         result.setData(userAgent);
     }

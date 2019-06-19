@@ -23,6 +23,8 @@ public abstract class UserAgent implements Serializable {
     private String tokenSecret;
     private String userAgentHeader;//user-agent
     private Date lastLoginTime;
+    private Integer onlineStatus;
+
 
     /**
      * 用户类型 1 访客 2 客服
@@ -175,5 +177,37 @@ public abstract class UserAgent implements Serializable {
      */
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+
+    /**
+     * @see com.xudong.im.enums.OnlineStatusEnum
+     */
+    public Integer getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    /**
+     * @see com.xudong.im.enums.OnlineStatusEnum
+     */
+    public void setOnlineStatus(Integer onlineStatus) {
+        this.onlineStatus = onlineStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "UserAgent{" +
+                "id='" + id + '\'' +
+                ", account='" + account + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", userName='" + userName + '\'' +
+                ", remoteAddr='" + remoteAddr + '\'' +
+                ", status=" + status +
+                ", token='" + token + '\'' +
+                ", tokenSecret='" + tokenSecret + '\'' +
+                ", userAgentHeader='" + userAgentHeader + '\'' +
+                ", lastLoginTime=" + lastLoginTime +
+                ", onlineStatus=" + onlineStatus +
+                '}';
     }
 }

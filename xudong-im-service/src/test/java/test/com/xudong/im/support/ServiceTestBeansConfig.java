@@ -12,7 +12,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  */
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {
-        "com.xudong.im.config",
+        "com.xudong.im.config.cache",
+        "com.xudong.im.config.database",
+        "com.xudong.im.config.service",
         "com.xudong.im.data",
         "com.xudong.im.cache",
         "com.xudong.im.manage",

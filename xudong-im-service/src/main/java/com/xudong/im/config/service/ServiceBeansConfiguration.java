@@ -1,5 +1,6 @@
-package com.xudong.im.config;
+package com.xudong.im.config.service;
 
+import com.xudong.core.sensitiveword.SensitiveWordIniter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.UrlPathHelper;
@@ -9,7 +10,12 @@ import org.springframework.web.util.UrlPathHelper;
  * @since 2019-06-19
  */
 @Configuration
-public class UtilBeansConfiguration {
+public class ServiceBeansConfiguration {
+    @Bean
+    public SensitiveWordIniter sensitiveWordIniter() {
+        return new SensitiveWordIniter();
+    }
+
     /**
      * url处理工具
      */

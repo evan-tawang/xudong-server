@@ -1,6 +1,5 @@
 package com.xudong.im.config;
 
-import com.xudong.core.sensitiveword.SensitiveWordIniter;
 import com.xudong.im.session.UserAgentSession;
 import com.xudong.im.session.auth.UserAuthInterceptor;
 import com.xudong.im.session.reader.UserAgentReadFilter;
@@ -14,6 +13,11 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistration
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UrlPathHelper;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,10 +33,11 @@ import java.util.Set;
 public class ApplicationBeansConfiguration implements WebMvcConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBeansConfiguration.class);
 
-    @Bean
-    public SensitiveWordIniter sensitiveWordIniter() {
-        return new SensitiveWordIniter();
-    }
+    @Autowired
+    private UrlPathHelper urlPathHelper;
+
+    @Autowired
+    private UserAgentSession userAgentSession;
 
     @Bean
     public FilterRegistrationBean loginUserFilterBean(UrlPathHelper urlPathHelper, UserAgentSession userAgentSession) {
@@ -53,12 +58,6 @@ public class ApplicationBeansConfiguration implements WebMvcConfigurer {
 
         return loginUserFilterBean;
     }
-
-    @Autowired
-    private UrlPathHelper urlPathHelper;
-
-    @Autowired
-    private  UserAgentSession userAgentSession;
 
     /**
      * 用户权限判断
@@ -93,5 +92,20 @@ public class ApplicationBeansConfiguration implements WebMvcConfigurer {
         }
 
         LOGGER.info(">>>> UserAuthInterceptor added, excludes {}", set);
+    }
+
+    @Bean
+    public Docket swaggerApi() {
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("Api document")
+                .version("1.0")
+                .build();
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo)
+                //.globalOperationParameters(pars)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.xudong"))
+                .build();
     }
 }
