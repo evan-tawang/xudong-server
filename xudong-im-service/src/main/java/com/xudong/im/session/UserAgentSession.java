@@ -11,6 +11,7 @@ import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.exception.RemotingAddrExcetion;
 import com.xudong.im.session.cache.StaffAgentCache;
 import com.xudong.im.session.cache.VisitorAgentCache;
+import com.xudong.im.session.reader.UserAgentContext;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -139,7 +140,7 @@ public class UserAgentSession {
 
             if (userAgent != null
                     && !remotingAddr.equals(userAgent.getIp())
-                    ) {
+            ) {
                 returnV = true;
             }
         }

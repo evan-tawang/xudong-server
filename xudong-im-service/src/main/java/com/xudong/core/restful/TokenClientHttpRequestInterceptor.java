@@ -1,7 +1,7 @@
 package com.xudong.core.restful;
 
 import com.xudong.im.domain.user.support.UserAgent;
-import com.xudong.im.session.UserAgentContext;
+import com.xudong.im.session.reader.UserAgentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
