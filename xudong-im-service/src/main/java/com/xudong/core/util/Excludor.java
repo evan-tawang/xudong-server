@@ -15,7 +15,10 @@ public class Excludor {
             "/**/*.gif", //
             "/**/*.png", //
             "/**/*.jpeg", //
-            "/**/*.ico"//
+            "/**/*.ico",//
+            "/**/chat/createSession", //
+            "/**/chat/sendMsg", //
+            "/**/chat/history" //
     };
 
     private Set<String> excludes;
