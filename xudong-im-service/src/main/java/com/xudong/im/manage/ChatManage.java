@@ -9,6 +9,7 @@ import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
 import com.xudong.core.websocket.WebSocketToClientUtil;
 import com.xudong.im.domain.user.support.UserAgent;
+import com.xudong.im.enums.ChatContentTypeEnum;
 import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.service.SensitiveWordService;
 import org.evanframework.dto.PageResult;
@@ -70,11 +71,17 @@ public class ChatManage {
         chatRecord.setSessionId(chatDTO.getSessionId());
         chatRecord.setStaffId(chatSession.getStaffId());
         chatRecord.setVisitorId(chatSession.getVisitorId());
+        chatRecord.setContentType(chatDTO.getContentType() != null ? chatDTO.getContentType() : ChatContentTypeEnum.TEXT.getValue());
+
+        if(agent != null && UserTypeEnum.STAFF.getValue().equals(agent.getUserType())){
+            chatRecord.setRead(true);
+        }
 
         chatRecordRepository.insert(chatRecord);
-
-        String filteredContent = sensitiveWordService.filter(chatDTO.getContent());
-        chatRecord.setContent(filteredContent);
+        if(ChatContentTypeEnum.TEXT.getValue().equals(chatRecord.getContentType())){
+            String filteredContent = sensitiveWordService.filter(chatDTO.getContent());
+            chatRecord.setContent(filteredContent);
+        }
 
         webSocketToClientUtil.sendMsg(chatRecord);
         return chatRecord;
@@ -157,6 +164,17 @@ public class ChatManage {
         return chatSession;
     }
 
+    public void read(String sessionId) {
+        if (StringUtils.isEmpty(sessionId)) {
+            return;
+        }
+        chatRecordRepository.updateIsRead(sessionId);
+    }
+
+    public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
+        return chatRecordRepository.queryPage(chatRecordQuery);
+    }
+
     /**
      * 分配客服
      * @return
@@ -164,9 +182,5 @@ public class ChatManage {
     //TODO: default user
     private String allocateStaff(){
         return CommonConstant.DEFAULT_STAFF_ID;
-    }
-
-    public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
-        return chatRecordRepository.queryPage(chatRecordQuery);
     }
 }

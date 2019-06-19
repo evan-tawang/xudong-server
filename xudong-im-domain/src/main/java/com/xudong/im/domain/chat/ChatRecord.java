@@ -2,12 +2,13 @@ package com.xudong.im.domain.chat;
 
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 聊天记录
  */
-public class ChatRecord {
+public class ChatRecord implements Serializable {
 
     @Id
     private String id;
@@ -16,6 +17,9 @@ public class ChatRecord {
     private String visitorId; //访客id
     private String staffId; // 员工
     private String content;//聊天内容
+
+    private Integer contentType; // 聊天类型
+    private boolean read; // 是否已读
     private Date gmtCreate;
 
     public String getId() {
@@ -64,6 +68,22 @@ public class ChatRecord {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 
     public Date getGmtCreate() {

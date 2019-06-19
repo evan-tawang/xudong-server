@@ -42,37 +42,37 @@ public class ChatSessionRepository {
         return o;
     }
 
-    public List<ChatSession> queryList(ChatSessionQuery ChatSessionQuery) {
-        Query query = buildQuery(ChatSessionQuery);
+    public List<ChatSession> queryList(ChatSessionQuery chatSessionQuery) {
+        Query query = buildQuery(chatSessionQuery);
         return mongoTemplate.find(query, ChatSession.class, COLLECTION_NAME);
     }
 
-    public PageResult<ChatSession> queryPage(ChatSessionQuery ChatSessionQuery) {
-        if (ChatSessionQuery.getPageSize() == 0) {
-            ChatSessionQuery.setPageSize(CommonConstant.DEFAULT_PAGE_SIZE);
+    public PageResult<ChatSession> queryPage(ChatSessionQuery chatSessionQuery) {
+        if (chatSessionQuery.getPageSize() == 0) {
+            chatSessionQuery.setPageSize(CommonConstant.DEFAULT_PAGE_SIZE);
         }
 
-        Query query = buildQuery(ChatSessionQuery);
+        Query query = buildQuery(chatSessionQuery);
 
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "gmtCreate"));
-        PageRequest pageRequest = new PageRequest(ChatSessionQuery.getPageNo() - 1, ChatSessionQuery.getPageSize(), sort);
+        PageRequest pageRequest = new PageRequest(chatSessionQuery.getPageNo() - 1, chatSessionQuery.getPageSize(), sort);
         query.with(pageRequest);
 
         List<ChatSession> list = mongoTemplate.find(query, ChatSession.class, COLLECTION_NAME);
         if (CollectionUtils.isEmpty(list)) {
-            return PageResult.create(ChatSessionQuery, new ArrayList<>(), 0);
+            return PageResult.create(chatSessionQuery, new ArrayList<>(), 0);
         }
         long count = mongoTemplate.count(query, COLLECTION_NAME);
-        return PageResult.create(ChatSessionQuery, list, count);
+        return PageResult.create(chatSessionQuery, list, count);
     }
 
-    private Query buildQuery(ChatSessionQuery ChatSessionQuery) {
+    private Query buildQuery(ChatSessionQuery chatSessionQuery) {
         Query query = new Query();
 
-        MongoUtil.buildQueryForIn(query, "id", ChatSessionQuery.getIdArray());
-        MongoUtil.buildQueryForIs(query, "staffId", ChatSessionQuery.getStaffId());
-        MongoUtil.buildQueryForIs(query, "visitorId", ChatSessionQuery.getVisitorId());
-        MongoUtil.buildQueryForIs(query, "visitorIp", ChatSessionQuery.getVisitorIp());
+        MongoUtil.buildQueryForIn(query, "id", chatSessionQuery.getIdArray());
+        MongoUtil.buildQueryForIs(query, "staffId", chatSessionQuery.getStaffId());
+        MongoUtil.buildQueryForIs(query, "visitorId", chatSessionQuery.getVisitorId());
+        MongoUtil.buildQueryForIs(query, "visitorIp", chatSessionQuery.getVisitorIp());
         return query;
     }
 

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -48,6 +50,14 @@ public class ChatRecordRepository {
             o.setSessionId(sessionId);
             insert(o);
         });
+    }
+
+    public void updateIsRead(String sessionId) {
+        Query query = new Query(Criteria.where("sessionId").in(sessionId));
+        Update update = new Update();
+        update.set("read", true);
+
+        mongoTemplate.updateMulti(query, update, COLLECTION_NAME);
     }
 
     public List<ChatRecord> queryList(ChatRecordQuery chatRecordQuery) {
@@ -90,4 +100,5 @@ public class ChatRecordRepository {
 
         return query;
     }
+
 }

@@ -18,7 +18,8 @@ public class Excludor {
             "/**/*.ico",//
             "/**/chat/createSession", //
             "/**/chat/sendMsg", //
-            "/**/chat/history" //
+            "/**/chat/history", //
+            "/**/guestBook/save" //
     };
 
     private Set<String> excludes;

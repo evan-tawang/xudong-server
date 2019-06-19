@@ -2,12 +2,13 @@ package com.xudong.im.domain.chat;
 
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 聊天会话
  */
-public class ChatSession {
+public class ChatSession  implements Serializable {
 
     public ChatSession() {
     }

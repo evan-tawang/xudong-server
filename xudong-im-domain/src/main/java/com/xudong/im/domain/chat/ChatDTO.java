@@ -1,10 +1,13 @@
 package com.xudong.im.domain.chat;
 
-public class ChatDTO {
+import java.io.Serializable;
+
+public class ChatDTO  implements Serializable {
 
     private String sessionId;//聊天会话id
     private String receiveId;// 接收消息id
     private String content;//
+    private Integer contentType;// 聊天类容类型
 
     public String getSessionId() {
         return sessionId;
@@ -28,5 +31,13 @@ public class ChatDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(Integer contentType) {
+        this.contentType = contentType;
     }
 }

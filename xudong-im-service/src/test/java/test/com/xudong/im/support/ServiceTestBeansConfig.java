@@ -17,7 +17,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
         "com.xudong.im.cache",
         "com.xudong.im.manage",
         "com.xudong.im.service",
-        "com.xudong.core.websocket"
+        "com.xudong.core.websocket",
+        "com.xudong.im.session"
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceTestBeansConfig {

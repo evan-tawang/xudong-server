@@ -6,25 +6,20 @@ import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
 import com.xudong.im.domain.chat.ChatSession;
 import com.xudong.im.domain.user.support.UserAgent;
-import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.ApiResponse;
-import org.evanframework.dto.OperateResult;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("chat")
@@ -49,7 +44,6 @@ public class ChatController {
         ChatSession session = chatManage.createSession(agent, IpUtil.getRemoteIp(request));
         return ApiResponse.create(session);
     }
-
 
     /**
      * 发送消息
@@ -93,6 +87,17 @@ public class ChatController {
         chatRecordQuery.setSort("ASC");
         PageResult<ChatRecord> result = chatManage.queryPage(chatRecordQuery);
         return ApiResponse.create(result);
+    }
+
+    /**
+     * 客服已读
+     * @param sessionId
+     * @return
+     */
+    @RequestMapping(value = "read", method = RequestMethod.POST)
+    public ApiResponse read(String sessionId) {
+        chatManage.read(sessionId);
+        return ApiResponse.create();
     }
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
