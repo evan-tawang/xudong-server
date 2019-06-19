@@ -64,7 +64,7 @@ public class LoginController {
 
     @PostMapping("logout1")
     public ApiResponse logout1(HttpServletRequest request) {
-        return ApiResponse.create("NO_LOGIN","未登录");
+        return ApiResponse.create("NO_LOGIN", "未登录");
     }
 
     @PostMapping("logout")
@@ -87,6 +87,12 @@ public class LoginController {
 //        }
 
         return apiResponse;
+    }
+
+    @PostMapping(value = "userAgent/updateOnlineStatus")
+    public ApiResponse updateOnlineStatus(@RequestParam Integer newStatus, HttpServletRequest request) {
+        userAgentSession.updateOnlineStatus(newStatus, request);
+        return ApiResponse.create();
     }
 
     private void setLoginDto(StaffLoginDTO loginDto) {

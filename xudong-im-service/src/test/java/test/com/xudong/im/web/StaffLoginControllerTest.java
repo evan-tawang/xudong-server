@@ -35,4 +35,13 @@ public class StaffLoginControllerTest extends WebTestCaseSupport {
 
         LOGGER.info("====>> testLogout : " + response);
     }
+
+    @Test
+    public void testUpdateOnlineStatus() {
+        String url = getFullApiUri("/userAgent/updateOnlineStatus?newStatus={0}");
+
+        ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, 3);
+        LOGGER.info("====>> testLogout : " + response);
+    }
+
 }
