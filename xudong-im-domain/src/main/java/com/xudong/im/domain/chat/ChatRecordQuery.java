@@ -4,6 +4,7 @@ import org.evanframework.query.AbstractQueryParam;
 import org.evanframework.query.QueryParam;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class ChatRecordQuery extends AbstractQueryParam implements QueryParam, Serializable {
 
@@ -12,6 +13,33 @@ public class ChatRecordQuery extends AbstractQueryParam implements QueryParam, S
     private String visitorId; //访客id
     private String staffId; // 员工
     private String content;//聊天内容
+
+    private Date beginDate;//聊天日期
+    private Date endDate;//聊天日期
+
+    /**
+     *
+     */
+    public Date getBeginDate() {
+        return beginDate;
+    }
+
+    /***/
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    /**
+     *
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /***/
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public String getSessionId() {
         return sessionId;

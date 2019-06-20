@@ -1,9 +1,9 @@
 package com.xudong.im.data.mongo;
 
+import com.xudong.core.util.MongoUtil;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
-import com.xudong.core.util.MongoUtil;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -73,7 +73,7 @@ public class ChatRecordRepository {
         Query query = buildQuery(chatRecordQuery);
 
         Sort.Direction direction = Sort.Direction.DESC;
-        if(!StringUtils.isEmpty(chatRecordQuery.getSort()) && Sort.Direction.ASC.name().equals(chatRecordQuery.getSort())){
+        if (!StringUtils.isEmpty(chatRecordQuery.getSort()) && Sort.Direction.ASC.name().equals(chatRecordQuery.getSort())) {
             direction = Sort.Direction.ASC;
         }
 
@@ -93,10 +93,11 @@ public class ChatRecordRepository {
     private Query buildQuery(ChatRecordQuery chatRecordQuery) {
         Query query = new Query();
 
-        MongoUtil.buildQueryForIs(query, "staffId()", chatRecordQuery.getStaffId());
+        MongoUtil.buildQueryForIs(query, "staffId", chatRecordQuery.getStaffId());
         MongoUtil.buildQueryForIs(query, "visitorId", chatRecordQuery.getVisitorId());
         MongoUtil.buildQueryForIs(query, "sessionId", chatRecordQuery.getSessionId());
-        MongoUtil.buildQueryForIs(query, "content", chatRecordQuery.getContent());
+        MongoUtil.buildQueryForLike(query, "content", chatRecordQuery.getContent(), MongoUtil.LikeType.ALL);
+        MongoUtil.buildQueryForGtAndLtDate(query, "gmtCreate", chatRecordQuery.getBeginDate(), chatRecordQuery.getEndDate());
 
         return query;
     }

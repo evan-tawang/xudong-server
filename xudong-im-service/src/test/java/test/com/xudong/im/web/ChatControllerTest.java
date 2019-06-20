@@ -1,9 +1,17 @@
 package test.com.xudong.im.web;
 
+import com.xudong.im.domain.help.TalkSkill;
+import org.evanframework.dto.ApiResponse;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import test.com.xudong.im.support.WebTestCaseSupport;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ChatController Tester.
@@ -50,8 +58,9 @@ public class ChatControllerTest extends WebTestCaseSupport {
      * Method: getForList(ChatRecordQuery chatRecordQuery)
      */
     @Test
-    public void testGetForList() throws Exception {
-//TODO: Test goes here...
+    public void testGetForList()  {
+
+
     }
 
 

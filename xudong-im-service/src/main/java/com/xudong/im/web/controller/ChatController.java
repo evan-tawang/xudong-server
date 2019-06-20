@@ -8,6 +8,7 @@ import com.xudong.im.domain.chat.ChatSession;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.manage.ChatManage;
 import com.xudong.im.session.UserAgentSession;
+import org.apache.commons.lang3.time.DateUtils;
 import org.evanframework.dto.ApiResponse;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
@@ -100,11 +101,15 @@ public class ChatController {
         return ApiResponse.create();
     }
 
-    @RequestMapping(value = "list", method = RequestMethod.GET)
+    @RequestMapping(value = "all-history", method = RequestMethod.GET)
     public ApiResponse<PageResult<ChatRecord>> getForList(ChatRecordQuery chatRecordQuery) {
         if(chatRecordQuery.getPageSize() == 0){
-            chatRecordQuery.setPageSize(10);
+            chatRecordQuery.setPageSize(50);
         }
+//        if(chatRecordQuery.getEndDate() != null){
+//            chatRecordQuery.setEndDate(DateUtils.addDays(chatRecordQuery.getEndDate() ,1));
+//        }
+
         PageResult<ChatRecord> result = chatManage.queryPage(chatRecordQuery);
         return ApiResponse.create(result);
     }

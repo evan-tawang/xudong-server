@@ -56,6 +56,7 @@ public class MongoUtil {
     /**
      * 数值类型 1.为null直接更新为null，
      * 2.blank更新为blank
+     *
      * @param update
      * @param key
      * @param val
@@ -208,7 +209,7 @@ public class MongoUtil {
     }
 
     public static void buildQueryOrArray(Query query, Criteria criteria, String[] keys, String val, LikeType likeType) {
-        if(ArrayUtils.isEmpty(keys)){
+        if (ArrayUtils.isEmpty(keys)) {
             return;
         }
         Set<Criteria> criterias = new HashSet<>();
@@ -223,6 +224,7 @@ public class MongoUtil {
     /**
      * 大于等于开始时间，小于结束时间
      * 做非空判断
+     *
      * @param query
      * @param key
      * @param start
@@ -246,9 +248,26 @@ public class MongoUtil {
      * @param end
      */
     public static void buildQueryForGtAndLtDate(Query query, String key, Date start, Date end) {
-        if (null != start && null != end) {
-            query.addCriteria(Criteria.where(key).gte(start).lt(end));
+        if (start != null || end != null) {
+            Criteria criteria = Criteria.where(key);
+
+            if (start != null) {
+                criteria.gte(start);
+            }
+            if (end != null) {
+                criteria.lt(end);
+            }
+
+            query.addCriteria(criteria);
         }
+
+//        if (null != start && null != end) {
+//            query.addCriteria(Criteria.where(key).gte(start).lt(end));
+//        }else if(null != start){
+//            query.addCriteria(Criteria.where(key).gte(start).lt(end));
+//        }else if(null != end){
+//            query.addCriteria(Criteria.where(key).gte(start).lt(end));
+//        }
     }
 
     /**
@@ -301,8 +320,6 @@ public class MongoUtil {
         }
         return regex;
     }
-
-
 
 
     public enum LikeType {
