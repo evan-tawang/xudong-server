@@ -3,11 +3,13 @@ package com.xudong.im.data.mongo;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.chat.GuestBook;
 import com.xudong.im.domain.chat.GuestBookQuery;
+import org.apache.commons.lang3.StringUtils;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -66,6 +68,32 @@ public class GuestBookRepository {
 
     private Query buildQuery(GuestBookQuery guestBookQuery) {
         Query query = new Query();
+
+        if (StringUtils.isNotBlank(guestBookQuery.getQueryKey())) {
+            String queryKey = guestBookQuery.getQueryKey();
+
+            String regex = ".*" + queryKey + ".*";
+
+            Criteria criteria = new Criteria().orOperator(
+                    Criteria.where("content").regex(regex),
+                    Criteria.where("visitorId").regex(regex)
+            );
+
+            query.addCriteria(criteria);
+
+//            GuestBook guestBook = new GuestBook();
+//            guestBook.setContent(queryKey);
+//
+//            ExampleMatcher matcher = ExampleMatcher.matching()
+//                    .withMatcher("content", ExampleMatcher.GenericPropertyMatchers.contains());
+//
+//            Example<GuestBook> example = Example.of(guestBook,matcher);
+//
+//            Criteria criteria = new Criteria().alike(example);
+
+            //query.addCriteria(criteria);
+        }
+
         return query;
     }
 }
