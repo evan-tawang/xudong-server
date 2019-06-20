@@ -1,7 +1,8 @@
 HELP.md
 /target/
 */target/
-*.log
+/LOG_DIR_IS_UNDEFINED
+/*/LOG_DIR_IS_UNDEFINED
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
@@ -29,4 +30,4 @@ HELP.md
 
 ### VS Code ###
 .vscode/
-LOG_DIR_IS_UNDEFINED/
+
