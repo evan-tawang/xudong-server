@@ -1,5 +1,6 @@
 package com.xudong.im.manage;
 
+import com.xudong.core.util.RandomUtil;
 import com.xudong.core.util.UUIDUtil;
 import com.xudong.im.cache.ChatSessionCache;
 import com.xudong.im.cache.ChatWaitConnectQueueCache;
@@ -8,10 +9,12 @@ import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
 import com.xudong.core.websocket.WebSocketToClientUtil;
+import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.ChatContentTypeEnum;
 import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.service.SensitiveWordService;
+import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,16 +22,16 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 聊天
  */
 @Service
 public class ChatManage {
+
+    private static final int MAX_CHAT_SIZE = 20;
 
     @Autowired
     private WebSocketToClientUtil webSocketToClientUtil;
@@ -42,6 +45,8 @@ public class ChatManage {
     private ChatSessionCache chatSessionCache;
     @Autowired
     private ChatWaitConnectQueueCache chatWaitConnectQueueCache;
+    @Autowired
+    private UserAgentSession userAgentSession;
 
     public ChatRecord sendMsg(ChatDTO chatDTO, UserAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
@@ -179,8 +184,97 @@ public class ChatManage {
      * 分配客服
      * @return
      */
-    //TODO: default user
     private String allocateStaff(){
-        return CommonConstant.DEFAULT_STAFF_ID;
+        List<StaffAgent> staffs = userAgentSession.getOnlineStaffs();
+
+        if (CollectionUtils.isEmpty(staffs)) {
+            return null;
+        }
+
+        Map<String, List<String>> sessionMap = chatSessionCache.getAll();
+
+        // 第一种 随机选
+        if(CollectionUtils.isEmpty(sessionMap)){
+            return staffs.get(RandomUtil.randomInt(staffs.size())).getId();
+        }
+
+        // 第二种 获取最少的
+        List<String> minChatStaffs = getMinChatStaff( staffs,sessionMap);
+        return minChatStaffs.get(RandomUtil.randomInt(minChatStaffs.size()));
+    }
+
+    private static List<String> getMinChatStaff(List<StaffAgent> staffs,Map<String, List<String>> sessionMap) {
+        if(CollectionUtils.isEmpty(sessionMap)){
+            return new ArrayList<>(0);
+        }
+
+        List<String> staffIds = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(staffs)){
+            staffIds = staffs.stream().map(StaffAgent::getId).collect(Collectors.toList());
+        }
+
+        Integer min = null;
+        Map<Integer, List<String>> map = new HashMap<>();
+
+        for (String key : sessionMap.keySet()) {
+            if(staffIds.contains(key)){
+                staffIds.remove(key);
+            }
+            int size = sessionMap.get(key).size();
+
+            if (min == null) {
+                min = size;
+            } else if(size > min){
+                continue;
+            } else if (size < min) {
+                map.remove(min);
+                min = size;
+            }
+
+            List<String> values = map.get(min);
+            if (values == null) {
+                values = new ArrayList<>();
+            }
+            values.add(key);
+            map.put(min, values);
+        }
+
+        if(CollectionUtils.isEmpty(staffIds)){
+            return map.get(min);
+        }
+        List<String> values = map.get(0);
+        if(values == null){
+            return staffIds;
+        } else {
+            values.addAll(staffIds);
+        }
+        return values;
+    }
+
+    public static void main(String[] args) {
+        Map<String, List<String>> sessionMap = new HashMap<>();
+
+        ArrayList<String> list = new ArrayList<>();
+        list.add("1111");
+//        list.add("22121");
+//        list.add("11112");
+//        list.add("1111241");
+
+        sessionMap.put("1",list);
+
+        ArrayList<String> list1 = new ArrayList<>();
+        list1.add("1111");
+        list1.add("22121");
+        list1.add("11112");
+
+        sessionMap.put("2",list1);
+
+        ArrayList<String> list2 = new ArrayList<>();
+        list2.add("1111");
+        list2.add("22121");
+
+        sessionMap.put("3",list2);
+
+//        System.out.println(getMinChatStaff(sessionMap));
     }
 }

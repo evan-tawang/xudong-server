@@ -1,5 +1,6 @@
 package com.xudong.im.service;
 
+import com.xudong.core.util.RandomUtil;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.StaffLoginDTO;
@@ -57,8 +58,7 @@ public class LoginService {
         StaffAgent userAgent = new StaffAgent();
 
         userAgent.setAccount(loginDto.getAccount());
-        // TODO: default
-        userAgent.setId(CommonConstant.DEFAULT_STAFF_ID);
+        userAgent.setId(RandomUtil.randomLong(1000) + "");
         userAgent.setOnlineStatus(OnlineStatusEnum.ONLINE.getValue());
 
         result.setData(userAgent);

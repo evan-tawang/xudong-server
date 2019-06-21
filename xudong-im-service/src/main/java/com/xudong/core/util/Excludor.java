@@ -19,7 +19,8 @@ public class Excludor {
             "/**/chat/createSession", //
             "/**/chat/sendMsg", //
             "/**/chat/history", //
-            "/**/guestBook/save" //
+            "/**/guestBook/save", //
+            "/**/login" //
     };
 
     private Set<String> excludes;
