@@ -100,16 +100,19 @@ public class ChatManage {
         }
 
         String visitorId = agent == null ? UUIDUtil.nameUUIDFromBytes(remoteAddr) : agent.getId() + "";
+
+
         ChatSession session = createSession(staffId, visitorId);
 
         if(session == null){
             chatWaitConnectQueueCache.leftPush(visitorId);
             return null;
         } else {
-            webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
 
             // 缓存会话
-            chatSessionCache.put(staffId, session.getId());
+            if(chatSessionCache.put(staffId, session.getId())){
+                webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
+            }
 
             return new ChatSession(session.getId(), staffId, visitorId);
         }

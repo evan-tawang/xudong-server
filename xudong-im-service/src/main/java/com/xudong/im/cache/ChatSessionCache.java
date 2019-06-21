@@ -44,15 +44,22 @@ public class ChatSessionCache {
         return list.stream().filter(bo->bo.getSessionId() != null).map(SessionBO::getSessionId).collect(Collectors.toSet());
     }
 
-    public void put(String key, String value) {
+    public boolean put(String key, String value) {
         List<SessionBO> list = getValues(key);
 
         if(list == null){
             list = new SessionBOList();
         }
-        list.add(new SessionBO(key, value));
+
+        SessionBO sessionBO = new SessionBO(key, value);
+        if(list.contains(sessionBO)){
+            return false;
+        }
+
+        list.add(sessionBO);
 
         hashOperations.put(key, list);
+        return true;
     }
 
     public void remove(String key, String value) {

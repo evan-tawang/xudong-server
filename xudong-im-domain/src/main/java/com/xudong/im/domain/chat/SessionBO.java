@@ -1,6 +1,7 @@
 package com.xudong.im.domain.chat;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class SessionBO implements Serializable {
 
@@ -29,5 +30,20 @@ public class SessionBO implements Serializable {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SessionBO sessionBO = (SessionBO) o;
+        return Objects.equals(staffId, sessionBO.staffId) &&
+                Objects.equals(sessionId, sessionBO.sessionId);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(staffId, sessionId);
     }
 }
