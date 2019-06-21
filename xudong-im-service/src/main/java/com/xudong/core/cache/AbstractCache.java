@@ -36,7 +36,7 @@ import java.lang.reflect.Type;
 public abstract class AbstractCache<T> {
     private static final Logger logger = LoggerFactory.getLogger(AbstractCache.class);
 
-    private int redisExpireSeconds = 7200;
+    private int redisExpireSeconds = 36000;
     private Class<T> cacheClass;
 
     private CacheUtil cacheUtil;

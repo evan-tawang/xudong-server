@@ -72,7 +72,7 @@ public class ChatRecordRepository {
 
         Query query = buildQuery(chatRecordQuery);
 
-        Sort.Direction direction = Sort.Direction.DESC;
+        Sort.Direction direction = Sort.Direction.ASC;
         if (!StringUtils.isEmpty(chatRecordQuery.getSort()) && Sort.Direction.ASC.name().equals(chatRecordQuery.getSort())) {
             direction = Sort.Direction.ASC;
         }
