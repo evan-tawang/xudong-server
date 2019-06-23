@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -76,4 +79,15 @@ public class ChatSessionRepository {
         return query;
     }
 
+    public void update(ChatSession chatSession) {
+        Assert.notNull(chatSession.getId(),"id不能为空");
+
+        Query query = new Query(Criteria.where("_id").in(chatSession.getId()));
+        Update update = new Update();
+
+        MongoUtil.buildUpdate(update,"connectStartTime",chatSession.getConnectStartTime());
+        MongoUtil.buildUpdate(update,"connectEndTime",chatSession.getConnectEndTime());
+
+        mongoTemplate.updateMulti(query, update, COLLECTION_NAME);
+    }
 }

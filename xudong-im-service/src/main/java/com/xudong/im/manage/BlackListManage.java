@@ -179,6 +179,10 @@ public class BlackListManage  {
      * @param val
      */
     public void setBlock(String val) {
+        if(StringUtils.isEmpty(val)){
+            return;
+        }
+
         BlackList o = blackListMapper.getByContent(val);
 
         if(o == null){

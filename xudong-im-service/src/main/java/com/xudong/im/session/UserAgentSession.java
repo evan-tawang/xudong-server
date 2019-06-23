@@ -9,6 +9,7 @@ import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.OnlineStatusEnum;
+import com.xudong.im.enums.UserOnlineStatusEnum;
 import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.exception.RemotingAddrExcetion;
 import com.xudong.im.session.cache.StaffAgentCache;
@@ -83,6 +84,9 @@ public class UserAgentSession {
         String token = createToken(userAgent.getUserType(), userAgentCacheKey, tokenSecret); //生成token：cacheKey进行AES加密,秘钥为 sha1(ip);
         userAgent.setToken(token);
         userAgent.setTokenSecret(DigestUtils.sha384Hex(token));
+
+        // todo: 默认为在线
+        userAgent.setOnlineStatus(UserOnlineStatusEnum.ON_LINE.getValue());
 
         AbstractCache userAgentCache = getUserAgentCache(userAgent.getUserType());
 

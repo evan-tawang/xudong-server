@@ -8,12 +8,12 @@ import com.xudong.im.domain.chat.ChatSession;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.manage.ChatManage;
 import com.xudong.im.session.UserAgentSession;
-import org.apache.commons.lang3.time.DateUtils;
 import org.evanframework.dto.ApiResponse;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,12 +59,22 @@ public class ChatController {
         return ApiResponse.create(chatRecord);
     }
 
+    /**
+     * 断开连接
+     * @param sessionId
+     * @return
+     */
     @RequestMapping(value = "disconnect", method = RequestMethod.POST)
     public ApiResponse<PageResult<ChatRecord>> disconnect(String sessionId) {
         chatManage.disconnect(sessionId);
         return ApiResponse.create();
     }
 
+    /**
+     * 获取已经连接
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "connected", method = RequestMethod.GET)
     public ApiResponse connected(HttpServletRequest request) {
         UserAgent agent = userAgentSession.get(request);
@@ -73,8 +83,26 @@ public class ChatController {
     }
 
     /**
+     * 未读取条数
+     * 会话id
+     * @param chatRecordQuery
+     * @return
+     */
+    @RequestMapping(value = "queryNonReadCount", method = RequestMethod.GET)
+    public ApiResponse<Long> queryNonReadCount(ChatRecordQuery chatRecordQuery, HttpServletRequest request) {
+        Assert.notNull(chatRecordQuery.getSessionId(),"会话id不能为空");
+
+        UserAgent userAgent = userAgentSession.get(request);
+
+        Long count = chatManage.queryNonReadCount(chatRecordQuery, userAgent);
+
+        return ApiResponse.create(count);
+    }
+
+
+    /**
      * 会话中的聊天记录信息
-     * 传递双方id 或者 会话id
+     * 会话id
      * @param chatRecordQuery
      * @return
      */
@@ -85,7 +113,7 @@ public class ChatController {
         if(chatRecordQuery.getPageSize() == 0){
             chatRecordQuery.setPageSize(30);
         }
-        chatRecordQuery.setSort("ASC");
+        chatRecordQuery.setSort( Sort.Direction.DESC.name());
         PageResult<ChatRecord> result = chatManage.queryPage(chatRecordQuery);
         return ApiResponse.create(result);
     }
@@ -98,6 +126,21 @@ public class ChatController {
     @RequestMapping(value = "read", method = RequestMethod.POST)
     public ApiResponse read(String sessionId) {
         chatManage.read(sessionId);
+        return ApiResponse.create();
+    }
+
+    /**
+     * 会话中的聊天记录信息
+     * 会话id
+     * @param sessionId
+     * @return
+     */
+    @RequestMapping(value = "pullBlack", method = RequestMethod.POST)
+    public ApiResponse<PageResult<ChatRecord>> pullBlack(String sessionId,HttpServletRequest request) {
+        Assert.notNull(sessionId, "会话id不能为空");
+
+        chatManage.pullBlack(sessionId);
+
         return ApiResponse.create();
     }
 

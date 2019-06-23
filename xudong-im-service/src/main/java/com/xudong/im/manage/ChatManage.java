@@ -4,15 +4,16 @@ import com.xudong.core.util.RandomUtil;
 import com.xudong.core.util.UUIDUtil;
 import com.xudong.im.cache.ChatSessionCache;
 import com.xudong.im.cache.ChatWaitConnectQueueCache;
-import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
 import com.xudong.core.websocket.WebSocketToClientUtil;
+import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.ChatContentTypeEnum;
 import com.xudong.im.enums.UserTypeEnum;
+import com.xudong.im.service.BlacklistService;
 import com.xudong.im.service.SensitiveWordService;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.PageResult;
@@ -47,6 +48,8 @@ public class ChatManage {
     private ChatWaitConnectQueueCache chatWaitConnectQueueCache;
     @Autowired
     private UserAgentSession userAgentSession;
+    @Autowired
+    private BlackListManage blackListManage;
 
     public ChatRecord sendMsg(ChatDTO chatDTO, UserAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
@@ -67,7 +70,10 @@ public class ChatManage {
             chatSession = createSession(staffId,visitorId);
         } else {
             chatSession = chatSessionRepository.load(chatDTO.getSessionId());
+
             Assert.notNull(chatSession, "sessionId不正确");
+
+            updateTime(chatSession.getId(), new Date(), null);
         }
 
         ChatRecord chatRecord = new ChatRecord();
@@ -91,6 +97,7 @@ public class ChatManage {
         webSocketToClientUtil.sendMsg(chatRecord);
         return chatRecord;
     }
+
 
     public ChatSession createSession(UserAgent agent, String remoteAddr) {
         String staffId = allocateStaff();
@@ -129,6 +136,8 @@ public class ChatManage {
 
         // 缓存会话
         chatSessionCache.remove(chatSession.getStaffId(), chatSession.getId());
+
+        updateTime(chatSession.getId(), null, new Date());
     }
 
     public List<ChatSession> connected(UserAgent agent) {
@@ -145,6 +154,24 @@ public class ChatManage {
         chatSessionQuery.setIdArray(sessionIds);
         List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
         return chatSessions;
+    }
+
+    public void logout(String userId,Integer userType) {
+        if(StringUtils.isEmpty(userId)){
+            return;
+        }
+
+        if(UserTypeEnum.STAFF.getValue().equals(userType)){
+            chatSessionCache.remove(userId);
+        } else {
+            ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
+            chatSessionQuery.setVisitorId(userId);
+            List<ChatSession> chatSessionList = chatSessionRepository.queryList(chatSessionQuery);
+            if (CollectionUtils.isEmpty(chatSessionList)) {
+                return;
+            }
+            chatSessionCache.remove(chatSessionList.get(0).getStaffId(), userId);
+        }
     }
 
     private ChatSession createSession(String staffId, String visitorId){
@@ -166,6 +193,7 @@ public class ChatManage {
         chatSession.setStaffId(staffId);
         chatSession.setVisitorId(visitorId);
         chatSession.setVisitorIp(visitorIp);
+        chatSession.setConnectStartTime(new Date());
 
         chatSessionRepository.insert(chatSession);
 
@@ -177,6 +205,31 @@ public class ChatManage {
             return;
         }
         chatRecordRepository.updateIsRead(sessionId);
+    }
+
+    public Long queryNonReadCount(ChatRecordQuery chatRecordQuery, UserAgent userAgent) {
+        if (userAgent == null || !UserTypeEnum.STAFF.getValue().equals(userAgent.getUserType())) {
+            return 0L;
+        }
+        chatRecordQuery.setRead(false);
+        return chatRecordRepository.queryCount(chatRecordQuery);
+    }
+
+    public void pullBlack(String sessionId) {
+        if (StringUtils.isEmpty(sessionId)) {
+            return;
+        }
+
+        ChatSession chatSession = chatSessionRepository.load(sessionId);
+
+        if(chatSession == null){
+            return;
+        }
+
+
+        blackListManage.setBlock(chatSession.getVisitorId());
+        blackListManage.setBlock(chatSession.getVisitorIp());
+
     }
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
@@ -204,6 +257,22 @@ public class ChatManage {
         // 第二种 获取最少的
         List<String> minChatStaffs = getMinChatStaff( staffs,sessionMap);
         return minChatStaffs.get(RandomUtil.randomInt(minChatStaffs.size()));
+    }
+
+    private void updateTime(String id,Date connectStartTime,Date connectEndTime){
+
+        if(StringUtils.isEmpty(id)){
+            return;
+        }
+
+        if(connectStartTime == null && connectEndTime == null){
+            return;
+        }
+
+        ChatSession chatSession = new ChatSession(id);
+        chatSession.setConnectStartTime(connectStartTime);
+        chatSession.setConnectEndTime(connectEndTime);
+        chatSessionRepository.update(chatSession);
     }
 
     private static List<String> getMinChatStaff(List<StaffAgent> staffs,Map<String, List<String>> sessionMap) {
@@ -280,4 +349,6 @@ public class ChatManage {
 
 //        System.out.println(getMinChatStaff(sessionMap));
     }
+
+
 }

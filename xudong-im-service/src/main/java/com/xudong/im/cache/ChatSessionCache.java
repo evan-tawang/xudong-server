@@ -62,6 +62,11 @@ public class ChatSessionCache {
         return true;
     }
 
+
+    public void remove(String key) {
+        hashOperations.delete(key);
+    }
+
     public void remove(String key, String value) {
         List<SessionBO> list = getValues(key);
 

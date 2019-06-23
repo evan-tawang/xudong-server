@@ -52,6 +52,12 @@ public class ChatRecordRepository {
         });
     }
 
+    public ChatRecord load(String id) {
+        Assert.hasLength(id, "id不能为空");
+
+        return mongoTemplate.findById(id, ChatRecord.class, COLLECTION_NAME);
+    }
+
     public void updateIsRead(String sessionId) {
         Query query = new Query(Criteria.where("sessionId").in(sessionId));
         Update update = new Update();
@@ -65,6 +71,11 @@ public class ChatRecordRepository {
         return mongoTemplate.find(query, ChatRecord.class, COLLECTION_NAME);
     }
 
+    public long queryCount(ChatRecordQuery chatRecordQuery){
+        Query query = buildQuery(chatRecordQuery);
+        return mongoTemplate.count(query, COLLECTION_NAME);
+    }
+
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
         if (chatRecordQuery.getPageSize() == 0) {
             chatRecordQuery.setPageSize(CommonConstant.DEFAULT_PAGE_SIZE);
@@ -73,8 +84,8 @@ public class ChatRecordRepository {
         Query query = buildQuery(chatRecordQuery);
 
         Sort.Direction direction = Sort.Direction.ASC;
-        if (!StringUtils.isEmpty(chatRecordQuery.getSort()) && Sort.Direction.ASC.name().equals(chatRecordQuery.getSort())) {
-            direction = Sort.Direction.ASC;
+        if (!StringUtils.isEmpty(chatRecordQuery.getSort()) && Sort.Direction.DESC.name().equals(chatRecordQuery.getSort())) {
+            direction = Sort.Direction.DESC;
         }
 
         String sortCode = StringUtils.isEmpty(chatRecordQuery.getSortCode()) ? "gmtCreate" : chatRecordQuery.getSortCode();
@@ -93,6 +104,7 @@ public class ChatRecordRepository {
     private Query buildQuery(ChatRecordQuery chatRecordQuery) {
         Query query = new Query();
 
+        MongoUtil.buildQueryForIs(query, "read", chatRecordQuery.getRead());
         MongoUtil.buildQueryForIs(query, "staffId", chatRecordQuery.getStaffId());
         MongoUtil.buildQueryForIs(query, "visitorId", chatRecordQuery.getVisitorId());
         MongoUtil.buildQueryForIs(query, "sessionId", chatRecordQuery.getSessionId());

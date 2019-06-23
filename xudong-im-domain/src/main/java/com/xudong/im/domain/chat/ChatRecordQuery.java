@@ -14,6 +14,8 @@ public class ChatRecordQuery extends AbstractQueryParam implements QueryParam, S
     private String staffId; // 员工
     private String content;//聊天内容
 
+    private Boolean read;// 是否已读取
+
     private Date beginDate;//聊天日期
     private Date endDate;//聊天日期
 
@@ -79,5 +81,13 @@ public class ChatRecordQuery extends AbstractQueryParam implements QueryParam, S
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Boolean getRead() {
+        return read;
+    }
+
+    public void setRead(Boolean read) {
+        this.read = read;
     }
 }

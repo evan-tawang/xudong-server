@@ -194,6 +194,8 @@ public abstract class UserAgent implements Serializable {
         this.onlineStatus = onlineStatus;
     }
 
+
+
     @Override
     public String toString() {
         return "UserAgent{" +
