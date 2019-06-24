@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * 登录
  *
@@ -60,6 +62,7 @@ public class LoginService {
         userAgent.setAccount(loginDto.getAccount());
         userAgent.setId(RandomUtil.randomLong(1000) + "");
         userAgent.setOnlineStatus(OnlineStatusEnum.ONLINE.getValue());
+        userAgent.setLastLoginTime(new Date());
 
         result.setData(userAgent);
     }

@@ -119,8 +119,8 @@ public class UserAgentSession {
             AbstractCache userAgentCache = getUserAgentCache(userType);
             agent = (UserAgent) userAgentCache.get(cacheKey);
         } else {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace(">>>>> 读取用户会话时，token为空或等于固定token（表示没登录），客户端ip【{}】，上游服务ip【{}】,url【{}】", remotingAddr, request.getRemoteAddr(), request.getRequestURI());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(">>>>> 读取用户会话时，token为空或等于固定token（表示没登录），客户端ip【{}】，上游服务ip【{}】,url【{}】", remotingAddr, request.getRemoteAddr(), request.getRequestURI());
             }
         }
 
