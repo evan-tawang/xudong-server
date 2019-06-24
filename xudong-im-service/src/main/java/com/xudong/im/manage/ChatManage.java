@@ -8,12 +8,10 @@ import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
 import com.xudong.core.websocket.WebSocketToClientUtil;
-import com.xudong.im.domain.limit.BlackList;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.ChatContentTypeEnum;
 import com.xudong.im.enums.UserTypeEnum;
-import com.xudong.im.service.BlacklistService;
 import com.xudong.im.service.SensitiveWordService;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.PageResult;
@@ -31,8 +29,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ChatManage {
-
-    private static final int MAX_CHAT_SIZE = 20;
+    private static final int DEFAULT_HIS_COUNT = 30;
 
     @Autowired
     private WebSocketToClientUtil webSocketToClientUtil;
@@ -234,6 +231,13 @@ public class ChatManage {
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
         return chatRecordRepository.queryPage(chatRecordQuery);
+    }
+
+    public List<ChatRecord> history(String sessionId, Integer currentCount) {
+        Assert.notNull(sessionId, "会话id不能为空");
+        List<ChatRecord> list = chatRecordRepository.history(sessionId, currentCount);
+        Collections.reverse(list);
+        return list;
     }
 
     /**

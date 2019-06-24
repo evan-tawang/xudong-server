@@ -101,6 +101,23 @@ public class ChatRecordRepository {
         return PageResult.create(chatRecordQuery, list, count);
     }
 
+    public List<ChatRecord> history(String sessionId, Integer currentCount) {
+        Assert.notNull(sessionId, "sessionId 不能为空");
+
+        Query query = new Query(Criteria.where("sessionId").in(sessionId));
+        if(currentCount != null){
+            query.skip(currentCount);
+        }
+        query.limit(30);
+
+        Sort.Direction direction = Sort.Direction.DESC;
+        Sort sort = new Sort(new Sort.Order(direction, "gmtCreate"));
+
+        query.with(sort);
+
+        return mongoTemplate.find(query, ChatRecord.class, COLLECTION_NAME);
+    }
+
     private Query buildQuery(ChatRecordQuery chatRecordQuery) {
         Query query = new Query();
 

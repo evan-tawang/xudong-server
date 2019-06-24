@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -103,19 +104,14 @@ public class ChatController {
     /**
      * 会话中的聊天记录信息
      * 会话id
-     * @param chatRecordQuery
+     * @param sessionId
+     * @param currentCount
      * @return
      */
     @RequestMapping(value = "history", method = RequestMethod.GET)
-    public ApiResponse<PageResult<ChatRecord>> history(ChatRecordQuery chatRecordQuery,HttpServletRequest request) {
-        Assert.notNull(chatRecordQuery.getSessionId(),"会话id不能为空");
-
-        if(chatRecordQuery.getPageSize() == 0){
-            chatRecordQuery.setPageSize(30);
-        }
-        chatRecordQuery.setSort( Sort.Direction.DESC.name());
-        PageResult<ChatRecord> result = chatManage.queryPage(chatRecordQuery);
-        return ApiResponse.create(result);
+    public ApiResponse<List<ChatRecord>> history(String sessionId, Integer currentCount, HttpServletRequest request) {
+        List<ChatRecord> list = chatManage.history(sessionId,currentCount);
+        return ApiResponse.create(list);
     }
 
     /**
