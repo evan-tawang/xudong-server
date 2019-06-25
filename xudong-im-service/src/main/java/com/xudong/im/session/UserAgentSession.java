@@ -117,7 +117,11 @@ public class UserAgentSession {
             String cacheKey = tmps[1];
 
             AbstractCache userAgentCache = getUserAgentCache(userType);
-            agent = (UserAgent) userAgentCache.get(cacheKey);
+            Object o = userAgentCache.get(cacheKey);
+
+            if(o != null){
+                agent = (UserAgent) o;
+            }
         } else {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(">>>>> 读取用户会话时，token为空或等于固定token（表示没登录），客户端ip【{}】，上游服务ip【{}】,url【{}】", remotingAddr, request.getRemoteAddr(), request.getRequestURI());

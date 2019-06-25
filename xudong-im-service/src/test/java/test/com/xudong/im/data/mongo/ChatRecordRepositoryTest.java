@@ -1,5 +1,6 @@
 package test.com.xudong.im.data.mongo;
 
+import com.alibaba.fastjson.JSONArray;
 import com.xudong.core.util.RandomUtil;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.domain.chat.ChatRecord;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import test.com.xudong.im.support.MongoDBTestCaseSupport;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 聊天记录
@@ -50,4 +52,11 @@ public class ChatRecordRepositoryTest extends MongoDBTestCaseSupport {
         result = chatRecordRepository.queryPage(chatRecordQuery);
         System.out.println(">>>>>>>> " + result.getRecordCount());
     }
+
+    @Test
+    public void testHistory() {
+        List<ChatRecord> history = chatRecordRepository.history("5d09d65cf70d2f3b58a1132f", 0);
+        System.out.println(JSONArray.toJSON(history));
+    }
+
 }
