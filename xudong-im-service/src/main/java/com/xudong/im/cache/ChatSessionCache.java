@@ -5,6 +5,8 @@ import com.xudong.core.cache.RedisTemplateCreator;
 import com.xudong.im.domain.chat.SessionBO;
 import com.xudong.im.domain.chat.SessionBOList;
 import net.sf.ehcache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class ChatSessionCache {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatSessionCache.class);
+
     private static final String CACHE_NAME = ChatSessionCache.class.getSimpleName();
     private final static int REDIS_DATABASE_INDEX = 4;
 
@@ -34,6 +38,8 @@ public class ChatSessionCache {
     public void init() {
         redisTemplate = redisTemplateCreator.getRedisTemplate(REDIS_DATABASE_INDEX);
         hashOperations = redisTemplate.boundHashOps(CACHE_NAME);
+
+        LOGGER.info(">>>> ChatSessionCache inited, Redis database index is [{}]", REDIS_DATABASE_INDEX);
     }
 
     public Set<String> get(String key) {

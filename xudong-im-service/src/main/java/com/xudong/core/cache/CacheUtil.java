@@ -47,16 +47,6 @@ public class CacheUtil {
     protected CacheUtil() {
     }
 
-    protected void init(RedisUtil RedisUtil, EHCacheUtil ehCacheUtil) {
-        this.redisUtil = RedisUtil;
-        this.ehCacheUtil = ehCacheUtil;
-        this.cacheName = ehCacheUtil.getCacheName();
-
-        if(LOGGER.isDebugEnabled()) {
-            LOGGER.debug("CacheUtil inited,cacheName is [{}]", cacheName);
-        }
-    }
-
     public CacheUtil(RedisUtil redisUtil, EHCacheUtil ehCacheUtil) {
         init(redisUtil, ehCacheUtil);
     }
@@ -64,6 +54,14 @@ public class CacheUtil {
     public CacheUtil(RedisUtil redisUtil, String cacheName) {
         this.redisUtil = redisUtil;
         this.cacheName = cacheName;
+    }
+
+    protected void init(RedisUtil RedisUtil, EHCacheUtil ehCacheUtil) {
+        this.redisUtil = RedisUtil;
+        this.ehCacheUtil = ehCacheUtil;
+        this.cacheName = ehCacheUtil.getCacheName();
+
+        LOGGER.info(">>>> CacheUtil inited,cacheName is [{}]", cacheName);
     }
 
     public void put(Serializable key, Serializable o, Integer redisExpireSeconds) {

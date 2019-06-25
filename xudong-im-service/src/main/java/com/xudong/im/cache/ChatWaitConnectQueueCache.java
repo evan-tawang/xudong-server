@@ -3,6 +3,8 @@ package com.xudong.im.cache;
 
 import com.xudong.core.cache.RedisTemplateCreator;
 import net.sf.ehcache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,6 +17,8 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class ChatWaitConnectQueueCache {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatWaitConnectQueueCache.class);
+
     private static final String CACHE_NAME = ChatWaitConnectQueueCache.class.getSimpleName();
 
     private final static int REDIS_DATABASE_INDEX = 4;
@@ -33,6 +37,8 @@ public class ChatWaitConnectQueueCache {
     public void init() {
         redisTemplate = redisTemplateCreator.getRedisTemplate(REDIS_DATABASE_INDEX);
         listOperations = redisTemplate.boundListOps(CACHE_NAME);
+
+        LOGGER.info(">>>> ChatWaitConnectQueueCache inited, Redis database index is [{}]", REDIS_DATABASE_INDEX);
     }
 
     public String rightPop() {

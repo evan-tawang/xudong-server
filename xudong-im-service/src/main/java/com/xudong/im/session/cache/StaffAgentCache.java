@@ -3,8 +3,11 @@ package com.xudong.im.session.cache;
 
 import com.xudong.core.cache.AbstractCache;
 import com.xudong.core.cache.RedisTemplateCreator;
+import com.xudong.im.cache.BlackListRedis;
 import com.xudong.im.domain.user.StaffAgent;
 import net.sf.ehcache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,6 +28,8 @@ import java.util.List;
  */
 @Component
 public class StaffAgentCache extends AbstractCache<StaffAgent> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StaffAgentCache.class);
+
     private static final String CACHE_NAME = StaffAgentCache.class.getSimpleName();
     private final static int REDIS_DATABASE_INDEX = 5;
 

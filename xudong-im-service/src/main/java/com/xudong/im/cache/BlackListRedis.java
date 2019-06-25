@@ -3,6 +3,8 @@ package com.xudong.im.cache;
 import com.xudong.core.cache.RedisTemplateCreator;
 import com.xudong.im.domain.limit.BlackList;
 import net.sf.ehcache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,6 +17,8 @@ import java.util.Set;
 //用于缓存黑名单原始数据库的数据
 @Component
 public class BlackListRedis {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlackListRedis.class);
+
     private static final String CACHE_NAME = BlackListRedis.class.getSimpleName();
 
     private final static int REDIS_DATABASE_INDEX = 8;
@@ -35,6 +39,8 @@ public class BlackListRedis {
         redisTemplate = redisTemplateCreator.getRedisTemplate(REDIS_DATABASE_INDEX);
         //zSetOperations = redisTemplate.boundZSetOps(CACHE_NAME);
         hashOperations = redisTemplate.boundHashOps(CACHE_NAME);
+
+        LOGGER.info(">>>> BlackListRedis inited, Redis database index is [{}]", REDIS_DATABASE_INDEX);
     }
 
     public List<String> getMatchingRegexList() {

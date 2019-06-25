@@ -5,6 +5,8 @@ import com.xudong.core.cache.AbstractCache;
 import com.xudong.core.cache.RedisTemplateCreator;
 import com.xudong.im.domain.user.VisitorAgent;
 import net.sf.ehcache.CacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,8 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class VisitorAgentCache extends AbstractCache<VisitorAgent> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorAgentCache.class);
+
     private final static int REDIS_DATABASE_INDEX = 6;
 
 

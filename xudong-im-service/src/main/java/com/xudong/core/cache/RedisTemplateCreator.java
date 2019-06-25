@@ -8,7 +8,6 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -107,15 +106,11 @@ public class RedisTemplateCreator {
             redisTemplate.afterPropertiesSet();
 
             redisTemplates.set(databaseIndex, redisTemplate);
+            LOGGER.info(">>>> RedisTemplate inited, dababase is [{}]", databaseIndex);
 
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("RedisTemplate inited, dababase is [{}]", databaseIndex);
-            }
         } else {
             redisTemplate = redisTemplates.get(databaseIndex);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("get RedisTemplate, dababase is [{}]", databaseIndex);
-            }
+            LOGGER.info(">>>> Get RedisTemplate, dababase is [{}]", databaseIndex);
         }
         return redisTemplate;
     }

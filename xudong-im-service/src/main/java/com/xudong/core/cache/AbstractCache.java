@@ -71,9 +71,7 @@ public abstract class AbstractCache<T> {
 //    protected abstract CacheUtil getCacheUtil();
 
     private void initLog(String cacheName, int redisDatabaseIndex) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Cache [cacheName:{},cacheClass:{},redisDatabaseIndex:{}] inited", cacheName, cacheClass.getName(), redisDatabaseIndex);
-        }
+        logger.info(">>>> Cache [cacheName:{},cacheClass:{},redisDatabaseIndex:{}] inited", cacheName, cacheClass.getName(), redisDatabaseIndex);
     }
 
     public void put(Serializable key, T o) {

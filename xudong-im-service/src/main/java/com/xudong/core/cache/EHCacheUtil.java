@@ -13,6 +13,7 @@ import java.io.Serializable;
 
 /**
  * EHCache工具类, Created by evan.shen on 2017/3/16.
+ *
  * @since 1.0
  */
 public class EHCacheUtil {
@@ -23,12 +24,11 @@ public class EHCacheUtil {
     private String cacheName = null;
 
     /**
-     *
      * @param cacheManager CacheManager通过构造函数传入，外部CacheManager保持单例
-     * @param conf maxEntriesLocalHeap默认5000，timeToIdleSeconds默认20，timeToLiveSeconds默认20
+     * @param conf         maxEntriesLocalHeap默认5000，timeToIdleSeconds默认20，timeToLiveSeconds默认20
      */
     public EHCacheUtil(CacheManager cacheManager, CacheConfiguration conf) {
-        if (conf.getName() ==null || "".equals(conf.getName().trim())) {
+        if (conf.getName() == null || "".equals(conf.getName().trim())) {
             throw new IllegalArgumentException("EHCache name can not empty!");
         }
 
@@ -48,9 +48,8 @@ public class EHCacheUtil {
         cache = new Cache(conf);
         try {
             cacheManager.addCache(cache);
-            if(logger.isDebugEnabled()) {
-                logger.debug("EHCache [{}] init success!", cacheName);
-            }
+            logger.info(">>>> EHCache [{}] init success!", cacheName);
+
         } catch (ObjectExistsException ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -66,7 +65,6 @@ public class EHCacheUtil {
 //    }
 
     /**
-     *
      * @param key
      * @param value
      */
@@ -76,7 +74,6 @@ public class EHCacheUtil {
     }
 
     /**
-     *
      * @param key
      * @param c
      * @param <T>
