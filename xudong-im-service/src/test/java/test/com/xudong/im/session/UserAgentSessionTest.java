@@ -2,6 +2,7 @@ package test.com.xudong.im.session;
 
 
 import com.xudong.im.domain.user.StaffAgent;
+import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.session.UserAgentSession;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,14 @@ public class UserAgentSessionTest extends WebTestCaseSupport {
      */
     @Test
     public void testGet() {
-//TODO: Test goes here... 
+        UserAgent userAgent = userAgentSession.get("148", 2);
+        LOGGER.info(">>>>>testGet:" + userAgent);
+
+        userAgent = userAgentSession.get("809", 1);
+        LOGGER.info(">>>>>testGet:" + userAgent);
+
+        StaffAgent staffAgent = userAgentSession.get("809", StaffAgent.class);
+        LOGGER.info(">>>>>testGet:" + staffAgent);
     }
 
     /**

@@ -7,6 +7,7 @@ import com.xudong.core.util.AESUtil;
 import com.xudong.core.util.IpUtil;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.user.StaffAgent;
+import com.xudong.im.domain.user.VisitorAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.OnlineStatusEnum;
 import com.xudong.im.enums.UserOnlineStatusEnum;
@@ -58,6 +59,8 @@ public class UserAgentSession {
 
     private Map<Integer, AbstractCache> userAgentCacheMap = new HashMap<>(8);
 
+    private Map<String, UserTypeEnum> userTypeMap = new HashMap<>(8);
+
     @PostConstruct
     public void init() {
         CacheConfiguration conf = new CacheConfiguration();
@@ -68,6 +71,9 @@ public class UserAgentSession {
 
         userAgentCacheMap.put(UserTypeEnum.STAFF.getValue(), staffAgentCache);
         userAgentCacheMap.put(UserTypeEnum.VISITOR.getValue(), visitorAgentCache);
+
+        userTypeMap.put(StaffAgent.class.getSimpleName(), UserTypeEnum.STAFF);
+        userTypeMap.put(VisitorAgent.class.getSimpleName(), UserTypeEnum.VISITOR);
     }
 
     public void save(UserAgent userAgent) {
@@ -77,7 +83,7 @@ public class UserAgentSession {
         Assert.hasLength(userAgent.getAccount(), "登录用户账号不能为空");
 
         //生成用户登录信息存放在redis的key
-        String userAgentCacheKey = DigestUtils.sha1Hex(DigestUtils.sha1Hex(userAgent.getId() + "-" + userAgent.getUserType()));
+        String userAgentCacheKey = generateUserAgentCacheKey(userAgent.getId(), userAgent.getUserType());
         //String userAgentCacheKey = DigestUtils.sha1Hex(System.currentTimeMillis() + "-" + UUID.randomUUID());
 
         String tokenSecret = DigestUtils.sha1Hex(userAgent.getRemoteAddr());//生成用于加密token的加密秘钥
@@ -101,6 +107,13 @@ public class UserAgentSession {
         // 、、userAgentKeyCache.put(userAgentKeyCacheKey, userAgentCacheKey);
     }
 
+    /**
+     * 根据Request获取
+     *
+     * @param request
+     * @return
+     * @throws RemotingAddrExcetion
+     */
     public UserAgent get(HttpServletRequest request) throws RemotingAddrExcetion {
         UserAgent agent = null;
         String remotingAddr = IpUtil.getRemoteIp(request);
@@ -119,7 +132,7 @@ public class UserAgentSession {
             AbstractCache userAgentCache = getUserAgentCache(userType);
             Object o = userAgentCache.get(cacheKey);
 
-            if(o != null){
+            if (o != null) {
                 agent = (UserAgent) o;
             }
         } else {
@@ -132,32 +145,61 @@ public class UserAgentSession {
     }
 
     /**
-     * 根据用户id判断该用户是否登录
+     * 根据id和类型获取用户
      *
      * @param userId
+     * @param userType UserTypeEnum
      * @return
+     * @see UserTypeEnum
      */
-    public boolean isLogin(String userId, Integer userType, HttpServletRequest request) {
-        boolean returnV = false;
+    public UserAgent get(String userId, Integer userType) {
+        UserAgent userAgent = null;
 
         String userAgentCacheKey = generateUserAgentCacheKey(userId, userType);
         if (StringUtils.isNotBlank(userAgentCacheKey)) {
-
             AbstractCache<UserAgent> userAgentCache = getUserAgentCache(userType);
+            userAgent = userAgentCache.get(userAgentCacheKey);
+        }
+        return userAgent;
+    }
 
-            UserAgent userAgent = userAgentCache.get(userAgentCacheKey);
+    public <T extends UserAgent> T get(String userId, Class<T> c) {
+        UserTypeEnum userType = userTypeMap.get(c.getSimpleName());
 
-            String remotingAddr = IpUtil.getRemoteIp(request);
+        UserAgent userAgent = null;
 
-            if (userAgent != null
-                    && !remotingAddr.equals(userAgent.getRemoteAddr())
-            ) {
-                returnV = true;
-            }
+        String userAgentCacheKey = generateUserAgentCacheKey(userId, userType.getValue());
+        if (StringUtils.isNotBlank(userAgentCacheKey)) {
+            AbstractCache<UserAgent> userAgentCache = getUserAgentCache(userType.getValue());
+            userAgent = userAgentCache.get(userAgentCacheKey);
+        }
+        return (T)userAgent;
+    }
+
+    /**
+     * 根据用户id判断该用户是否登录
+     *
+     * @param userId
+     * @param userType UserTypeEnum
+     * @return
+     * @see UserTypeEnum
+     */
+    public boolean isLogin(String userId, Integer userType, String remotingAddr) {
+        boolean returnV = false;
+
+        UserAgent userAgent = get(userId, userType);
+        if (userAgent != null
+                && !remotingAddr.equals(userAgent.getRemoteAddr())
+        ) {
+            returnV = true;
         }
         return returnV;
     }
 
+    /**
+     * @param request
+     * @throws RemotingAddrExcetion
+     */
     public void remove(HttpServletRequest request) throws RemotingAddrExcetion {
         String token = request.getHeader("token");
         String remotingAddr = IpUtil.getRemoteIp(request);
