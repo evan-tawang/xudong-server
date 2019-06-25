@@ -78,7 +78,7 @@ public class StaffLoginController {
         return apiResponse;
     }
 
-    @PostMapping(value = "login/debug")
+    @PostMapping(value = "virtual-login")
     //@CsrfValidate
     public ApiResponse loginDebug(@RequestParam String account, HttpServletRequest request) {
         ApiResponse<StaffAgent> apiResponse = ApiResponse.create();
