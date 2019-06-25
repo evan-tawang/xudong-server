@@ -86,6 +86,7 @@ public class ApplicationBeansConfiguration implements WebMvcConfigurer {
         Set<String> set = new HashSet<>();
 
         set.add("/**/login");
+        set.add("/**/login/debug");
         set.add("/**/logout");
 
         for (String e : set) {
