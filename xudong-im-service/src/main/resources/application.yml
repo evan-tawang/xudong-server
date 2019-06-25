@@ -88,3 +88,7 @@ logging:
     org.springframework.jdbc.core: TRACE
     com.xudong: debug
 
+mes:
+  api:
+    staff-login: http://115.239.198.226:9998/Account/CustomerDoLogin
+

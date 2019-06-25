@@ -1,7 +1,6 @@
 package com.xudong.im.service;
 
 import com.xudong.core.util.RandomUtil;
-import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.StaffLoginDTO;
 import com.xudong.im.domain.user.support.UserAgent;
@@ -19,14 +18,12 @@ import java.util.Date;
  * @author 沈炜
  * @since 2017/9/4
  */
+@Deprecated
 @Service
-public class LoginService {
-    private final static Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
-
+public class StaffLoginService {
+    private final static Logger LOGGER = LoggerFactory.getLogger(StaffLoginService.class);
     private static final String OBJECT_TYPE_KEY = "ValidateCode";
-
     private static final Integer MAX_ERROR_LOGIN_COUNT = 3;
-
 
     /**
      * 登录验证
@@ -44,7 +41,6 @@ public class LoginService {
             }
         } else {
             LOGGER.warn(">>>> login fail, account [{}]", loginDto.getAccount());
-
             //handlerLoginFail(dto, result, user);
         }
 

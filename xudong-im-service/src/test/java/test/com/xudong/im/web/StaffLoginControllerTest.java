@@ -1,6 +1,7 @@
 package test.com.xudong.im.web;
 
 import com.xudong.core.util.RandomUtil;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.evanframework.dto.ApiResponse;
 import org.junit.Test;
 import test.com.xudong.im.support.WebTestCaseSupport;
@@ -16,11 +17,13 @@ public class StaffLoginControllerTest extends WebTestCaseSupport {
 
     @Test
     public void testLogin() {
-        String url = getFullApiUri("/login?account={account}&random={random}");
+        String url = getFullApiUri("/staff/login?account={account}&pwd={pwd}");
 
         Map<String, Object> parames = new HashMap<String, Object>();
-        parames.put("account", RandomUtil.randomName("acc"));
-        parames.put("random", RandomUtil.randomName("random"));
+        //parames.put("account", RandomUtil.randomName("sysadmin"));
+        parames.put("account", "sysadmin");
+        parames.put("pwd", DigestUtils.md5Hex("111111"));
+        //parames.put("random", RandomUtil.randomName("random"));
 
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, parames);
 
@@ -29,7 +32,7 @@ public class StaffLoginControllerTest extends WebTestCaseSupport {
 
     @Test
     public void testLogout() {
-        String url = getFullApiUri("/logout");
+        String url = getFullApiUri("/staff/logout");
 
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class);
 
@@ -38,7 +41,7 @@ public class StaffLoginControllerTest extends WebTestCaseSupport {
 
     @Test
     public void testUpdateOnlineStatus() {
-        String url = getFullApiUri("/userAgent/updateOnlineStatus?newStatus={0}");
+        String url = getFullApiUri("/staff/updateOnlineStatus?newStatus={0}");
 
         ApiResponse response = restTemplate.postForObject(url, null, ApiResponse.class, 3);
         LOGGER.info("====>> testLogout : " + response);

@@ -29,4 +29,7 @@ public interface CommonOperateResult extends OperateCommonResultType {
     OperateResultType REPEAT_SUBMIT = new OperateResultType("REPEAT_SUBMIT", "重复提交");
 
     OperateResultType BUSY_OPERATE = new OperateResultType("BUSY_OPERATE", "您当前的操作过于频繁,请稍后再试");
+
+    OperateResultType USER_NOT_EXIST_OR_PASSWORD_WRONG = new OperateResultType("USER_NOT_EXIST_OR_PASSWORD_WRONG", "账号或密码错误");
+
 }

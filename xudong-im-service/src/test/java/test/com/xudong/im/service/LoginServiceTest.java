@@ -3,7 +3,7 @@ package test.com.xudong.im.service;
 import com.xudong.core.util.RandomUtil;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.StaffLoginDTO;
-import com.xudong.im.service.LoginService;
+import com.xudong.im.service.StaffLoginService;
 import org.evanframework.dto.OperateResult;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import test.com.xudong.im.support.ServiceTestCaseSupport;
 public class LoginServiceTest extends ServiceTestCaseSupport {
 
     @Autowired
-    private LoginService loginService;
+    private StaffLoginService loginService;
 
     /**
      * Method: login(StaffLoginDTO loginDto)

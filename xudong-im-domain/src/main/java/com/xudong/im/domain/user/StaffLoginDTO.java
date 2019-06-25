@@ -19,6 +19,8 @@ public class StaffLoginDTO implements Serializable {
     //@ApiModelProperty(value = "账号", required = true, dataType = "String")
     private String account;
 
+    private String pwd;
+
     //@ApiModelProperty(value = "随机数", required = true, dataType = "String")
     private String random;
 
@@ -85,6 +87,20 @@ public class StaffLoginDTO implements Serializable {
      */
     public void setRetryCount(Integer retryCount) {
         this.retryCount = retryCount;
+    }
+
+    /**
+     * 密码 md5
+     */
+    public String getPwd() {
+        return pwd;
+    }
+
+    /**
+     * 密码 md5
+     * */
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
     }
 
     @Override

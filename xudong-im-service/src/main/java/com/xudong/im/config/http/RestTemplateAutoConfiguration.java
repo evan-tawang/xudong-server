@@ -37,6 +37,12 @@ public class RestTemplateAutoConfiguration {
     }
 
     @Bean
+    public TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor() {
+        TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor = new TokenClientHttpRequestInterceptor();
+        return tokenClientHttpRequestInterceptor;
+    }
+
+    @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory simpleClientHttpRequestFactory, ClientHttpRequestInterceptor tokenClientHttpRequestInterceptor) {
         RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
 
@@ -50,9 +56,16 @@ public class RestTemplateAutoConfiguration {
         return restTemplate;
     }
 
-    @Bean
-    public TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor() {
-        TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor = new TokenClientHttpRequestInterceptor();
-        return tokenClientHttpRequestInterceptor;
-    }
+//    /**
+//     * 用于调用mes系统接口
+//     * @param simpleClientHttpRequestFactory
+//     * @return
+//     */
+//    @Bean("restTemplateForMes")
+//    public RestTemplate restTemplateForMes(ClientHttpRequestFactory simpleClientHttpRequestFactory) {
+//        RestTemplate restTemplate = new RestTemplate(simpleClientHttpRequestFactory);
+//        LOGGER.info(">>>> RestTemplateForMes inited");
+//
+//        return restTemplate;
+//    }
 }
