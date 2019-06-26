@@ -71,7 +71,7 @@ public class ChatManageTest extends ServiceTestCaseSupport {
     public void testCreateSession() throws Exception {
         VisitorAgent agent = new VisitorAgent();
         agent.setId(RandomUtil.randomId() + "");
-             ChatSession chatSession = chatManage.createSession(null, "127.0.0.1");
+        ChatSession chatSession = chatManage.createSession("127.0.0.1");
         printInfo(chatSession);
 //TODO: Test goes here... 
     }

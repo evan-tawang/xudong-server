@@ -4,7 +4,7 @@ import com.xudong.core.util.IpUtil;
 import com.xudong.im.domain.chat.ChatDTO;
 import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
-import com.xudong.im.domain.chat.ChatSession;
+import com.xudong.im.domain.chat.ChatSessionVO;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.manage.ChatManage;
 import com.xudong.im.session.UserAgentSession;
@@ -13,14 +13,13 @@ import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -41,9 +40,11 @@ public class ChatController {
      * @return
      */
     @RequestMapping(value = "createSession", method = RequestMethod.POST)
-    public ApiResponse<ChatSession> createSession(HttpServletRequest request) {
-        UserAgent agent = userAgentSession.get(request);
-        ChatSession session = chatManage.createSession(agent, IpUtil.getRemoteIp(request));
+    public ApiResponse<ChatSessionVO> createSession(String connectId,HttpServletRequest request) {
+
+        connectId = StringUtils.isEmpty(connectId) ? IpUtil.getRemoteIp(request) : connectId;
+
+        ChatSessionVO session = chatManage.createSession( connectId);
         return ApiResponse.create(session);
     }
 
@@ -77,9 +78,9 @@ public class ChatController {
      * @return
      */
     @RequestMapping(value = "connected", method = RequestMethod.GET)
-    public ApiResponse connected(HttpServletRequest request) {
+    public ApiResponse<List<ChatSessionVO>> connected(HttpServletRequest request) {
         UserAgent agent = userAgentSession.get(request);
-        List<ChatSession> chatSessions = chatManage.connected(agent);
+        List<ChatSessionVO> chatSessions = chatManage.connected(agent);
         return ApiResponse.create(chatSessions);
     }
 

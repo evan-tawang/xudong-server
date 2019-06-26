@@ -15,6 +15,7 @@ import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.service.SensitiveWordService;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.PageResult;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -96,15 +97,14 @@ public class ChatManage {
     }
 
 
-    public ChatSession createSession(UserAgent agent, String remoteAddr) {
+    public ChatSessionVO createSession(String connectId) {
         String staffId = allocateStaff();
 
         if (StringUtils.isEmpty(staffId)) {
             return null;
         }
 
-        String visitorId = agent == null ? UUIDUtil.nameUUIDFromBytes(remoteAddr) : agent.getId() + "";
-
+        String visitorId = connectId;
 
         ChatSession session = createSession(staffId, visitorId);
 
@@ -118,7 +118,10 @@ public class ChatManage {
                 webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
             }
 
-            return new ChatSession(session.getId(), staffId, visitorId);
+            ChatSessionVO chatSessionVO = new ChatSessionVO(session.getId(), staffId, visitorId);
+
+            chatSessionVO.setOtherSideName(getUserName(staffId, UserTypeEnum.STAFF.getValue()));
+            return chatSessionVO;
         }
     }
 
@@ -137,7 +140,7 @@ public class ChatManage {
         updateTime(chatSession.getId(), null, new Date());
     }
 
-    public List<ChatSession> connected(UserAgent agent) {
+    public List<ChatSessionVO> connected(UserAgent agent) {
         if(agent == null){
             return new ArrayList<>();
         }
@@ -150,7 +153,19 @@ public class ChatManage {
         ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
         chatSessionQuery.setIdArray(sessionIds);
         List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
-        return chatSessions;
+
+        List<ChatSessionVO> voList = new ArrayList<>();
+
+        for (ChatSession chatSession: chatSessions) {
+            ChatSessionVO chatSessionVO = new ChatSessionVO();
+            BeanUtils.copyProperties(chatSession, chatSessionVO);
+
+            chatSessionVO.setOtherSideName(getUserName(chatSession.getVisitorId(), UserTypeEnum.VISITOR.getValue()));
+
+            voList.add(chatSessionVO);
+        }
+
+        return voList;
     }
 
     public void logout(String userId,Integer userType) {
@@ -230,12 +245,21 @@ public class ChatManage {
     }
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
-        return chatRecordRepository.queryPage(chatRecordQuery);
+        PageResult<ChatRecord> result = chatRecordRepository.queryPage(chatRecordQuery);
+        for (ChatRecord record : result.getData()){
+            record.setContent(sensitiveWordService.filter(record.getContent()));
+        }
+        return result;
     }
 
     public List<ChatRecord> history(String sessionId, Integer currentCount) {
         Assert.notNull(sessionId, "会话id不能为空");
         List<ChatRecord> list = chatRecordRepository.history(sessionId, currentCount);
+
+        for (ChatRecord record : list) {
+            record.setContent(sensitiveWordService.filter(record.getContent()));
+        }
+
         Collections.reverse(list);
         return list;
     }
@@ -354,5 +378,8 @@ public class ChatManage {
 //        System.out.println(getMinChatStaff(sessionMap));
     }
 
-
+    private String getUserName(String userId, Integer userType) {
+        UserAgent userAgent = userAgentSession.get(userId, userType);
+        return userAgent != null ? userAgent.getUserName() : "";
+    }
 }
