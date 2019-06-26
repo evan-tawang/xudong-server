@@ -62,7 +62,7 @@ public class WebSocketToClientUtil {
      * @param staffId
      * @param sessionId
      */
-    public void allocate(String staffId, String visitorId, String sessionId) {
+    public void allocate(String staffId, String visitorId,String otherSideName, String sessionId) {
         if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(staffId)) {
             return;
         }
@@ -73,6 +73,7 @@ public class WebSocketToClientUtil {
         Map<String,String> params = new HashMap<>();
         params.put("id", sessionId);
         params.put("visitorId", visitorId);
+        params.put("otherSideName", otherSideName);
 
         simpMessageSendingOperations.convertAndSendToUser(staffId, "/allocate", params);
     }

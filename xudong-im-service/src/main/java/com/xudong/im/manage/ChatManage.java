@@ -115,7 +115,9 @@ public class ChatManage {
 
             // 缓存会话
             if(chatSessionCache.put(staffId, session.getId())){
-                webSocketToClientUtil.allocate(staffId, visitorId, session.getId());
+                String visitorName = getUserName(visitorId, UserTypeEnum.VISITOR.getValue());
+
+                webSocketToClientUtil.allocate(staffId, visitorId, visitorName, session.getId());
             }
 
             ChatSessionVO chatSessionVO = new ChatSessionVO(session.getId(), staffId, visitorId);
