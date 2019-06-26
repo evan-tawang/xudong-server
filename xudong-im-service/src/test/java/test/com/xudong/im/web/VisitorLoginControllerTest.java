@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Evan.Shen
  * @since 2019-06-25
  */
-public class VisitorLoginOpenApiTest extends OpenApiTestCaseSupport {
+public class VisitorLoginControllerTest extends OpenApiTestCaseSupport {
 
     @Test
     public void testLogin() {

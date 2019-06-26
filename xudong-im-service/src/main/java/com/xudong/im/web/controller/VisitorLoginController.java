@@ -1,9 +1,8 @@
-package com.xudong.im.web.openapi;
+package com.xudong.im.web.controller;
 
 import com.xudong.core.util.IpUtil;
 import com.xudong.im.domain.user.VisitorAgent;
 import com.xudong.im.domain.user.VisitorLoginDTO;
-import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.OnlineStatusEnum;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.ApiResponse;
@@ -23,18 +22,14 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("visitor")
-public class VisitorLoginOpenApi {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorLoginOpenApi.class);
+public class VisitorLoginController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorLoginController.class);
 
     @Autowired
     private UserAgentSession userAgentSession;
 
-
     @PostMapping(value = "login")
-    //@CsrfValidate
     public ApiResponse login(VisitorLoginDTO loginDto, HttpServletRequest request) {
-        //OperateResult<StaffAgent> operateResult = loginService.login(loginDto);
-
         ApiResponse apiResponse = ApiResponse.create();
 
         VisitorAgent userAgent = new VisitorAgent();
@@ -56,13 +51,12 @@ public class VisitorLoginOpenApi {
         return apiResponse;
     }
 
-
-    @PostMapping("logout")
-    public ApiResponse logout(HttpServletRequest request) {
-        UserAgent agent = userAgentSession.get(request);
-        if (null != agent) {
-            userAgentSession.remove(request);
-        }
-        return ApiResponse.create();
-    }
+//    @PostMapping("logout")
+//    public ApiResponse logout(HttpServletRequest request) {
+//        UserAgent agent = userAgentSession.get(request);
+//        if (null != agent) {
+//            userAgentSession.remove(request);
+//        }
+//        return ApiResponse.create();
+//    }
 }
