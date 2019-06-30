@@ -44,7 +44,7 @@ public class ChatController {
 
         connectId = StringUtils.isEmpty(connectId) ? IpUtil.getRemoteIp(request) : connectId;
 
-        ChatSessionVO session = chatManage.createSession( connectId);
+        ChatSessionVO session = chatManage.createSession( connectId,request.getRemoteAddr());
         return ApiResponse.create(session);
     }
 

@@ -9,6 +9,8 @@ import org.evanframework.dto.OperateResultType;
  */
 public interface CommonOperateResult extends OperateCommonResultType {
 
+    OperateResultType USER_OVERDUE = new OperateResultType("NO_LOGIN", "用戶信息已过期");
+
     OperateResultType REMOTING_ADDR_WRONG = new OperateResultType("REMOTING_ADDR_WRONG", "客户端地址不正确，请重新登录");
 
     OperateResultType SIGN_WRONG = new OperateResultType("SIGN_WRONG", "接口签名不正确");

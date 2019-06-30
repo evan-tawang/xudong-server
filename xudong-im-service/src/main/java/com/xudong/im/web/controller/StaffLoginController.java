@@ -12,6 +12,7 @@ import com.xudong.im.enums.OnlineStatusEnum;
 import com.xudong.im.service.StaffLoginService;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.ApiResponse;
+import org.evanframework.exception.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,12 +99,6 @@ public class StaffLoginController {
         return apiResponse;
     }
 
-
-    @PostMapping("logout1")
-    public ApiResponse logout1(HttpServletRequest request) {
-        return ApiResponse.create("NO_LOGIN", "未登录");
-    }
-
     @PostMapping("logout")
     public ApiResponse logout(HttpServletRequest request) {
         UserAgent agent = userAgentSession.get(request);
@@ -117,5 +112,17 @@ public class StaffLoginController {
     public ApiResponse updateOnlineStatus(@RequestParam Integer newStatus, HttpServletRequest request) {
         userAgentSession.updateOnlineStatus(newStatus, request);
         return ApiResponse.create();
+    }
+
+
+    @PostMapping(value = "isLogin")
+    public ApiResponse isLogin(HttpServletRequest request) {
+        UserAgent userAgent = userAgentSession.get(request);
+
+        if(userAgent != null){
+            return ApiResponse.create();
+        }
+
+        throw new ServiceException(CommonOperateResult.USER_OVERDUE);
     }
 }

@@ -12,9 +12,11 @@ import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.ChatContentTypeEnum;
 import com.xudong.im.enums.UserTypeEnum;
+import com.xudong.im.service.BlacklistService;
 import com.xudong.im.service.SensitiveWordService;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.PageResult;
+import org.evanframework.exception.ServiceException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,9 @@ public class ChatManage {
     private UserAgentSession userAgentSession;
     @Autowired
     private BlackListManage blackListManage;
+    @Autowired
+    private BlacklistService blacklistService;
+
 
     public ChatRecord sendMsg(ChatDTO chatDTO, UserAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
@@ -97,16 +102,21 @@ public class ChatManage {
     }
 
 
-    public ChatSessionVO createSession(String connectId) {
+    public ChatSessionVO createSession(String connectId,String connectIp) {
         String staffId = allocateStaff();
 
         if (StringUtils.isEmpty(staffId)) {
             return null;
         }
 
+        if(blacklistService.isBlock(connectId) || blacklistService.isBlock(connectIp)){
+            throw new ServiceException("BLACK_ERROR","您已被拉入黑名单！");
+        }
+
+
         String visitorId = connectId;
 
-        ChatSession session = createSession(staffId, visitorId);
+        ChatSession session = createSession(staffId, visitorId, connectIp);
 
         if(session == null){
             chatWaitConnectQueueCache.leftPush(visitorId);
@@ -188,9 +198,9 @@ public class ChatManage {
         }
     }
 
-    private ChatSession createSession(String staffId, String visitorId){
-        return createSession(staffId, visitorId, null);
-    }
+//    private ChatSession createSession(String staffId, String visitorId){
+//        return createSession(staffId, visitorId, null);
+//    }
 
     private ChatSession createSession(String staffId, String visitorId, String visitorIp){
 
