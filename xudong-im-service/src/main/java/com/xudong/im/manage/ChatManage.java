@@ -91,12 +91,12 @@ public class ChatManage {
             chatRecord.setRead(true);
         }
 
-        chatRecordRepository.insert(chatRecord);
         if(ChatContentTypeEnum.TEXT.getValue().equals(chatRecord.getContentType())){
             String filteredContent = sensitiveWordService.filter(chatDTO.getContent());
             chatRecord.setContent(filteredContent);
         }
 
+        chatRecordRepository.insert(chatRecord);
         webSocketToClientUtil.sendMsg(chatRecord);
         return chatRecord;
     }
@@ -268,11 +268,11 @@ public class ChatManage {
         Assert.notNull(sessionId, "会话id不能为空");
         List<ChatRecord> list = chatRecordRepository.history(sessionId, currentCount);
 
-        for (ChatRecord record : list) {
-            if (ChatContentTypeEnum.TEXT.getValue().equals(record.getContentType())) {
-                record.setContent(sensitiveWordService.filter(record.getContent()));
-            }
-        }
+//        for (ChatRecord record : list) {
+//            if (ChatContentTypeEnum.TEXT.getValue().equals(record.getContentType())) {
+//                record.setContent(sensitiveWordService.filter(record.getContent()));
+//            }
+//        }
 
         Collections.reverse(list);
         return list;
