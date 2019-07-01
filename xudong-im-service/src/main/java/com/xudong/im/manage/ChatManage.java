@@ -269,7 +269,9 @@ public class ChatManage {
         List<ChatRecord> list = chatRecordRepository.history(sessionId, currentCount);
 
         for (ChatRecord record : list) {
-            record.setContent(sensitiveWordService.filter(record.getContent()));
+            if (ChatContentTypeEnum.TEXT.getValue().equals(record.getContentType())) {
+                record.setContent(sensitiveWordService.filter(record.getContent()));
+            }
         }
 
         Collections.reverse(list);
