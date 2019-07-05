@@ -1,6 +1,7 @@
 package com.xudong.core.websocket;
 
 import com.xudong.im.domain.chat.ChatRecord;
+import com.xudong.im.domain.chat.ChatSession;
 import com.xudong.im.enums.UserTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,23 +38,17 @@ public class WebSocketToClientUtil {
 
     /**
      * 访客排队排到后，通知访客
-     * @param visitorId
-     * @param staffId
-     * @param sessionId
+     * @param chatSession
      */
-    public void startSession(String visitorId, String staffId, String sessionId) {
-        if (StringUtils.isEmpty(visitorId) || StringUtils.isEmpty(staffId)) {
+    public void startSession(ChatSession chatSession) {
+        if (chatSession == null || StringUtils.isEmpty(chatSession.getVisitorId()) || StringUtils.isEmpty(chatSession.getId())) {
             return;
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(">>>> WebSocket to client, visitorId:{}", visitorId);
+            LOGGER.debug(">>>> WebSocket to client, startSession -> visitorId:{}", chatSession.getId());
         }
 
-        Map<String,String> params = new HashMap<>();
-        params.put("sessionId",sessionId);
-        params.put("staffId",staffId);
-
-        simpMessageSendingOperations.convertAndSendToUser(visitorId, "/startSession", params);
+        simpMessageSendingOperations.convertAndSendToUser(chatSession.getVisitorId(), "/waitSession", chatSession);
     }
 
     /**

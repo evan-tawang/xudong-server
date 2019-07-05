@@ -7,6 +7,7 @@ import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.VisitorAgent;
 import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
+import org.evanframework.dto.OperateResult;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
@@ -71,8 +72,8 @@ public class ChatManageTest extends ServiceTestCaseSupport {
     public void testCreateSession() throws Exception {
         VisitorAgent agent = new VisitorAgent();
         agent.setId(RandomUtil.randomId() + "");
-        ChatSession chatSession = chatManage.createSession("1","127.0.0.1");
-        printInfo(chatSession);
+        OperateResult session = chatManage.createSession("1", "127.0.0.1");
+        printInfo(session);
 //TODO: Test goes here... 
     }
 

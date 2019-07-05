@@ -9,6 +9,7 @@ import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.manage.ChatManage;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.ApiResponse;
+import org.evanframework.dto.OperateResult;
 import org.evanframework.dto.PageResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +41,15 @@ public class ChatController {
      * @return
      */
     @RequestMapping(value = "createSession", method = RequestMethod.POST)
-    public ApiResponse<ChatSessionVO> createSession(String connectId,HttpServletRequest request) {
+    public ApiResponse<ChatSessionVO> createSession(String connectId, HttpServletRequest request) {
 
         connectId = StringUtils.isEmpty(connectId) ? IpUtil.getRemoteIp(request) : connectId;
 
-        ChatSessionVO session = chatManage.createSession( connectId,request.getRemoteAddr());
-        return ApiResponse.create(session);
+        OperateResult data = chatManage.createSession(connectId, request.getRemoteAddr());
+        if(data == null){
+            return ApiResponse.create();
+        }
+        return ApiResponse.create(data);
     }
 
     /**

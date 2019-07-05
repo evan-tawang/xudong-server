@@ -7,6 +7,8 @@ import org.junit.After;
 import org.springframework.beans.factory.annotation.Autowired;
 import test.com.xudong.im.support.CacheTestCaseSupport;
 
+import java.util.Set;
+
 /**
  * ChatWaitConnectQueueCache Tester.
  *
@@ -48,18 +50,27 @@ public class ChatWaitConnectQueueCacheTest extends CacheTestCaseSupport {
      */
     @Test
     public void testLeftPush() throws Exception {
-        chatWaitConnectQueueCache.leftPush("1111");
-        chatWaitConnectQueueCache.leftPush("222");
+        chatWaitConnectQueueCache.add("1111");
+        chatWaitConnectQueueCache.add("222");
+        chatWaitConnectQueueCache.add("1111");
 
+//        Set<String> set = chatWaitConnectQueueCache.diff();
+//        System.out.println(set.toString());
 
-        String value = chatWaitConnectQueueCache.rightPop();
+        String value = chatWaitConnectQueueCache.pop();
         System.out.println(value);
 
-        String value1 = chatWaitConnectQueueCache.rightPop();
+        String value1 = chatWaitConnectQueueCache.pop();
         System.out.println(value1);
 
-        String value2 = chatWaitConnectQueueCache.rightPop();
+        String value2 = chatWaitConnectQueueCache.pop();
         System.out.println(value2);
+
+        String value3 = chatWaitConnectQueueCache.pop();
+        System.out.println(value3);
+
+        String value4 = chatWaitConnectQueueCache.pop();
+        System.out.println(value4);
     }
 
 

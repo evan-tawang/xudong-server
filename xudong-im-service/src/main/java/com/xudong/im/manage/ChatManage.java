@@ -1,13 +1,12 @@
 package com.xudong.im.manage;
 
 import com.xudong.core.util.RandomUtil;
-import com.xudong.core.util.UUIDUtil;
+import com.xudong.core.websocket.WebSocketToClientUtil;
 import com.xudong.im.cache.ChatSessionCache;
 import com.xudong.im.cache.ChatWaitConnectQueueCache;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
-import com.xudong.core.websocket.WebSocketToClientUtil;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.ChatContentTypeEnum;
@@ -15,6 +14,7 @@ import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.service.BlacklistService;
 import com.xudong.im.service.SensitiveWordService;
 import com.xudong.im.session.UserAgentSession;
+import org.evanframework.dto.OperateResult;
 import org.evanframework.dto.PageResult;
 import org.evanframework.exception.ServiceException;
 import org.springframework.beans.BeanUtils;
@@ -70,7 +70,8 @@ public class ChatManage {
                 visitorId = String.valueOf(agent.getId());
                 staffId = chatDTO.getReceiveId();
             }
-            chatSession = createSession(staffId,visitorId);
+            OperateResult<ChatSessionVO> session = createSession(staffId, visitorId);
+            chatSession = session.getData();
         } else {
             chatSession = chatSessionRepository.load(chatDTO.getSessionId());
 
@@ -102,7 +103,7 @@ public class ChatManage {
     }
 
 
-    public ChatSessionVO createSession(String connectId,String connectIp) {
+    public OperateResult createSession(String connectId, String connectIp) {
         String staffId = allocateStaff();
 
         if (StringUtils.isEmpty(staffId)) {
@@ -119,8 +120,8 @@ public class ChatManage {
         ChatSession session = createSession(staffId, visitorId, connectIp);
 
         if(session == null){
-            chatWaitConnectQueueCache.leftPush(visitorId);
-            return null;
+            chatWaitConnectQueueCache.add(visitorId);
+            return OperateResult.create("STAFF_BUSY", "客服繁忙中，请稍后", visitorId);
         } else {
 
             // 缓存会话
@@ -131,9 +132,9 @@ public class ChatManage {
             }
 
             ChatSessionVO chatSessionVO = new ChatSessionVO(session.getId(), staffId, visitorId);
-
             chatSessionVO.setOtherSideName(getUserName(staffId, UserTypeEnum.STAFF.getValue()));
-            return chatSessionVO;
+
+            return OperateResult.create(chatSessionVO);
         }
     }
 
@@ -150,6 +151,11 @@ public class ChatManage {
         chatSessionCache.remove(chatSession.getStaffId(), chatSession.getId());
 
         updateTime(chatSession.getId(), null, new Date());
+
+        String visitorId = chatWaitConnectQueueCache.pop();
+
+        OperateResult<ChatSessionVO> session = createSession(visitorId, null);
+        webSocketToClientUtil.startSession(session.getData());
     }
 
     public List<ChatSessionVO> connected(UserAgent agent) {
