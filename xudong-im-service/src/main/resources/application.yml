@@ -5,7 +5,7 @@ spring:
   application:
     name: xudong-im
   datasource:
-    url: jdbc:mysql://116.62.114.198:3306/xudong?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://116.62.114.198:3306/xudong?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&serverTimezone=GMT%2B8
     username: root
     password: MiZhi001
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -51,9 +51,9 @@ spring:
 #        max-wait: 2000ms
   jackson:
     default-property-inclusion: non_null
-    time-zone: GMT+8
-    serialization:
-      write-dates-as-timestamps: true
+#    time-zone: GMT+8
+#    serialization:
+#      write-dates-as-timestamps: true
 
   mvc:
     throw-exception-if-no-handler-found: true
