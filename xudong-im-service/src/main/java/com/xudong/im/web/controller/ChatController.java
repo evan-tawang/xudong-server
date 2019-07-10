@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("chat")
 public class ChatController {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ChatController.class);
+    private final static Logger log = LoggerFactory.getLogger(ChatController.class);
 
     @Autowired
     private ChatManage chatManage;
@@ -44,6 +44,8 @@ public class ChatController {
     public ApiResponse<ChatSessionVO> createSession(String connectId, HttpServletRequest request) {
 
         connectId = StringUtils.isEmpty(connectId) ? IpUtil.getRemoteIp(request) : connectId;
+
+        log.info(">>>>>>>>>>>>> client ip:" + connectId);
 
         OperateResult data = chatManage.createSession(connectId, request.getRemoteAddr());
         if(data == null){
