@@ -256,13 +256,14 @@ public class ChatManage {
             return;
         }
 
-
         blackListManage.setBlock(chatSession.getVisitorId());
         blackListManage.setBlock(chatSession.getVisitorIp());
 
     }
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
+        Assert.notNull(chatRecordQuery.getSessionId(), "会话id不能为空");
+
         PageResult<ChatRecord> result = chatRecordRepository.queryPage(chatRecordQuery);
         for (ChatRecord record : result.getData()){
             record.setContent(sensitiveWordService.filter(record.getContent()));

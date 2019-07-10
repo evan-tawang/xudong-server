@@ -37,7 +37,7 @@ public class ChatRecordRepository {
             return null;
         }
         o.setGmtCreate(new Date());
-        mongoTemplate.insert(o, COLLECTION_NAME);
+        mongoTemplate.insert(o, getCollectionName(o.getSessionId()));
         return o;
     }
 
@@ -52,28 +52,28 @@ public class ChatRecordRepository {
         });
     }
 
-    public ChatRecord load(String id) {
-        Assert.hasLength(id, "id不能为空");
-
-        return mongoTemplate.findById(id, ChatRecord.class, COLLECTION_NAME);
-    }
+//    public ChatRecord load(String id) {
+//        Assert.hasLength(id, "id不能为空");
+//
+//        return mongoTemplate.findById(id, ChatRecord.class, getCollectionName( sessionId));
+//    }
 
     public void updateIsRead(String sessionId) {
         Query query = new Query(Criteria.where("sessionId").in(sessionId));
         Update update = new Update();
         update.set("read", true);
 
-        mongoTemplate.updateMulti(query, update, COLLECTION_NAME);
+        mongoTemplate.updateMulti(query, update, getCollectionName( sessionId));
     }
 
     public List<ChatRecord> queryList(ChatRecordQuery chatRecordQuery) {
         Query query = buildQuery(chatRecordQuery);
-        return mongoTemplate.find(query, ChatRecord.class, COLLECTION_NAME);
+        return mongoTemplate.find(query, ChatRecord.class, getCollectionName(chatRecordQuery.getSessionId()));
     }
 
     public long queryCount(ChatRecordQuery chatRecordQuery){
         Query query = buildQuery(chatRecordQuery);
-        return mongoTemplate.count(query, COLLECTION_NAME);
+        return mongoTemplate.count(query, getCollectionName(chatRecordQuery.getSessionId()));
     }
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
@@ -93,11 +93,11 @@ public class ChatRecordRepository {
         PageRequest pageRequest = new PageRequest(chatRecordQuery.getPageNo() - 1, chatRecordQuery.getPageSize(), sort);
         query.with(pageRequest);
 
-        List<ChatRecord> list = mongoTemplate.find(query, ChatRecord.class, COLLECTION_NAME);
+        List<ChatRecord> list = mongoTemplate.find(query, ChatRecord.class, getCollectionName(chatRecordQuery.getSessionId()));
         if (CollectionUtils.isEmpty(list)) {
             return PageResult.create(chatRecordQuery, new ArrayList<>(), 0);
         }
-        long count = mongoTemplate.count(query, COLLECTION_NAME);
+        long count = mongoTemplate.count(query,  getCollectionName(chatRecordQuery.getSessionId()));
         return PageResult.create(chatRecordQuery, list, count);
     }
 
@@ -115,7 +115,7 @@ public class ChatRecordRepository {
 
         query.with(sort);
 
-        return mongoTemplate.find(query, ChatRecord.class, COLLECTION_NAME);
+        return mongoTemplate.find(query, ChatRecord.class, getCollectionName(sessionId));
     }
 
     private Query buildQuery(ChatRecordQuery chatRecordQuery) {
@@ -131,4 +131,7 @@ public class ChatRecordRepository {
         return query;
     }
 
+    private String getCollectionName(String sessionId) {
+        return COLLECTION_NAME + "_" + sessionId;
+    }
 }
