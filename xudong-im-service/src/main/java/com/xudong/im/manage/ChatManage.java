@@ -120,7 +120,7 @@ public class ChatManage {
             }
 
             ChatSessionVO chatSessionVO = new ChatSessionVO(session.getId(), staffId, visitorId);
-            chatSessionVO.setOtherSideName(dto.getConnectName());
+            chatSessionVO.setOtherSideName(getUserName(staffId, UserTypeEnum.STAFF.getValue()));
 
             return OperateResult.create(chatSessionVO);
         }
@@ -366,6 +366,12 @@ public class ChatManage {
         }
         return values;
     }
+
+    private String getUserName(String userId, Integer userType) {
+        UserAgent userAgent = userAgentSession.get(userId, userType);
+        return userAgent != null ? userAgent.getUserName() : "";
+    }
+
 
     public static void main(String[] args) {
         Map<String, List<String>> sessionMap = new HashMap<>();
