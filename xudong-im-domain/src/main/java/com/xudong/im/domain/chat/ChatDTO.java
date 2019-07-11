@@ -6,6 +6,8 @@ public class ChatDTO  implements Serializable {
 
     private String sessionId;//聊天会话id
     private String receiveId;// 接收消息id
+    private String receiveName;// 接收消息
+    private String receiveAccount;// 接收消息id
     private String content;//
     private Integer contentType;// 聊天类容类型
 
@@ -23,6 +25,22 @@ public class ChatDTO  implements Serializable {
 
     public void setReceiveId(String receiveId) {
         this.receiveId = receiveId;
+    }
+
+    public String getReceiveName() {
+        return receiveName;
+    }
+
+    public void setReceiveName(String receiveName) {
+        this.receiveName = receiveName;
+    }
+
+    public String getReceiveAccount() {
+        return receiveAccount;
+    }
+
+    public void setReceiveAccount(String receiveAccount) {
+        this.receiveAccount = receiveAccount;
     }
 
     public String getContent() {

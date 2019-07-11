@@ -1,10 +1,7 @@
 package com.xudong.im.web.controller;
 
 import com.xudong.core.util.IpUtil;
-import com.xudong.im.domain.chat.ChatDTO;
-import com.xudong.im.domain.chat.ChatRecord;
-import com.xudong.im.domain.chat.ChatRecordQuery;
-import com.xudong.im.domain.chat.ChatSessionVO;
+import com.xudong.im.domain.chat.*;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.manage.ChatManage;
 import com.xudong.im.session.UserAgentSession;
@@ -41,13 +38,16 @@ public class ChatController {
      * @return
      */
     @RequestMapping(value = "createSession", method = RequestMethod.POST)
-    public ApiResponse<ChatSessionVO> createSession(String connectId, HttpServletRequest request) {
+    public ApiResponse<ChatSessionVO> createSession(ChatCreateSessionDTO dto, HttpServletRequest request) {
 
-        connectId = StringUtils.isEmpty(connectId) ? IpUtil.getRemoteIp(request) : connectId;
+        String remoteIp = IpUtil.getRemoteIp(request);
 
-        log.info(">>>>>>>>>>>>> client ip:" + connectId);
+        dto.setConnectIp(remoteIp);
+        dto.setConnectId(StringUtils.isEmpty(dto.getConnectId()) ? remoteIp : dto.getConnectId());
 
-        OperateResult data = chatManage.createSession(connectId, request.getRemoteAddr());
+        log.info(">>>>>>>>>>>>> client ip:" + dto.getConnectId());
+
+        OperateResult data = chatManage.createSession(dto);
         if(data == null){
             return ApiResponse.create();
         }

@@ -4,6 +4,7 @@ import com.xudong.core.util.RandomUtil;
 import com.xudong.core.websocket.WebSocketToClientUtil;
 import com.xudong.im.cache.ChatSessionCache;
 import com.xudong.im.cache.ChatWaitConnectQueueCache;
+import com.xudong.im.cache.ChatWaitVisitorCache;
 import com.xudong.im.data.mongo.ChatRecordRepository;
 import com.xudong.im.data.mongo.ChatSessionRepository;
 import com.xudong.im.domain.chat.*;
@@ -47,6 +48,8 @@ public class ChatManage {
     @Autowired
     private ChatWaitConnectQueueCache chatWaitConnectQueueCache;
     @Autowired
+    private ChatWaitVisitorCache chatWaitVisitorCache;
+    @Autowired
     private UserAgentSession userAgentSession;
     @Autowired
     private BlackListManage blackListManage;
@@ -57,28 +60,11 @@ public class ChatManage {
     public ChatRecord sendMsg(ChatDTO chatDTO, UserAgent agent){
         Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
 
-        ChatSession chatSession = null;
-        if(StringUtils.isEmpty(chatDTO.getSessionId())){
-            Assert.notNull(chatDTO.getReceiveId(),"接收者不能为空");
+        ChatSession chatSession = chatSessionRepository.load(chatDTO.getSessionId());
 
-            String staffId = null, visitorId = null;
+        Assert.notNull(chatSession, "sessionId不正确");
 
-            if(UserTypeEnum.STAFF.getValue().equals(agent.getUserType())){
-                staffId = String.valueOf(agent.getId());
-                visitorId = chatDTO.getReceiveId();
-            } else {
-                visitorId = String.valueOf(agent.getId());
-                staffId = chatDTO.getReceiveId();
-            }
-            OperateResult<ChatSessionVO> session = createSession(staffId, visitorId);
-            chatSession = session.getData();
-        } else {
-            chatSession = chatSessionRepository.load(chatDTO.getSessionId());
-
-            Assert.notNull(chatSession, "sessionId不正确");
-
-            updateTime(chatSession.getId(), new Date(), null);
-        }
+        updateTime(chatSession.getId(), new Date(), null);
 
         ChatRecord chatRecord = new ChatRecord();
         chatRecord.setSendUserType(agent != null ? agent.getUserType() : UserTypeEnum.VISITOR.getValue());
@@ -103,36 +89,38 @@ public class ChatManage {
     }
 
 
-    public OperateResult createSession(String connectId, String connectIp) {
+    public OperateResult createSession(ChatCreateSessionDTO dto) {
         String staffId = allocateStaff();
 
         if (StringUtils.isEmpty(staffId)) {
             return null;
         }
 
-        if(blacklistService.isBlock(connectId) || blacklistService.isBlock(connectIp)){
+        if(blacklistService.isBlock(dto.getConnectAccount())
+                || blacklistService.isBlock(dto.getConnectId())
+                || blacklistService.isBlock(dto.getConnectIp())
+            ){
             throw new ServiceException("BLACK_ERROR","您已被拉入黑名单！");
         }
 
+        String visitorId = dto.getConnectId();
 
-        String visitorId = connectId;
-
-        ChatSession session = createSession(staffId, visitorId, connectIp);
+        ChatSession session = createSession(staffId, visitorId, dto.getConnectName(), dto.getConnectAccount(), dto.getConnectIp());
 
         if(session == null){
             chatWaitConnectQueueCache.add(visitorId);
+            chatWaitVisitorCache.put(visitorId, dto);
             return OperateResult.create("STAFF_BUSY", "客服繁忙中，请稍后", visitorId);
         } else {
 
             // 缓存会话
             if(chatSessionCache.put(staffId, session.getId())){
-                String visitorName = getUserName(visitorId, UserTypeEnum.VISITOR.getValue());
 
-                webSocketToClientUtil.allocate(staffId, visitorId, visitorName, session.getId());
+                webSocketToClientUtil.allocate(staffId, visitorId, dto.getConnectName(), session.getId());
             }
 
             ChatSessionVO chatSessionVO = new ChatSessionVO(session.getId(), staffId, visitorId);
-            chatSessionVO.setOtherSideName(getUserName(staffId, UserTypeEnum.STAFF.getValue()));
+            chatSessionVO.setOtherSideName(dto.getConnectName());
 
             return OperateResult.create(chatSessionVO);
         }
@@ -153,8 +141,13 @@ public class ChatManage {
         updateTime(chatSession.getId(), null, new Date());
 
         String visitorId = chatWaitConnectQueueCache.pop();
+        ChatCreateSessionDTO dto = chatWaitVisitorCache.get(visitorId);
 
-        OperateResult<ChatSessionVO> session = createSession(visitorId, null);
+        if(dto == null){
+            dto = new ChatCreateSessionDTO(visitorId);
+        }
+
+        OperateResult<ChatSessionVO> session = createSession(dto);
         webSocketToClientUtil.startSession(session.getData());
     }
 
@@ -178,7 +171,7 @@ public class ChatManage {
             ChatSessionVO chatSessionVO = new ChatSessionVO();
             BeanUtils.copyProperties(chatSession, chatSessionVO);
 
-            chatSessionVO.setOtherSideName(getUserName(chatSession.getVisitorId(), UserTypeEnum.VISITOR.getValue()));
+            chatSessionVO.setOtherSideName(chatSession.getVisitorName());
 
             voList.add(chatSessionVO);
         }
@@ -208,7 +201,7 @@ public class ChatManage {
 //        return createSession(staffId, visitorId, null);
 //    }
 
-    private ChatSession createSession(String staffId, String visitorId, String visitorIp){
+    private ChatSession createSession(String staffId, String visitorId, String visitorName, String visitorAccount, String visitorIp) {
 
         ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
 //        chatSessionQuery.setServiceId(serviceId);
@@ -223,6 +216,8 @@ public class ChatManage {
         chatSession.setStaffId(staffId);
         chatSession.setVisitorId(visitorId);
         chatSession.setVisitorIp(visitorIp);
+        chatSession.setVisitorName(visitorName);
+        chatSession.setVisitorAccount(visitorAccount);
         chatSession.setConnectStartTime(new Date());
 
         chatSessionRepository.insert(chatSession);
@@ -397,10 +392,5 @@ public class ChatManage {
         sessionMap.put("3",list2);
 
 //        System.out.println(getMinChatStaff(sessionMap));
-    }
-
-    private String getUserName(String userId, Integer userType) {
-        UserAgent userAgent = userAgentSession.get(userId, userType);
-        return userAgent != null ? userAgent.getUserName() : "";
     }
 }

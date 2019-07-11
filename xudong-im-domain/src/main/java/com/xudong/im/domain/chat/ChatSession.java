@@ -25,8 +25,12 @@ public class ChatSession  implements Serializable {
 
     @Id
     private String id;
+
     private String visitorIp;//访客ip
     private String visitorId;//访客id
+    private String visitorName;//访客名称
+    private String visitorAccount;//访客账户
+
     private String staffId; // 员工
 
     private Integer status; // 连接中
@@ -56,6 +60,22 @@ public class ChatSession  implements Serializable {
 
     public void setVisitorId(String visitorId) {
         this.visitorId = visitorId;
+    }
+
+    public String getVisitorName() {
+        return visitorName;
+    }
+
+    public void setVisitorName(String visitorName) {
+        this.visitorName = visitorName;
+    }
+
+    public String getVisitorAccount() {
+        return visitorAccount;
+    }
+
+    public void setVisitorAccount(String visitorAccount) {
+        this.visitorAccount = visitorAccount;
     }
 
     public String getStaffId() {
