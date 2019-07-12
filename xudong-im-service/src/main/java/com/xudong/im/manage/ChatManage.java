@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -57,10 +58,26 @@ public class ChatManage {
     private BlacklistService blacklistService;
 
 
-    public ChatRecord sendMsg(ChatDTO chatDTO, UserAgent agent){
-        Assert.notNull(chatDTO.getContent(),"聊天内容不能为空");
+    public ChatRecord sendMsg(ChatRecordDTO dto, UserAgent agent){
+        Assert.notNull(dto.getContent(), "聊天内容不能为空");
+        Assert.notNull(dto.getSessionId(), "sessionId不能为空");
 
-        ChatSession chatSession = chatSessionRepository.load(chatDTO.getSessionId());
+        ChatSession chatSession = null;
+
+        //访客
+        if(agent == null){
+
+            ChatCreateSessionBO bo = new ChatCreateSessionBO();
+            bo.setVisitorId(dto.getReceiveId());
+            bo.setVisitorAccount(dto.getReceiveAccount());
+            bo.setVisitorName(dto.getReceiveName());
+
+            chatSession = saveOrUpdate(null, bo);
+        }
+
+        if(chatSession == null){
+            chatSession = chatSessionRepository.load(dto.getSessionId());
+        }
 
         Assert.notNull(chatSession, "sessionId不正确");
 
@@ -68,22 +85,25 @@ public class ChatManage {
 
         ChatRecord chatRecord = new ChatRecord();
         chatRecord.setSendUserType(agent != null ? agent.getUserType() : UserTypeEnum.VISITOR.getValue());
-        chatRecord.setContent(chatDTO.getContent());
-        chatRecord.setSessionId(chatDTO.getSessionId());
+        chatRecord.setContent(dto.getContent());
+        chatRecord.setSessionId(dto.getSessionId());
         chatRecord.setStaffId(chatSession.getStaffId());
         chatRecord.setVisitorId(chatSession.getVisitorId());
-        chatRecord.setContentType(chatDTO.getContentType() != null ? chatDTO.getContentType() : ChatContentTypeEnum.TEXT.getValue());
+        chatRecord.setContentType(dto.getContentType() != null ? dto.getContentType() : ChatContentTypeEnum.TEXT.getValue());
 
         if(agent != null && UserTypeEnum.STAFF.getValue().equals(agent.getUserType())){
             chatRecord.setRead(true);
         }
 
         if(ChatContentTypeEnum.TEXT.getValue().equals(chatRecord.getContentType())){
-            String filteredContent = sensitiveWordService.filter(chatDTO.getContent());
+            String filteredContent = sensitiveWordService.filter(dto.getContent());
             chatRecord.setContent(filteredContent);
         }
 
         chatRecordRepository.insert(chatRecord);
+
+        chatRecord.setVisitorName(chatSession.getVisitorName());
+
         webSocketToClientUtil.sendMsg(chatRecord);
         return chatRecord;
     }
@@ -99,13 +119,13 @@ public class ChatManage {
         if(blacklistService.isBlock(dto.getConnectAccount())
                 || blacklistService.isBlock(dto.getConnectId())
                 || blacklistService.isBlock(dto.getConnectIp())
-            ){
+                ){
             throw new ServiceException("BLACK_ERROR","您已被拉入黑名单！");
         }
 
         String visitorId = dto.getConnectId();
 
-        ChatSession session = createSession(staffId, visitorId, dto.getConnectName(), dto.getConnectAccount(), dto.getConnectIp());
+        ChatSession session = createSession(staffId, dto);
 
         if(session == null){
             chatWaitConnectQueueCache.add(visitorId);
@@ -197,32 +217,77 @@ public class ChatManage {
         }
     }
 
-//    private ChatSession createSession(String staffId, String visitorId){
-//        return createSession(staffId, visitorId, null);
-//    }
+    private ChatSession createSession(String staffId, ChatCreateSessionDTO dto) {
 
-    private ChatSession createSession(String staffId, String visitorId, String visitorName, String visitorAccount, String visitorIp) {
+        ChatCreateSessionBO bo = new ChatCreateSessionBO();
+        bo.setSessionId(dto.getSessionId());
+        bo.setVisitorIdRandom(dto.getVisitorIdRandom());
 
-        ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
-//        chatSessionQuery.setServiceId(serviceId);
-        chatSessionQuery.setVisitorId(visitorId);
-        List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
+        bo.setVisitorId(dto.getConnectId());
+        bo.setVisitorIp(dto.getConnectIp());
+        bo.setVisitorName(dto.getConnectName());
+        bo.setVisitorAccount(dto.getConnectAccount());
 
-        if(!CollectionUtils.isEmpty(chatSessions)){
-            return chatSessions.get(0);
+        return saveOrUpdate(staffId, bo);
+    }
+
+    private ChatSession saveOrUpdate(String staffId, ChatCreateSessionBO bo) {
+
+        ChatSession chatSession = null;
+
+        //通过sessionId 查找
+        if(!StringUtils.isEmpty(bo.getSessionId())){
+            chatSession = chatSessionRepository.load(bo.getSessionId());
         }
 
-        ChatSession chatSession = new ChatSession();
-        chatSession.setStaffId(staffId);
-        chatSession.setVisitorId(visitorId);
-        chatSession.setVisitorIp(visitorIp);
-        chatSession.setVisitorName(visitorName);
-        chatSession.setVisitorAccount(visitorAccount);
-        chatSession.setConnectStartTime(new Date());
+        // 通过访问者id查找
+        if(chatSession == null){
+            ChatSessionQuery chatSessionQuery = new ChatSessionQuery();
+            chatSessionQuery.setVisitorId(bo.getVisitorId());
+            List<ChatSession> chatSessions = chatSessionRepository.queryList(chatSessionQuery);
 
-        chatSessionRepository.insert(chatSession);
+            if (!CollectionUtils.isEmpty(chatSessions)) {
+                chatSession = chatSessions.get(0);
+            }
+        }
 
-        return chatSession;
+        String sessionId = null, visitorId = bo.getVisitorId(), visitorIp = bo.getVisitorIp(), visitorName = bo.getVisitorName(), visitorAccount = bo.getVisitorAccount();
+        Boolean isVisitorIdRandom = null;
+        if (chatSession != null) {
+            sessionId = chatSession.getId();
+
+            visitorIp = compared(chatSession.getVisitorIp(), bo.getVisitorIp());
+            visitorName = compared(chatSession.getVisitorName(), bo.getVisitorName());
+            visitorAccount = compared(chatSession.getVisitorAccount(), bo.getVisitorAccount());
+
+            visitorId = compared(chatSession.getVisitorId(), bo.getVisitorId());
+
+            if(!StringUtils.isEmpty(visitorId)){
+                if(chatSession.isVisitorIdRandom()){  // 随机id被更新为有效id
+                    isVisitorIdRandom = false;
+                } else {
+                    sessionId = null;  // visitorId 有变化且有sessionId 需重新创建session 非更新
+                }
+            }
+        } else {
+            isVisitorIdRandom = bo.getVisitorIdRandom();
+        }
+
+        ChatSession session = new ChatSession(sessionId);
+        session.setStaffId(staffId);
+        session.setVisitorId(visitorId);
+        session.setVisitorIp(visitorIp);
+        session.setVisitorName(visitorName);
+        session.setVisitorAccount(visitorAccount);
+        session.setVisitorIdRandom(isVisitorIdRandom);
+
+        if (StringUtils.isEmpty(sessionId)) {
+            session.setConnectStartTime(new Date());
+        }
+
+        chatSessionRepository.save(session);
+
+        return session;
     }
 
     public void read(String sessionId) {
@@ -253,7 +318,6 @@ public class ChatManage {
 
         blackListManage.setBlock(chatSession.getVisitorId());
         blackListManage.setBlock(chatSession.getVisitorIp());
-
     }
 
     public PageResult<ChatRecord> queryPage(ChatRecordQuery chatRecordQuery) {
@@ -372,31 +436,13 @@ public class ChatManage {
         return userAgent != null ? userAgent.getUserName() : "";
     }
 
-
-    public static void main(String[] args) {
-        Map<String, List<String>> sessionMap = new HashMap<>();
-
-        ArrayList<String> list = new ArrayList<>();
-        list.add("1111");
-//        list.add("22121");
-//        list.add("11112");
-//        list.add("1111241");
-
-        sessionMap.put("1",list);
-
-        ArrayList<String> list1 = new ArrayList<>();
-        list1.add("1111");
-        list1.add("22121");
-        list1.add("11112");
-
-        sessionMap.put("2",list1);
-
-        ArrayList<String> list2 = new ArrayList<>();
-        list2.add("1111");
-        list2.add("22121");
-
-        sessionMap.put("3",list2);
-
-//        System.out.println(getMinChatStaff(sessionMap));
+    private static String compared(String oldStr, String newStr) {
+        if (StringUtils.isEmpty(oldStr)) {
+            return newStr;
+        }
+        if (StringUtils.isEmpty(newStr)) {
+            return null;
+        }
+        return oldStr.equals(newStr) ? null : newStr;
     }
 }

@@ -1,6 +1,7 @@
 package com.xudong.im.web.controller;
 
 import com.xudong.core.util.IpUtil;
+import com.xudong.core.util.UUIDUtil;
 import com.xudong.im.domain.chat.*;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.manage.ChatManage;
@@ -41,11 +42,16 @@ public class ChatController {
     public ApiResponse<ChatSessionVO> createSession(ChatCreateSessionDTO dto, HttpServletRequest request) {
 
         String remoteIp = IpUtil.getRemoteIp(request);
-
         dto.setConnectIp(remoteIp);
-        dto.setConnectId(StringUtils.isEmpty(dto.getConnectId()) ? remoteIp : dto.getConnectId());
 
-        log.info(">>>>>>>>>>>>> client ip:" + dto.getConnectId());
+        log.info(">>>>>>>>>>>>> client ip:" + remoteIp);
+
+        if(StringUtils.isEmpty(dto.getConnectId())){
+            dto.setConnectId(UUIDUtil.randomUUID());
+            dto.setVisitorIdRandom(true);
+        } else {
+            dto.setConnectId(dto.getConnectId());
+        }
 
         OperateResult data = chatManage.createSession(dto);
         if(data == null){
@@ -61,8 +67,13 @@ public class ChatController {
      * @return
      */
     @RequestMapping(value = "sendMsg", method = RequestMethod.POST)
-    public ApiResponse sendMsg(ChatDTO chatDTO, HttpServletRequest request) {
+    public ApiResponse sendMsg(ChatRecordDTO chatDTO, HttpServletRequest request) {
         UserAgent agent = userAgentSession.get(request);
+
+        if(agent == null){
+            chatDTO.setReceiveIp(IpUtil.getRemoteIp(request));
+        }
+
         ChatRecord chatRecord = chatManage.sendMsg(chatDTO, agent);
         return ApiResponse.create(chatRecord);
     }

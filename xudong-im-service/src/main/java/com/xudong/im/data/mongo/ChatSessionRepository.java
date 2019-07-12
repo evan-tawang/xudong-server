@@ -36,6 +36,18 @@ public class ChatSessionRepository {
         return mongoTemplate.findById(id, ChatSession.class, COLLECTION_NAME);
     }
 
+    public ChatSession save(ChatSession o) {
+        if (o == null) {
+            return null;
+        }
+        if(StringUtils.isEmpty(o.getId())){
+            insert(o);
+        } else {
+            update(o);
+        }
+        return o;
+    }
+
     public ChatSession insert(ChatSession o) {
         if (o == null) {
             return null;
@@ -79,15 +91,22 @@ public class ChatSessionRepository {
         return query;
     }
 
-    public void update(ChatSession chatSession) {
-        Assert.notNull(chatSession.getId(),"id不能为空");
+    public void update(ChatSession o) {
+        Assert.notNull(o.getId(),"id不能为空");
 
-        Query query = new Query(Criteria.where("_id").in(chatSession.getId()));
+        Query query = new Query(Criteria.where("_id").in(o.getId()));
         Update update = new Update();
 
-        MongoUtil.buildUpdate(update,"connectStartTime",chatSession.getConnectStartTime());
-        MongoUtil.buildUpdate(update,"connectEndTime",chatSession.getConnectEndTime());
+        MongoUtil.buildUpdate(update, "staffId", o.getStaffId());
+        MongoUtil.buildUpdate(update, "visitorIp", o.getVisitorIp());
+        MongoUtil.buildUpdate(update, "visitorId", o.getVisitorId());
+        MongoUtil.buildUpdate(update, "visitorName", o.getVisitorName());
+        MongoUtil.buildUpdate(update, "visitorAccount", o.getVisitorAccount());
+        MongoUtil.buildUpdate(update, "status", o.getStatus());
 
-        mongoTemplate.updateMulti(query, update, COLLECTION_NAME);
+        MongoUtil.buildUpdate(update, "connectStartTime", o.getConnectStartTime());
+        MongoUtil.buildUpdate(update, "connectEndTime", o.getConnectEndTime());
+
+        mongoTemplate.updateFirst(query, update, COLLECTION_NAME);
     }
 }

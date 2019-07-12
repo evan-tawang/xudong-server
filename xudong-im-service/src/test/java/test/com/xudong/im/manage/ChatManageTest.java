@@ -1,13 +1,10 @@
 package test.com.xudong.im.manage;
 
 import com.xudong.core.util.RandomUtil;
-import com.xudong.im.domain.chat.ChatDTO;
-import com.xudong.im.domain.chat.ChatSession;
+import com.xudong.im.domain.chat.ChatRecordDTO;
 import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.VisitorAgent;
-import com.xudong.im.enums.UserTypeEnum;
 import com.xudong.im.manage.ChatManage;
-import org.evanframework.dto.OperateResult;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
@@ -35,11 +32,11 @@ public class ChatManageTest extends ServiceTestCaseSupport {
     }
 
     /**
-     * Method: sendMsg(ChatDTO chatDTO, StaffAgent agent)
+     * Method: sendMsg(ChatRecordDTO chatDTO, StaffAgent agent)
      */
     @Test
     public void testSendMsgBySessionId() throws Exception {
-        ChatDTO chatDTO = new ChatDTO();
+        ChatRecordDTO chatDTO = new ChatRecordDTO();
         chatDTO.setContent("testing");
         chatDTO.setSessionId("5cfcdd131d798610084eb98c");
 
@@ -53,7 +50,7 @@ public class ChatManageTest extends ServiceTestCaseSupport {
 
     @Test
     public void testSendMsgByReceiveId() throws Exception {
-        ChatDTO chatDTO = new ChatDTO();
+        ChatRecordDTO chatDTO = new ChatRecordDTO();
         chatDTO.setContent("有什么事情吗");
         chatDTO.setReceiveId("f528764d-624d-3129-b32c-21fbca0cb8d6");
 

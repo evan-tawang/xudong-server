@@ -9,10 +9,20 @@ public class ChatCreateSessionDTO {
         this.connectId = connectId;
     }
 
+    private String sessionId;
     private String connectId;
     private String connectIp;
     private String connectName;
     private String connectAccount;
+    private Boolean visitorIdRandom;//访客id 是否随机
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     public String getConnectId() {
         return connectId;
@@ -44,5 +54,13 @@ public class ChatCreateSessionDTO {
 
     public void setConnectAccount(String connectAccount) {
         this.connectAccount = connectAccount;
+    }
+
+    public Boolean getVisitorIdRandom() {
+        return visitorIdRandom;
+    }
+
+    public void setVisitorIdRandom(Boolean visitorIdRandom) {
+        this.visitorIdRandom = visitorIdRandom;
     }
 }

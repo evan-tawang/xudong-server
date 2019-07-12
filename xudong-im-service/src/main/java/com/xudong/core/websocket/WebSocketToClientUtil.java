@@ -24,7 +24,7 @@ public class WebSocketToClientUtil {
      * 新消息
      * @param chatRecord
      */
-    public void sendMsg( ChatRecord chatRecord) {
+    public void sendMsg(ChatRecord chatRecord) {
         if (chatRecord == null) {
             return;
         }

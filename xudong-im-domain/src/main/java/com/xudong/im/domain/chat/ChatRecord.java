@@ -22,6 +22,8 @@ public class ChatRecord implements Serializable {
     private boolean read; // 是否已读
     private Date gmtCreate;
 
+    private String visitorName; //访客名称
+
     public String getId() {
         return id;
     }
@@ -92,6 +94,14 @@ public class ChatRecord implements Serializable {
 
     public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
+    }
+
+    public String getVisitorName() {
+        return visitorName;
+    }
+
+    public void setVisitorName(String visitorName) {
+        this.visitorName = visitorName;
     }
 
     @Override

@@ -39,7 +39,7 @@ public class ChatControllerTest extends WebTestCaseSupport {
     }
 
     /**
-     * Method: sendMsg(@RequestBody ChatDTO chatDTO, HttpServletRequest request)
+     * Method: sendMsg(@RequestBody ChatRecordDTO chatDTO, HttpServletRequest request)
      */
     @Test
     public void testSendMsg() throws Exception {

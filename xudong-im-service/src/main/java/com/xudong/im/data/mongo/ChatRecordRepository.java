@@ -1,6 +1,7 @@
 package com.xudong.im.data.mongo;
 
 import com.xudong.core.util.MongoUtil;
+import com.xudong.core.util.UUIDUtil;
 import com.xudong.im.constant.CommonConstant;
 import com.xudong.im.domain.chat.ChatRecord;
 import com.xudong.im.domain.chat.ChatRecordQuery;
@@ -133,5 +134,9 @@ public class ChatRecordRepository {
 
     private String getCollectionName(String sessionId) {
         return COLLECTION_NAME + "_" + sessionId;
+    }
+
+
+    public static void main(String[] args) {
     }
 }

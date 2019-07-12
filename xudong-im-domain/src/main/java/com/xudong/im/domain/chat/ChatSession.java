@@ -1,6 +1,7 @@
 package com.xudong.im.domain.chat;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -26,6 +27,7 @@ public class ChatSession  implements Serializable {
     @Id
     private String id;
 
+    private Boolean visitorIdRandom;//访客id 是否随机
     private String visitorIp;//访客ip
     private String visitorId;//访客id
     private String visitorName;//访客名称
@@ -44,6 +46,19 @@ public class ChatSession  implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Transient
+    public boolean isVisitorIdRandom() {
+        return visitorIdRandom != null && visitorIdRandom;
+    }
+
+    public Boolean getVisitorIdRandom() {
+        return visitorIdRandom;
+    }
+
+    public void setVisitorIdRandom(Boolean visitorIdRandom) {
+        this.visitorIdRandom = visitorIdRandom;
     }
 
     public String getVisitorIp() {
