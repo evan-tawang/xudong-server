@@ -9,6 +9,7 @@ import com.xudong.im.domain.user.StaffAgent;
 import com.xudong.im.domain.user.StaffLoginDTO;
 import com.xudong.im.domain.user.support.UserAgent;
 import com.xudong.im.enums.OnlineStatusEnum;
+import com.xudong.im.manage.ChatManage;
 import com.xudong.im.service.StaffLoginService;
 import com.xudong.im.session.UserAgentSession;
 import org.evanframework.dto.ApiResponse;
@@ -43,6 +44,9 @@ public class StaffLoginController {
 
     @Autowired
     private MesApiClient mesApiClient;
+
+    @Autowired
+    private ChatManage chatManage;
 
 //    @Autowired
 //    private SysConfig sysConfig;
@@ -104,6 +108,7 @@ public class StaffLoginController {
         UserAgent agent = userAgentSession.get(request);
         if (null != agent) {
             userAgentSession.remove(request);
+            chatManage.logout(agent.getId(), agent.getUserType());
         }
         return ApiResponse.create();
     }

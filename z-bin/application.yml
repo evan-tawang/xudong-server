@@ -1,0 +1,66 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: xudong-im
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/xudong_im?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: XuDong001
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:   #下面为连接池的补充设置，应用到上面数据源中
+      max-lifetime: 1000
+      minimum-idle: 4
+      idle-timeout: 1000
+      maximum-pool-size: 32
+      connection-test-query: SELECT 1
+      connection-timeout: 2000
+  data:
+    mongodb:
+      uri: mongodb://xudong_im:XuDong001@127.0.0.1:27017/xudong_im
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: XuDong001
+    jedis:
+      pool:
+        max-active: 16  #最大连接数,0为没有限制
+        max-idle: 4   #最大等待连接中的数量, 0为没有限制
+        min-idle: 1   #最小等待连接中的数量
+        max-wait: 2000ms  #最大建立连接等待时间。如果超过此时间将接到异常
+  jackson:
+    default-property-inclusion: non_null
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+  output:
+    ansi:
+      enabled: detect
+  http:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+logging:
+  pattern:
+    console: "%date{dd HH:mm:ss} %level [%thread] %msg。%-60caller{1}"
+  level:
+    #org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod: trace
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: warn
+    org.springframework.boot.autoconfigure.logging: warn
+    org.springframework.web.socket: debug
+    springfox.documentation: error
+    io.swagger: error
+    java.sql.Statement: debug
+    java.sql.PreparedStatement: debug
+    java.sql.ResultSet: debug
+    org.springframework.jdbc.core: TRACE
+    com.xudong: debug
+
+mes:
+  api:
+    staff-login: http://115.239.198.226:9998/Account/CustomerDoLogin
+
