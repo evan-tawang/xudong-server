@@ -133,10 +133,14 @@ public class ChatRecordRepository {
     }
 
     private String getCollectionName(String sessionId) {
-        return COLLECTION_NAME + "_" + sessionId;
+        String lastName = sessionId.substring(sessionId.length() - 1, sessionId.length());
+        return COLLECTION_NAME + "_" + lastName;
     }
 
 
     public static void main(String[] args) {
+        String sessionId = "12321312a";
+        String lastName = sessionId.substring(sessionId.length() - 1, sessionId.length());
+        System.out.println(lastName);
     }
 }

@@ -20,7 +20,8 @@ public class Excludor {
             "/**/chat/sendMsg", //
             "/**/chat/history", //
             "/**/guestBook/save", //
-            "/**/login" //
+            "/**/login", //
+            "/**/chat/disconnect" //
     };
 
     private Set<String> excludes;

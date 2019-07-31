@@ -62,22 +62,18 @@ public class ChatManage {
         Assert.notNull(dto.getContent(), "聊天内容不能为空");
         Assert.notNull(dto.getSessionId(), "sessionId不能为空");
 
-        ChatSession chatSession = null;
+        ChatSession chatSession = chatSessionRepository.load(dto.getSessionId());
 
         //访客
-        if(agent == null){
-
-            ChatCreateSessionBO bo = new ChatCreateSessionBO();
-            bo.setVisitorId(dto.getReceiveId());
-            bo.setVisitorAccount(dto.getReceiveAccount());
-            bo.setVisitorName(dto.getReceiveName());
-
-            chatSession = saveOrUpdate(null, bo);
-        }
-
-        if(chatSession == null){
-            chatSession = chatSessionRepository.load(dto.getSessionId());
-        }
+//        if(agent == null){
+//
+//            ChatCreateSessionBO bo = new ChatCreateSessionBO();
+//            bo.setVisitorId(dto.getReceiveId());
+//            bo.setVisitorAccount(dto.getReceiveAccount());
+//            bo.setVisitorName(dto.getReceiveName());
+//
+//            chatSession = saveOrUpdate(null, bo);
+//        }
 
         Assert.notNull(chatSession, "sessionId不正确");
 
@@ -135,7 +131,6 @@ public class ChatManage {
 
             // 缓存会话
             if(chatSessionCache.put(staffId, session.getId())){
-
                 webSocketToClientUtil.allocate(staffId, visitorId, dto.getConnectName(), session.getId());
             }
 
