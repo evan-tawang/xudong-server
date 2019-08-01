@@ -156,6 +156,10 @@ public class ChatManage {
         updateTime(chatSession.getId(), null, new Date());
 
         String visitorId = chatWaitConnectQueueCache.pop();
+        if(StringUtils.isEmpty(visitorId)){
+            return;
+        }
+
         ChatCreateSessionDTO dto = chatWaitVisitorCache.get(visitorId);
 
         if(dto == null){
