@@ -261,7 +261,7 @@ public class UserAgentSession {
     public void updateOnlineStatus(Integer status, HttpServletRequest request) {
         UserAgent loginUser = get(request);
 
-        String userAgentCacheKey = DigestUtils.sha1Hex(DigestUtils.sha1Hex(loginUser.getId() + "-" + loginUser.getUserType()));
+        String userAgentCacheKey = generateUserAgentCacheKey(loginUser.getId(),loginUser.getUserType());
 
         if (StringUtils.isNotBlank(userAgentCacheKey)) {
             loginUser.setOnlineStatus(status);
@@ -277,7 +277,7 @@ public class UserAgentSession {
      * @param userType
      * @return
      */
-    private String generateUserAgentCacheKey(String userId, Integer userType) {
+    private static String generateUserAgentCacheKey(String userId, Integer userType) {
         return DigestUtils.sha1Hex(userId + "-" + userType);
     }
 
@@ -375,4 +375,8 @@ public class UserAgentSession {
 //    public void setUserAgentKeyCache(StaffAgentKeyCache userAgentKeyCache) {
 //        this.userAgentKeyCache = userAgentKeyCache;
 //    }
+
+    public static void main(String[] args) {
+        System.out.println(generateUserAgentCacheKey("699", 1));
+    }
 }

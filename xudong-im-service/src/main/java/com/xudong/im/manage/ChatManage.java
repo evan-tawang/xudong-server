@@ -324,7 +324,9 @@ public class ChatManage {
 
         PageResult<ChatRecord> result = chatRecordRepository.queryPage(chatRecordQuery);
         for (ChatRecord record : result.getData()){
-            record.setContent(sensitiveWordService.filter(record.getContent()));
+            if(ChatContentTypeEnum.TEXT.getValue().equals(record.getContentType())){
+                record.setContent(sensitiveWordService.filter(record.getContent()));
+            }
         }
         return result;
     }
