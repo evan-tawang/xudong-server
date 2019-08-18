@@ -11,9 +11,11 @@ import java.util.Date;
 public class GuestBook  implements Serializable {
     @Id
     private String id;
-    private String visitorIp; //访客ip
     private String content; // 留言内容
     private String visitorId; //访客id
+    private String visitorIp; //访客ip
+        private String visitorName; //访客名称
+    private String visitorPhone; //访客电话
     private Date gmtCreate; // 留言时间
 
     public String getId() {
@@ -30,6 +32,22 @@ public class GuestBook  implements Serializable {
 
     public void setVisitorIp(String visitorIp) {
         this.visitorIp = visitorIp;
+    }
+
+    public String getVisitorName() {
+        return visitorName;
+    }
+
+    public void setVisitorName(String visitorName) {
+        this.visitorName = visitorName;
+    }
+
+    public String getVisitorPhone() {
+        return visitorPhone;
+    }
+
+    public void setVisitorPhone(String visitorPhone) {
+        this.visitorPhone = visitorPhone;
     }
 
     public String getContent() {
